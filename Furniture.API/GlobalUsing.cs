@@ -1,0 +1,13 @@
+﻿global using Furniture.Common.Helper.Mail;
+global using Furniture.Core.Models;
+global using Furniture.Infrastructure.Data;
+global using Furniture.Infrastructure.Repositories.Interfaces;
+global using Furniture.Infrastructure.Repositories.Implements;
+global using Furniture.Service;
+global using Furniture.Core.DTOs;
+global using FluentValidation;
+global using FluentValidation.AspNetCore;
+global using Furniture.API.Mappings;
+global using Furniture.API.Middleware;
+global using Furniture.Service.Services.Implements;
+global using Furniture.Service.Services.Interfaces;

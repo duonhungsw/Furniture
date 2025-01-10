@@ -1,0 +1,134 @@
+﻿@* @model ProductDto *@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Untree.co">
+	<link rel="shortcut icon" href="favicon.png">
+
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap4" />
+
+	<!-- Bootstrap CSS -->
+	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<link href="~/css/tiny-slider.css" rel="stylesheet">
+	<link href="~/css/style.css" rel="stylesheet">
+	<title>Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co </title>
+</head>
+
+<body>
+	<!-- Start Header/Navigation -->
+	<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+
+		<div class="container">
+			<a class="navbar-brand" href="index.html">Furni<span>.</span></a>
+
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarsFurni">
+				<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+					<li class="nav-item ">
+						<a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+					</li>
+					<li class="active"><a class="nav-link" asp-controller="Product" asp-action="ProductIndex">Shop</a></li>
+					<li><a class="nav-link" href="about.html">About us</a></li>
+					<li><a class="nav-link" href="services.html">Services</a></li>
+					<li><a class="nav-link" href="blog.html">Blog</a></li>
+					<li><a class="nav-link" href="contact.html">Contact us</a></li>
+				</ul>
+
+				<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<img src="~/images/user.svg">
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a></li>
+							<li><a class="dropdown-item" href="#">LoginOut</a></li>
+							<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item" href="#">Something else here</a></li>
+						</ul>
+					</li>
+					<li><a class="nav-link" asp-controller="Cart" asp-action="ShoppingCart"><img src="~/images/cart.svg"></a></li>
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+	<!-- End Header/Navigation -->
+	<!-- Start Hero Section -->
+	<div class="hero">
+		<div class="container">
+			<div class="row justify-content-between">
+				<div class="col-lg-5">
+					<div class="intro-excerpt">
+						<h1>Product detail</h1>
+					</div>
+				</div>
+				<div class="col-lg-7">
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Hero Section -->
+	<div class="product-detail-container">
+		<div class="product-image">
+			<img src="~/@Model.PictureUrl" alt="Product Image">
+		</div>
+		<div class="product-info">
+			<h1 class="product-title">@Model.Name</h1>
+			<p class="product-price">@Model.Price $</p>
+			<p class="product-description">
+				@Model.Description
+			</p>
+			<div class="product-options">
+				<label for="quantity">Quantity:</label>
+				<input type="number" id="quantity" name="quantity" min="1" max="@Model.QuantityInStock" value="1">
+			</div>
+			<button class="add-to-cart-btn">Add to Cart</button>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		<script>
+			$(document).ready(function () {
+				$(".add-to-cart-btn").click(function () {
+					var quantity = $("#quantity").val(); // Lấy số lượng
+					var productData = {
+						productId: '@Model.Id',
+						price: '@Model.Price',
+						quantity: quantity // Số lượng được chọn
+					};
+
+
+					$.ajax({
+						type: 'POST',
+						url: "/Cart/AddToCart",
+						data: JSON.stringify(productData), // Gửi đối tượng JSON chứa productId và quantity
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+						success: function (response) {
+							if (response.success === false) {
+								alert("Không thể thêm sản phẩm vào giỏ hàng.");
+							} else {
+								alert("Thêm vào giỏ hàng thành công!");
+								console.log("Sản phẩm đã được thêm.");
+							}
+						},
+						error: function (xhr, status, error) {
+							console.error("Lỗi xảy ra: ", status, error);
+							alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
+						}
+					});
+					return false; // Ngăn form submit lại trang
+				});
+			});
+		</script>
+</body>
+
+
+</html>
