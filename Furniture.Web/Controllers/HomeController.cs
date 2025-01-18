@@ -1,13 +1,13 @@
 using Furniture.Web.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Furniture.Web.Services;
 
 namespace Furniture.Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IAccountService accountService) : Controller
 {
-    public IActionResult Index()
+    public async Task<ActionResult<AccountModel>> Index()
     {
-        return View();
+        var result = await accountService.GetUserInfo();
+        return View(result);
     }
 }
