@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace Furniture.Service.Services.Interfaces;
+﻿namespace Furniture.Service.Services.Interfaces;
 
 public interface ITokenService
 {
@@ -12,4 +10,6 @@ public interface ITokenService
 	void RemoveTokenInCookie();
 	Task<Account> Authenticate();
 	//bool IsTokenExpired(string token);
+	string GeneratePasswordResetTokenAsync(AccountDto accountDto);
+
 }

@@ -2,7 +2,7 @@
 
 public enum AppRoles
 {
-    Customer =11,
-    Admin =12,
-    Employee = 13
+    Customer =1,
+    Admin =2,
+    Employee = 3
 }

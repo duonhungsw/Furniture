@@ -9,4 +9,7 @@ public interface IAccountServices
     Task<AccountDto> GetAccountById(Guid Id);
     Task<bool> ChangePassword(ChangePasswordDto changePasswordDto);
     Task<bool> UpdateAsync(AccountDto customerDto, IFormFile avatar);
+	Task<AccountDto> GetAccountByEmail(string Email);
+	Task<bool> ResetPasswordAsync(string Email, ForgotPassDTOs Regismodel);
+
 }

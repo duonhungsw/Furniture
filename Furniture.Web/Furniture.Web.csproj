@@ -7,11 +7,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Account\ViewProfile.cshtml" />
+    <Content Remove="wwwroot\js\validation.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Account\ViewProfile.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\validation.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Account\ViewProfile.cshtml" />
+    <None Include="wwwroot\js\validation.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Furniture.Core\Furniture.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Account\ViewProfile.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -12,6 +12,13 @@ public class AccountServices(IAccountRepository accountRepository,
 		throw new NotImplementedException();
 	}
 
+	public async Task<AccountDto> GetAccountByEmail(string Email)
+	{
+		var account = await accountRepository.GetByEmailAsync(Email);
+		var result = mapper.Map<AccountDto>(account);
+		return result;
+	}
+
 	public async Task<AccountDto> GetAccountById(Guid Id)
 	{
 		var account = await accountRepository.GetByIdAsync(Id);
@@ -49,6 +56,18 @@ public class AccountServices(IAccountRepository accountRepository,
 
         accountRepository.Create(account);
 		if(await accountRepository.SaveChangesAsync())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public async Task<bool> ResetPasswordAsync(string Email, ForgotPassDTOs model)
+	{
+		var account = await accountRepository.GetByEmailAsync(Email);
+		account!.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.Password!);
+		accountRepository.Update(account);
+		if (await accountRepository.SaveChangesAsync())
 		{
 			return true;
 		}

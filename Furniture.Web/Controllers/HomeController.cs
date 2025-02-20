@@ -1,13 +1,18 @@
-using Furniture.Web.Models;
 using Furniture.Web.Services;
 
 namespace Furniture.Web.Controllers;
 
-public class HomeController(IAccountService accountService) : Controller
+public class HomeController(IAccountApi accountService) : Controller
 {
-    public async Task<ActionResult<AccountModel>> Index()
+    public async Task<IActionResult> Index()
     {
-        var result = await accountService.GetUserInfo();
-        return View(result);
-    }
+		var response = await accountService.GetUserInfo();
+
+		if (!response!.IsSuccessStatusCode || response.Content == null)
+		{
+			return View();
+		}
+
+		return View(response.Content);
+	}
 }
