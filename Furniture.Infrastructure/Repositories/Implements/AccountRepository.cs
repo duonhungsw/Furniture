@@ -7,6 +7,11 @@ public class AccountRepository : GenericRepository<Account>, IAccountRepository
 	public AccountRepository(ApplicationDbContext context) : base(context)
 	{
 	}
+	public async Task<Account?> GetByEmailAsync(string Email)
+	{
+		return await appDbContext.Accounts.FirstOrDefaultAsync(x => x.Email == Email);
+	}
+
 	public async Task<Account?> LoginAsync(Account account)
 	{
 		return await appDbContext.Accounts

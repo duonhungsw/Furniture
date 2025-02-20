@@ -22,6 +22,11 @@ public class StoreContextSeed
             dbContext.Products.AddRange(product);
             await dbContext.SaveChangesAsync();
         }
+        if (!dbContext.Accounts.Any())
+        {
+            dbContext.Accounts.AddRange(ListAccount);
+            await dbContext.SaveChangesAsync();
+        }
     }
     public static List<Account> ListAccount => new List<Account>
     {
@@ -29,7 +34,7 @@ public class StoreContextSeed
     {
         Id = Guid.NewGuid(),
         Name = "Hung",
-        Email = "ddhung2003@example.com",
+        Email = "ddhung2003@gmail.com",
         HashPassword = PasswordHasher.HashPasswordPBKDF2("Test@gmail.com"),
         Avatar = "null",
         BirthDay = "null",
@@ -39,13 +44,24 @@ public class StoreContextSeed
     new Account
     {
         Id = Guid.NewGuid(),
-        Name = "Jane Smith",
-        Email = "janesmith@example.com",
-        HashPassword = "hashed_password_456",
-        Avatar = "avatar2.png",
-        BirthDay = "1992-02-02",
-        Phone = "987654321",
-        RoleName = "User"
+        Name = "Employee",
+        Email = "employee@gmail.com",
+        HashPassword = PasswordHasher.HashPasswordPBKDF2("Employee@gmail.com"),
+        Avatar = "null",
+        BirthDay = "null",
+        Phone = "null",
+        RoleName = "Employee"
+    },
+    new Account
+    {
+        Id = Guid.NewGuid(),
+        Name = "Admin",
+        Email = "admin@gmail.com",
+        HashPassword = PasswordHasher.HashPasswordPBKDF2("Admin@gmail.com"),
+        Avatar = "null",
+        BirthDay = "null",
+        Phone = "null",
+        RoleName = "Admin"
     }
     };
 }

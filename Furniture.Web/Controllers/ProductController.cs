@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace Furniture.Web.Controllers;
 
-namespace Furniture.Web.Controllers
+public class ProductController : Controller
 {
-	public class ProductController : Controller
+	public IActionResult ViewProducts()
 	{
-		public IActionResult ProductHome()
-		{
-			return View();
-		}
-		public IActionResult ProductDetail()
-		{
-			return View();
-		}
+		return View();
+	}
+	public IActionResult ProductDetail()
+	{
+		return View();
 	}
 }
