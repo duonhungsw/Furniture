@@ -1,9 +1,7 @@
 ﻿namespace Furniture.Infrastructure.Repositories.Implements;
-
-
-public class ProductRepository : GenericRepository<Account>, IProductRepository
+public class ProductRepository : GenericRepository<Product>, IProductRepository
 {
-	public ProductRepository(ApplicationDbContext context) : base(context)
-	{
-	}
+    public ProductRepository(ApplicationDbContext context) : base(context)
+    {
+    }
 }
