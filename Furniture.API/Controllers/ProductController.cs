@@ -5,6 +5,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace Furniture.API.Controllers;
 public class ProductController(IProductServices _services, IMapper _mapper) : BaseApiController
 {
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProductDto?>> GetProductById(Guid id)
+    {
+        var product = await _services.GetProductByIdAsync(id);
+        return Ok(product);
+    }
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<ProductDto>>> GetProductsWithPaging([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 8)
+    {
+        var result = await _services.GetProductsAsync();
+        return CreatePagedResult(result, pageIndex, pageSize);
+    }
+    [HttpGet("search")]
+    public async Task<ActionResult<PagedResult<ProductDto>>> SearchProductsWithPaging([FromQuery] string keyWord, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 8)
+    {
+        var result = await _services.SearchProductsAsync(keyWord);
+        return CreatePagedResult(result, pageIndex, pageSize);
+    }
     [HttpPatch("update")]
     public async Task<bool> Update([FromBody] ProductDto model)
     {

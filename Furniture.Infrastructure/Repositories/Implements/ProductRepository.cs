@@ -14,4 +14,12 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         return await appDbContext.Products.ToListAsync();
     }
+
+    public async Task<List<Product>> SearchProductsAsync(string keyword)
+    {
+        return await appDbContext.Products
+                    .AsNoTracking()
+                    .Where(p => EF.Functions.Collate(p.Name, "Latin1_General_CI_AI").Contains(keyword) 
+                        && p.QuantityInStock > 0).ToListAsync();
+    }
 }
