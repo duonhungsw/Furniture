@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Reflection;
 
 
@@ -16,6 +17,20 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("Database"))
 );
+//string? connectionString = builder.Configuration.GetValue<string>("AzureBlobStorage:ConnectionString");
+
+//if (string.IsNullOrEmpty(connectionString))
+//{
+//	throw new InvalidOperationException("Azure Blob Storage connection string is missing or empty.");
+//}
+
+//builder.Services.AddSingleton<IFileStorageService>(provider =>
+//	new FileStorageService(connectionString));
+
+
+builder.Services.AddSingleton<IFileStorageService>(provider =>
+	new FileStorageService(builder.Configuration.GetSection("AzureBlobStorage:ConnectionString").Value!));
+
 builder.Services.AddSingleton(nameof(ApplicationDbContext));
 
 //add inject Repositories and Services
@@ -23,10 +38,14 @@ builder.Services.AddSingleton(nameof(ApplicationDbContext));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
 builder.Services.AddScoped<IAccountServices, AccountServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+//builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
