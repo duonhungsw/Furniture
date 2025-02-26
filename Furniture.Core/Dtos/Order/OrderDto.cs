@@ -1,0 +1,20 @@
+﻿using Furniture.Core.Dtos.Account;
+
+namespace Furniture.Core.Dtos.Order;
+
+public class OrderDto
+{
+	public Guid Id { get; set; }
+	public Guid AccountId { get; set; }
+	public AccountDto? Accounnt { get; set; }
+	public string? Country { get; set; }
+	public string? City { get; set; }
+	public string? District { get; set; }
+	public string? Town { get; set; }
+	public string? Detail { get; set; }
+	public string? Phone { get; set; }
+	public string? Note { get; set; }
+	public decimal TotalMoney { get; set; }
+	public string? PaymentMethod { get; set; }
+	public List<CreateOrderItemDto> OrderItems { get; set; } = new List<CreateOrderItemDto>();
+}
