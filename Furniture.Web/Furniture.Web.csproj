@@ -33,4 +33,8 @@
     <UpToDateCheckInput Remove="Views\Account\ViewProfile.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="wwwroot\templateAdmin\pages\samples\login.cshtml" />
+  </ItemGroup>
+
 </Project>
