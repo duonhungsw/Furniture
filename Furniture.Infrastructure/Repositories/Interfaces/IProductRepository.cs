@@ -1,5 +1,8 @@
-﻿namespace Furniture.Infrastructure.Repositories.Interfaces;
+﻿using Furniture.Core.Dtos.Product;
 
-public interface IProductRepository
+namespace Furniture.Infrastructure.Repositories.Interfaces;
+
+public interface IProductRepository : IGenericRepository<Product>
 {
+    Task<List<Product>> ListProductAsync();
 }
