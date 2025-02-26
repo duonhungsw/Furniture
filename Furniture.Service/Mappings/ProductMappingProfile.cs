@@ -1,5 +1,13 @@
-﻿namespace Furniture.Service.Mappings;
+﻿
+using Furniture.Core.Dtos.Product;
+using Microsoft.AspNetCore.Http.HttpResults;
 
-public class ProductMappingProfile
+namespace Furniture.Service.Mappings;
+
+public class ProductMappingProfile : Profile
 {
+    public ProductMappingProfile()
+    {
+        CreateMap<ProductDto, Product>().ReverseMap();
+    }
 }
