@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@model Account
 <!doctype html>
 <html lang="en">
 <head>
@@ -35,14 +35,13 @@
 					<li class="nav-item active">
 						<a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
 					</li>
-					<li><a class="nav-link" asp-controller="Product" asp-action="ProductIndex">Shop</a></li>
+					<li><a class="nav-link" asp-controller="Product" asp-action="ViewProducts">Shop</a></li>
 					<li><a class="nav-link" href="about.html">About us</a></li>
 					<li><a class="nav-link" href="services.html">Services</a></li>
 					<li><a class="nav-link" href="blog.html">Blog</a></li>
 					<li><a class="nav-link" href="contact.html">Contact us</a></li>
 				</ul>
-				<ul>
-				</ul>
+
 				<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
 
 					<li class="nav-item dropdown">
@@ -50,17 +49,18 @@
 							<img src="~/images/user.svg">
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							@if (Context.Request.Cookies.ContainsKey("JWTToken"))
+							@if (Context.Request.Cookies["AccessToken"] != null)
 							{
+								<li><a class="dropdown-item" asp-controller="Account" asp-action="ViewProfile">My Account</a></li>
+								<li><a class="dropdown-item" href="#"> My Purchase</a></li>
 								<li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
 							}
 							else
 							{
 								<li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a></li>
 							}
-							<li><hr class="dropdown-divider"></li>
-							<li><a class="dropdown-item" href="#">Purchase</a></li>
-						</ul>
+@* 							<li><hr class="dropdown-divider"></li>
+ *@						</ul>
 					</li>
 
 					<li><a class="nav-link" asp-controller="Cart" asp-action="ShoppingCart"><img src="~/images/cart.svg"></a></li>

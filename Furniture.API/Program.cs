@@ -10,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton(System.TimeProvider.System);
 builder.Services.AddAuthorization();
+builder.Services.AddDistributedMemoryCache();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -37,12 +38,20 @@ builder.Services.AddCors(options =>
 		builder =>
 		{
 			builder.WithOrigins("https://localhost:7000")
+			.AllowCredentials() 
 			.AllowAnyMethod()
 			.AllowAnyHeader()
 			.SetIsOriginAllowedToAllowWildcardSubdomains().AllowCredentials();
 		});
 });
-
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(5);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+	options.Cookie.SameSite = SameSiteMode.Lax;
+});
 
 // Configure email service
 var mailsettings = builder.Configuration.GetSection("MailSettings");
@@ -63,8 +72,9 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 
-app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
+app.UseSession();
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();

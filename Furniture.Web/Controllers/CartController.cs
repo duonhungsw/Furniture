@@ -5,8 +5,8 @@ namespace Furniture.Web.Controllers;
 public class CartController : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> ShoppingCart()
+    public IActionResult ShoppingCart()
     {
-        return RedirectToAction("ShoppingCart", "Cart");
+        return View();
     }
 }

@@ -1,13 +1,18 @@
-using Furniture.Web.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Furniture.Web.Services;
 
 namespace Furniture.Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IAccountApi accountService) : Controller
 {
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
-    }
+		var response = await accountService.GetUserInfo();
+
+		if (!response!.IsSuccessStatusCode || response.Content == null)
+		{
+			return View();
+		}
+
+		return View(response.Content);
+	}
 }

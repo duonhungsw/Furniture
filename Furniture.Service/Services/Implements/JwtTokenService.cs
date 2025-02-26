@@ -124,9 +124,9 @@ public class JwtTokenService : ITokenService
 	{
 		var cookieOptions = new CookieOptions
 		{
-			HttpOnly = true,
-			Secure = true,
-			SameSite = SameSiteMode.Strict,
+			HttpOnly = false,
+			Secure = false,
+			SameSite = SameSiteMode.Lax,
 		};
 		_httpContextAccessor.HttpContext?.Response.Cookies.Append(AccessToken, accessToken, cookieOptions);
 		_httpContextAccessor.HttpContext?.Response.Cookies.Append(RefreshToken, refreshToken, cookieOptions);
@@ -193,5 +193,30 @@ public class JwtTokenService : ITokenService
 			throw new Exception("Invalid token.");
 		}
 	}
-	
+
+	public string GeneratePasswordResetTokenAsync(AccountDto accountDto)
+	{
+		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+		var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+		var claims = new List<Claim>
+		{
+			new Claim(ClaimTypes.NameIdentifier, accountDto!.Id.ToString()),
+			new Claim(JwtRegisteredClaimNames.Iat,
+						new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(),
+						ClaimValueTypes.Integer64),
+			new Claim(ClaimTypes.Name, accountDto.Name!),
+			new Claim(ClaimTypes.Email, accountDto.Email!),
+			new Claim(ClaimTypes.Role, accountDto.RoleName!),
+		};
+
+		var token = new JwtSecurityToken(
+			issuer: _issuer,
+			audience: _audience,
+			claims: claims,
+			expires: DateTime.UtcNow.AddMinutes(10),
+			signingCredentials: creds);
+
+		return new JwtSecurityTokenHandler().WriteToken(token);
+	}
 }

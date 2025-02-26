@@ -1,4 +1,5 @@
-﻿<!doctype html>
+﻿@model SignInDTOs
+<!doctype html>
 <html lang="en">
 <head>
 	<title>Webleb</title>
@@ -6,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<link rel="stylesheet" href="~/css/login.css">
 
 </head>
@@ -25,23 +27,27 @@
 										<div class="section text-center">
 											<h4 class="mb-4 pb-3">Log In</h4>
 											<form asp-action="Login" method="post">
-												<div class="col-2 text-end">
+												@* <div class="col-2 text-end">
 													<a asp-controller="Home" asp-action="LoginGoogle" class="btn btn-link">
 														<i class="input-icon uil uil-google" style="font-size: 24px; color: #db4437;"></i> <!-- Thay đổi màu và kích thước nếu cần -->
 													</a>
-												</div>
+												</div> *@
 
 												<div class="form-group">
-													<input type="email" name="email" value="@Model?.Email" class="form-style" placeholder="Email">
+													<input type="email" class="form-style" name="email" id="email" value="@Model?.Email" class="form-style"
+														   placeholder="Email" oninput="validateForm()" required autocomplete="email">
+													<div id="emailError" class="text-danger"></div>
 													<i class="input-icon uil uil-at"></i>
 												</div>
 												<div class="form-group mt-2">
-													<input type="password" id="password" name="password" class="form-style" placeholder="Password">
+													<input type="password" class="form-style" id="hashPassword" name="hashPassword" class="form-style"
+														   placeholder="Password" oninput="validateForm()" required autocomplete="hashPassword">
+													<div id="hashPasswordError" class="text-danger"></div>
 													<i class="input-icon uil uil-lock-alt"></i>
 												</div>
-												<button type="submit" class="btn mt-4">Login</button>
+												<button type="submit" class="btn mt-4" id="signInBtn" disabled>Login</button>
 											</form>
-											<p class="mb-0 mt-4 text-center"><a href="~/Home/ForgotPassword" class="link">Forgot your password?</a></p>
+											<p class="mb-0 mt-4 text-center"><a href="~/Account/ForgotPassword" class="link">Forgot your password?</a></p>
 										</div>
 									</div>
 								</div>
@@ -49,25 +55,29 @@
 									<div class="center-wrap">
 										<div class="section text-center">
 											<h4 class="mb-3 pb-3">Sign Up</h4>
-											<form asp-action="SignUp" method="post">
+											<form asp-action="SignUp" asp-controller="Account" method="post">
 												<div class="form-group">
-													<input type="text" class="form-style" name="username" placeholder="User Name">
+													<input type="text" class="form-style" name="Name" id="username" placeholder="User Name" oninput="validateForm()" required>
+													<div id="userNameError" class="text-danger"></div>
 													<i class="input-icon uil uil-user"></i>
 												</div>
-												<div class="form-group mt-2">
-													<input type="email" class="form-style" name="email" placeholder="Email">
+												<div class="form-group  mt-2">
+													<input type="email" name="email" id="emailSignUp" value="@Model?.Email" class="form-style"
+														   placeholder="Email" oninput="validateForm()" required>
+													<div id="emailSignUpError" class="text-danger"></div>
 													<i class="input-icon uil uil-at"></i>
 												</div>
-												<div class="form-group mt-2">
-													<input type="password" class="form-style" name="password" placeholder="Password">
+												<div class="form-group  mt-2">
+													<input type="password" class="form-style" id="password" name="password" placeholder="Password" oninput="validateForm()" required autocomplete="password">
+													<div id="passwordError" class="text-danger"></div>
 													<i class="input-icon uil uil-lock-alt"></i>
 												</div>
-												<div class="form-group mt-2">
-													<input type="tel" class="form-style" name="confirmPassword" placeholder="Repeat password">
+												<div class="form-group  mt-2">
+													<input type="tel" class="form-style" name="confirmPassword" id="confirmPassword" placeholder="Comfirm password" oninput="validateForm()" required>
+													<div id="confirmPasswordError" class="text-danger"></div>
 													<i class="input-icon uil uil-lock-alt"></i>
 												</div>
-
-												<button class="btn mt-4" type="submit">Register</button>
+												<button class="btn mt-4" id="signUpBtn" type="submit" disabled>Register</button>
 											</form>
 										</div>
 									</div>
@@ -79,5 +89,6 @@
 			</div>
 		</div>
 	</div>
+	<script src="~/js/validation.js"></script>
 </body>
 </html>

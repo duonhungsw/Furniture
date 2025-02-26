@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Furniture.Service.Services.Implements;
 
-public class AccountServices(IAccountRepository accountRepository,IGenericRepository<Account> generic,
+public class AccountServices(IAccountRepository accountRepository,
 							ITokenService tokenService, IMapper mapper) : IAccountServices
 {
 	public Task<bool> ChangePassword(ChangePasswordDto changePasswordDto)
@@ -12,9 +12,16 @@ public class AccountServices(IAccountRepository accountRepository,IGenericReposi
 		throw new NotImplementedException();
 	}
 
+	public async Task<AccountDto> GetAccountByEmail(string Email)
+	{
+		var account = await accountRepository.GetByEmailAsync(Email);
+		var result = mapper.Map<AccountDto>(account);
+		return result;
+	}
+
 	public async Task<AccountDto> GetAccountById(Guid Id)
 	{
-		var account = await generic.GetByIdAsync(Id);
+		var account = await accountRepository.GetByIdAsync(Id);
 		if (account == null)
 			throw new NotFoundException($"Not found customer with Id: {Id}");
 
@@ -24,7 +31,7 @@ public class AccountServices(IAccountRepository accountRepository,IGenericReposi
 
 	public async Task<TokenDto?> LoginAsync(SignInDTOs model)
 	{
-		//model.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.HashPassword!);
+		model.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.HashPassword!);
 		var account = mapper.Map<Account>(model);
 
 		var result = await accountRepository.LoginAsync(account);
@@ -47,8 +54,20 @@ public class AccountServices(IAccountRepository accountRepository,IGenericReposi
 		account.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.Password);
 		account.RoleName = AppRoles.Customer.ToString();
 
-		generic.Create(account);
-		if(await generic.SaveChangesAsync())
+        accountRepository.Create(account);
+		if(await accountRepository.SaveChangesAsync())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public async Task<bool> ResetPasswordAsync(string Email, ForgotPassDTOs model)
+	{
+		var account = await accountRepository.GetByEmailAsync(Email);
+		account!.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.Password!);
+		accountRepository.Update(account);
+		if (await accountRepository.SaveChangesAsync())
 		{
 			return true;
 		}
