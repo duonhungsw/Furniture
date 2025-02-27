@@ -56,12 +56,13 @@ public class FileStorageService : IFileStorageService
 		return await blobClient.OpenReadAsync();
 	}
 
-	public async Task<string> SaveFilesAsync(string container, List<IFormFile> files)
+	public async Task<List<string>> SaveFilesAsync(string container, List<IFormFile> files)
 	{
 		var containerClient = _blobServiceClient.GetBlobContainerClient(container);
 		await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+        var urls = new List<string>();
 
-		foreach (var file in files)
+        foreach (var file in files)
 		{
 			var contentType = GetContentType(file.FileName);
 			var httpHeaders = new BlobHttpHeaders
@@ -71,12 +72,14 @@ public class FileStorageService : IFileStorageService
 			var blobClient = containerClient.GetBlobClient(file.FileName);
 			using var stream = file.OpenReadStream();
 			await blobClient.UploadAsync(stream, httpHeaders);
-		}
+            urls.Add(blobClient.Uri.ToString());
 
-		return $"Uploaded {files.Count} file(s) to container '{container}'.";
-	}
+        }
 
-	public async Task<string> UploadFileAsync(string containerName, IFormFile file)
+        return urls;
+    }
+
+    public async Task<string> UploadFileAsync(string containerName, IFormFile file)
 	{
 		var contentType = GetContentType(file.FileName);
 		var httpHeaders = new BlobHttpHeaders
