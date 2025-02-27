@@ -1,9 +1,10 @@
 ﻿using Furniture.Common.Exceptions;
 using Furniture.Core.Dtos.Product;
-
+using Furniture.Core.Enum;
 namespace Furniture.Service.Services.Implements;
 public class ProductServices(
     IProductRepository _repository,
+    IFileStorageService _storageService,
     IMapper _mapper) : IProductServices
 {
     public async Task<bool> DeleteAsync(Guid id)
@@ -12,30 +13,134 @@ public class ProductServices(
         if (product == null)
             throw new NotFoundException($"Not found product with {id}");
 
-        _repository.Delete(product);
-        if (await _repository.SaveChangesAsync())
+        string containerName = ContainerName.product.ToString();
+        if (!string.IsNullOrEmpty(product.PictureUrl))
         {
-            return true;
+            var imageUrls = product.PictureUrl.Split(',');
+            foreach (var imageUrl in imageUrls)
+            {
+                var uri = new Uri(imageUrl);
+                string blobName = Path.GetFileName(uri.LocalPath);
+
+                bool fileExists = await _storageService.FileExistsAsync(containerName, blobName);
+                if (fileExists)
+                {
+                    bool isDeleted = await _storageService.DeleteFileAsync(containerName, blobName);
+                    if (!isDeleted)
+                    {
+                        throw new Exception($"Không thể xóa ảnh: {blobName}");
+                    }
+                }
+            }
         }
-        return false;
+        _repository.Delete(product);
+        return await _repository.SaveChangesAsync();
     }
+
     public async Task<Product?> GetProductByIdAsync(Guid id)
     {
         var result = await _repository.GetByIdAsync(id);
         return result;
     }
-    public async Task<bool> UpdateAsync(ProductDto model)
-    {
-        var product = _mapper.Map<Product>(model);
-        _repository.Update(product);
-        await _repository.SaveChangesAsync();
-        return true;
-    }
+
+
     public async Task<bool> CreateAsync(ProductDto model)
     {
+        string containerName = ContainerName.product.ToString();
+        List<string> pictureUrls = new List<string>();
+
+        if (model.Images != null && model.Images.Any())
+        {
+            foreach (var file in model.Images!)
+            {
+                string fileName = file.FileName;
+                bool fileExists = await _storageService.FileExistsAsync(containerName, fileName);
+                if (fileExists)
+                {
+                    throw new Exception($"File '{fileName}' đã tồn tại trong hệ thống.");
+                }
+                string fileUrl = await _storageService.UploadFileAsync(containerName, file);
+                pictureUrls.Add(fileUrl);
+            }
+        }
+
+        model.PictureUrl = string.Join(",", pictureUrls);
+
         var product = _mapper.Map<Product>(model);
+        product.PictureUrl = model.PictureUrl;
+
         _repository.Create(product);
         await _repository.SaveChangesAsync();
         return true;
     }
+
+    protected string picture;
+
+    public async Task<bool> UpdateAsync(ProductDto model)
+    {
+        string containerName = ContainerName.product.ToString();
+
+        var existingProduct = await _repository.GetByIdAsync(model.Id);
+        if (existingProduct == null)
+            throw new NotFoundException($"Not found with id: {model.Id}");
+
+        if (model.Images is not null && model.Images.Count > 0)
+        {
+            var newImageNames = model.Images.Select(file => file.FileName).ToList();
+            var oldImageNames = existingProduct.PictureUrl.Split(',')
+                                                          .Select(url => Path.GetFileName(new Uri(url).LocalPath))
+                                                          .ToList();
+
+            bool isSameImages = newImageNames.SequenceEqual(oldImageNames);
+
+            if (isSameImages)
+            {
+                var updated = _mapper.Map(model, existingProduct);
+                updated.PictureUrl = existingProduct.PictureUrl;
+                _repository.Update(updated);
+                await _repository.SaveChangesAsync();
+                return true;
+            }
+        }
+
+
+        if (!string.IsNullOrEmpty(existingProduct.PictureUrl))
+        {
+            var oldImageUrls = existingProduct.PictureUrl.Split(',');
+
+            foreach (var imageUrl in oldImageUrls)
+            {
+                var uri = new Uri(imageUrl);
+                string oldBlobName = Path.GetFileName(uri.LocalPath);
+
+                bool fileExists = await _storageService.FileExistsAsync(containerName, oldBlobName);
+                if (fileExists)
+                {
+                    bool isDeleted = await _storageService.DeleteFileAsync(containerName, oldBlobName);
+                    if (!isDeleted)
+                    {
+                        throw new Exception($"Không thể xóa ảnh cũ: {oldBlobName}");
+                    }
+                }
+            }
+        }
+
+        List<string> newPictureUrls = new List<string>();
+
+        if (model.Images != null && model.Images.Count > 0)
+        {
+            newPictureUrls = await  _storageService.SaveFilesAsync(containerName, model.Images);
+        }
+
+        //Cập nhật danh sách ảnh mới vào `PictureUrl`
+        model.PictureUrl = string.Join(",", newPictureUrls);
+
+        var updatedProduct = _mapper.Map(model, existingProduct);
+        updatedProduct.PictureUrl = model.PictureUrl ?? existingProduct.PictureUrl;
+        _repository.Update(updatedProduct);
+        await _repository.SaveChangesAsync();
+
+        return true;
+    }
+
 }
