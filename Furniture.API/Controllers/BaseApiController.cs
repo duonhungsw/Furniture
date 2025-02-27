@@ -2,7 +2,7 @@
 
 namespace Furniture.API.Controllers;
 
-[Route("api/[controller]")]
+[Route("/[controller]")]
 [ApiController]
 public class BaseApiController : ControllerBase
 {
