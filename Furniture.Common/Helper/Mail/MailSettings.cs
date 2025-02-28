@@ -1,4 +1,4 @@
-﻿namespace Furniture.Common.Helper.Mail;
+﻿namespace Furniture.Common;
 
 public class MailSettings
 {

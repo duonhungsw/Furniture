@@ -1,4 +1,4 @@
-﻿using Furniture.Common.Helper.Mail;
+﻿using Furniture.Common;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;

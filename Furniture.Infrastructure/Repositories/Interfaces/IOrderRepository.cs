@@ -1,5 +1,8 @@
-﻿namespace Furniture.Infrastructure.Repositories.Interfaces;
+﻿using Furniture.Core.Dtos.Order;
+
+namespace Furniture.Infrastructure.Repositories.Interfaces;
 
 public interface IOrderRepository : IGenericRepository<Order>
 {
+	Task<List<OrderItemDto>> GetOrders(Guid id);
 }
