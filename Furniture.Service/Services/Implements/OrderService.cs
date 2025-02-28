@@ -1,18 +1,24 @@
-﻿using Furniture.Core.Dtos.Order;
+﻿using Furniture.Common.Exceptions;
+using Furniture.Core.Dtos.Order;
 
 namespace Furniture.Service.Services.Implements;
 
 public class OrderService(
 	IOrderRepository _repository,
 	IOrderItemRepository _orderItemRepository,
+	ITokenService _tokenService,
 	IMapper _mapper) : IOrderService
 {
 	public async Task<bool> CreateOrderAsync(CreateOrderDto model)
 	{
+		var account = await _tokenService.Authenticate();
+
+		if (account == null)
+			throw new UnauthorizedAccessException();
+
 		var order = _mapper.Map<Order>(model);
-
+		order.AccountId = account.Id;
 		order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.price);
-
 		_repository.Create(order);
 		if (await _repository.SaveChangesAsync())
 		{
@@ -28,5 +34,13 @@ public class OrderService(
 		}
 
 		return false;
+	}
+
+	public async Task<List<OrderItemDto>> GetOrdersAsync()
+	{
+		var customer = await _tokenService.Authenticate();
+		if (customer == null)
+			throw new NotFoundException("Unauthentication");
+		return await _repository.GetOrders(customer.Id);
 	}
 }

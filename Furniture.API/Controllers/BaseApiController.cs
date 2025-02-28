@@ -6,18 +6,18 @@ namespace Furniture.API.Controllers;
 [ApiController]
 public class BaseApiController : ControllerBase
 {
-	protected ActionResult<PagedResult<T>> CreatePagedResult<T>(IEnumerable<T> list, int pageIndex, int pageSize)
+	protected ActionResult<PagedResult<T>> CreatePagedResult<T>(IEnumerable<T> list, QueryInfo queryInfo)
 	{
 		int totalCount = list.Count();
-		var items = list.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+		var items = list.Skip((queryInfo.PageIndex - 1) * queryInfo.PageSize).Take(queryInfo.PageSize).ToList();
 
 		var result = new PagedResult<T>
 		{
 			Items = items,
-			PageIndex = pageIndex,
-			PageSize = pageSize,
+			PageIndex = queryInfo.PageIndex,
+			PageSize = queryInfo.PageSize,
 			TotalCount = totalCount,
-			TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+			TotalPages = (int)Math.Ceiling(totalCount / (double)queryInfo.PageSize)
 		};
 
 		return Ok(result);
