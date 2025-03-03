@@ -8,9 +8,9 @@ namespace Furniture.Infrastructure.Repositories.Interfaces
 {
     public interface ICartItemRepository : IGenericRepository<CartItem>
     {
-        Task AddCartItem(CartItem cartItem);
-        Task<bool> AddCartItemIsContain(CartItem cartItem, int quantity);
-        Task<bool> CheckCartItemByProductId(Cart cart,Guid ProductId);
-        Task<CartItem?> GetCartItemByCartIdAndProductId(Guid cartId, Guid productId);
+        Task AddCartItemAsync(CartItem cartItem);
+        Task<bool> AddCartItemIsContainAsync(CartItem cartItem, int quantity);
+        Task<bool> CheckCartItemByProductIdAsync(Cart cart,Guid ProductId);
+        Task<CartItem?> GetCartItemByCartIdAndProductIdAsync(Guid cartId, Guid productId);
     }
 }

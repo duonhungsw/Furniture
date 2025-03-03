@@ -15,12 +15,12 @@ public class CartServices(ICartRepository cartRepository,IProductRepository prod
         }
         return null;
     }
-    public async Task<bool> DeleteCartItem(Guid cartItemID)
+    public async Task<bool> DeleteCartItemAsync(Guid cartItemID)
     {
         var account = await tokenService.Authenticate();
         if (account != null)
         {
-            var checkDelelte = await cartRepository.DeleteCartItem(account.Id, cartItemID);
+            var checkDelelte = await cartRepository.DeleteCartItemAsync(account.Id, cartItemID);
             if (checkDelelte)
             {
                 return true;
@@ -32,12 +32,12 @@ public class CartServices(ICartRepository cartRepository,IProductRepository prod
         }
         return false;
     }
-    public async Task<bool> UpdateCartItemByQuantity(Guid cartItemId, int quantity)
+    public async Task<bool> UpdateCartItemByQuantityAsync(Guid cartItemId, int quantity)
     {
         var account = await tokenService.Authenticate();
         if (account != null)
         {
-            var checkUpdate = await cartRepository.UpdateCartItemByQuantity(account.Id, cartItemId, quantity);
+            var checkUpdate = await cartRepository.UpdateCartItemByQuantityAsync(account.Id, cartItemId, quantity);
             if (checkUpdate)
             {
                 return true;
@@ -51,12 +51,12 @@ public class CartServices(ICartRepository cartRepository,IProductRepository prod
         }
         return false;
     }
-    public async Task<bool> UpdateCartItemByStatus(Guid cartItemId)
+    public async Task<bool> UpdateCartItemByStatusAsync(Guid cartItemId)
     {
         var account = await tokenService.Authenticate();
         if (account != null)
         {
-            var checkUpdate = await cartRepository.UpdateCartItemByStatus(account.Id,cartItemId);
+            var checkUpdate = await cartRepository.UpdateCartItemByStatusAsync(account.Id,cartItemId);
             if (checkUpdate)
             {
                 return true;
@@ -68,19 +68,19 @@ public class CartServices(ICartRepository cartRepository,IProductRepository prod
         }
         return false;
     }
-    public async Task<bool> AddCartItem(CartAddDto model)
+    public async Task<bool> AddCartItemAsync(CartAddDto model)
     {
         Guid productId = model.ProductId;
         int quantity = model.Quantity;
         var account = await tokenService.Authenticate();
         if (account != null)
         {
-            var cartByAccountId = await cartRepository.GetCartByAccountId(account.Id);
-            var productByProductId = await productRepository.FindByIdAsync(productId);
-            if (await cartItemRepository.CheckCartItemByProductId(cartByAccountId, productByProductId.Id))
+            var cartByAccountId = await cartRepository.GetCartByAccountIdAsync(account.Id);
+            var productByProductId = await productRepository.GetByIdAsync(productId);
+            if (await cartItemRepository.CheckCartItemByProductIdAsync(cartByAccountId, productByProductId.Id))
             {
-                var cartItem = await cartItemRepository.GetCartItemByCartIdAndProductId(cartByAccountId.Id, productId);
-                await cartItemRepository.AddCartItemIsContain(cartItem, quantity);
+                var cartItem = await cartItemRepository.GetCartItemByCartIdAndProductIdAsync(cartByAccountId.Id, productId);
+                await cartItemRepository.AddCartItemIsContainAsync(cartItem, quantity);
             }
             else
             {
@@ -90,18 +90,18 @@ public class CartServices(ICartRepository cartRepository,IProductRepository prod
                 cartItem.Quantity = quantity;
                 cartItem.Status = false;
                 cartItem.Price = productByProductId.Price;
-                await cartItemRepository.AddCartItem(cartItem);
+                await cartItemRepository.AddCartItemAsync(cartItem);
                 return true;
             }
         }
         return false;
     }
-    public async Task<Cart> GetCartByAccountId()
+    public async Task<Cart> GetCartByAccountIdAsync()
     {
         var account = await tokenService.Authenticate();
         if(account != null)
         {
-            var cart = await cartRepository.GetCartByAccountId(account.Id);
+            var cart = await cartRepository.GetCartByAccountIdAsync(account.Id);
             return cart;
         }
         return null;

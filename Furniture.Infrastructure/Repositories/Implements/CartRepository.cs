@@ -40,14 +40,14 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
             return cartProducts;
         }
     }
-    public async Task<bool> DeleteCartItem(Guid accountId, Guid cartItemID)
+    public async Task<bool> DeleteCartItemAsync(Guid accountId, Guid cartItemID)
     {
         var listCartItems = await GetCartProductsAsync(accountId);
         foreach (var cartItem in listCartItems)
         {
             if (cartItem.Id.Equals(cartItemID))
             {
-                await DeleteCartItem(cartItemID);
+                await DeleteCartItemAsync(cartItemID);
                 return true;
 #pragma warning disable CS0162 // Unreachable code detected
                 break;
@@ -56,7 +56,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         }
         return false;
     }
-    public async Task DeleteCartItem(Guid cartItemID)
+    public async Task DeleteCartItemAsync(Guid cartItemID)
     {
         var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
         if (cartItem != null)
@@ -66,7 +66,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
             await appDbContext.SaveChangesAsync();
         }
     }
-    public async Task UpdateCartItemByQuantity(Guid cartItemID, int quantity)
+    public async Task UpdateCartItemByQuantityAsync(Guid cartItemID, int quantity)
     {
         var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
         if (cartItem != null)
@@ -75,14 +75,14 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
             await appDbContext.SaveChangesAsync();
         }
     }
-    public async Task<bool> UpdateCartItemByQuantity(Guid accountId, Guid cartItemID, int quantity)
+    public async Task<bool> UpdateCartItemByQuantityAsync(Guid accountId, Guid cartItemID, int quantity)
     {
         var listCartItems = await GetCartProductsAsync(accountId);
         foreach (var cartItem in listCartItems)
         {
             if (cartItem.Id.Equals(cartItemID))
             {
-                await UpdateCartItemByQuantity(cartItemID, quantity);
+                await UpdateCartItemByQuantityAsync(cartItemID, quantity);
                 return true;
 #pragma warning disable CS0162 // Unreachable code detected
                 break;
@@ -95,7 +95,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         }
         return false;
     }
-    public async Task UpdateCartItemByStatus(Guid cartItemID)
+    public async Task UpdateCartItemByStatusAsync(Guid cartItemID)
     {
         var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
         if (cartItem != null)
@@ -113,14 +113,14 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
             
         }
     }
-    public async Task<bool> UpdateCartItemByStatus(Guid accountId, Guid cartItemID)
+    public async Task<bool> UpdateCartItemByStatusAsync(Guid accountId, Guid cartItemID)
     {
         var listCartItems = await GetCartProductsAsync(accountId);
         foreach (var cartItem in listCartItems)
         {
             if (cartItem.Id.Equals(cartItemID))
             {
-                await UpdateCartItemByStatus(cartItemID);
+                await UpdateCartItemByStatusAsync(cartItemID);
                 return true;
 #pragma warning disable CS0162 // Unreachable code detected
                 break;
@@ -138,7 +138,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
         appDbContext.CartItems.Add(cartItem);
         await appDbContext.SaveChangesAsync();
     }
-    public async Task<Cart?> GetCartByAccountId(Guid accountId)
+    public async Task<Cart?> GetCartByAccountIdAsync(Guid accountId)
     {
         return await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
     }

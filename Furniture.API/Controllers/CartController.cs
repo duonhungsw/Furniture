@@ -14,21 +14,21 @@ public class CartController(ICartServices cartServices
     [HttpDelete("{cartItemId}")]
     public async Task<bool> DeleteCartItem([FromRoute]Guid cartItemId)
     {
-        return await cartServices.DeleteCartItem(cartItemId);
+        return await cartServices.DeleteCartItemAsync(cartItemId);
     }
     [HttpPatch("update/quantity")]
     public async Task<bool> UpdateCartItemByQuantity([FromBody] CartUpdateQuantityDto model)
     {
-        return await cartServices.UpdateCartItemByQuantity(model.CartId,model.Quantity);
+        return await cartServices.UpdateCartItemByQuantityAsync(model.CartId,model.Quantity);
     }
     [HttpPatch("update/status/{cartItemId}")]
     public async Task<bool> UpdateCartItemByStatus([FromRoute]Guid cartItemId)
     {
-        return await cartServices.UpdateCartItemByStatus(cartItemId);
+        return await cartServices.UpdateCartItemByStatusAsync(cartItemId);
     }
     [HttpPost("add")]
     public async Task<bool> AddCartItem([FromForm]CartAddDto model)
     {
-        return await cartServices.AddCartItem(model);
+        return await cartServices.AddCartItemAsync(model);
     }
 }

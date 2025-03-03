@@ -8,12 +8,12 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
     {
 
     }
-    public async Task AddCartItem(CartItem cartItem)
+    public async Task AddCartItemAsync(CartItem cartItem)
     {
         await appDbContext.CartItems.AddAsync(cartItem); // Thêm vào DB theo cách async
         await appDbContext.SaveChangesAsync(); // Lưu thay đổi vào DB
     }
-    public async Task<bool> AddCartItemIsContain(CartItem cartItem, int quantity)
+    public async Task<bool> AddCartItemIsContainAsync(CartItem cartItem, int quantity)
     {
         var existingCartItem = await appDbContext.CartItems.FindAsync(cartItem.Id);
 
@@ -27,7 +27,7 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
         await appDbContext.SaveChangesAsync(); // EF Core tự động theo dõi thay đổi
         return true; // Trả về true nếu cập nhật thành công
     }
-    public async Task<bool> CheckCartItemByProductId(Cart cart, Guid ProductId)
+    public async Task<bool> CheckCartItemByProductIdAsync(Cart cart, Guid ProductId)
     {
         var listCartItemWithCartId = await appDbContext.CartItems.ToListAsync();
         List<CartItem> cartItems = new List<CartItem>();
@@ -47,7 +47,7 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
         }
         return false;
     }
-    public async Task<CartItem?> GetCartItemByCartIdAndProductId(Guid cartId,Guid productId)
+    public async Task<CartItem?> GetCartItemByCartIdAndProductIdAsync(Guid cartId,Guid productId)
     {
         var cartItem = new CartItem();
         var cartItemList = await appDbContext.CartItems.ToListAsync();
