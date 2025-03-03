@@ -1,6 +1,4 @@
-﻿using Furniture.Core.Dtos.Account;
-
-namespace Furniture.Infrastructure.Repositories.Interfaces;
+﻿namespace Furniture.Infrastructure;
 
 public interface IAccountRepository : IGenericRepository<Account>
 {

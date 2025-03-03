@@ -1,6 +1,4 @@
-﻿using Furniture.Core.Dtos.Order;
-
-namespace Furniture.Infrastructure.Repositories.Interfaces;
+﻿namespace Furniture.Infrastructure;
 
 public interface IOrderRepository : IGenericRepository<Order>
 {

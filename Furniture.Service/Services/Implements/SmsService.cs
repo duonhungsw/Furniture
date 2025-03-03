@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using RestSharp;
+﻿using RestSharp;
 
 namespace Furniture.Service;
 

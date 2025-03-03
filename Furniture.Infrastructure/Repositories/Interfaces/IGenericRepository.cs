@@ -1,4 +1,4 @@
-﻿namespace Furniture.Infrastructure.Repositories.Interfaces;
+﻿namespace Furniture.Infrastructure;
 
 public interface IGenericRepository<T> where T : BaseEntity
 {

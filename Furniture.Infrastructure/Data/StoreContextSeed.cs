@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 
-namespace Furniture.Infrastructure.Data;
+namespace Furniture.Infrastructure;
 
 public class StoreContextSeed
 {

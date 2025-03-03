@@ -1,4 +1,4 @@
-﻿namespace Furniture.Common.Exceptions;
+﻿namespace Furniture.Common;
 
 public class UnauthorizedException : CustomException
 {

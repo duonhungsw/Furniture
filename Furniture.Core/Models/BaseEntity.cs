@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Furniture.Core.Models;
+namespace Furniture.Core;
 
 public abstract class BaseEntity
 {

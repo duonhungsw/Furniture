@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Furniture.Service.Services.Implements;
+namespace Furniture.Service;
 
 public class JwtTokenService : ITokenService
 {
@@ -61,7 +59,7 @@ public class JwtTokenService : ITokenService
 				var newAccessToken = GenerateAccessToken(customerDto);
 				SetTokensInsideCookie(newAccessToken, refreshToken);
 
-				return await Task.FromResult(customerDto) ;
+				return await Task.FromResult(customerDto);
 			}
 
 			var result = new Account

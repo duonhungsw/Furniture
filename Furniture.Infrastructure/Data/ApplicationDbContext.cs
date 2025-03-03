@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-
-namespace Furniture.Infrastructure.Data;
+﻿namespace Furniture.Infrastructure;
 
 public class ApplicationDbContext : DbContext
 {

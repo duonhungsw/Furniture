@@ -1,5 +1,4 @@
-﻿using Furniture.Core.Dtos.Order;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Furniture.API.Controllers;
 

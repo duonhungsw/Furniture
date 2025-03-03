@@ -1,5 +1,4 @@
-﻿namespace Furniture.Service.Mappings;
-
+﻿namespace Furniture.Service;
 public class AccountMappingProfile : Profile
 {
 	public AccountMappingProfile()

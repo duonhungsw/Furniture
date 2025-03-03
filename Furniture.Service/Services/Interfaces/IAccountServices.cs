@@ -1,6 +1,4 @@
-﻿using Furniture.Core;
-
-namespace Furniture.Service.Services.Interfaces;
+﻿namespace Furniture.Service;
 
 public interface IAccountServices
 {

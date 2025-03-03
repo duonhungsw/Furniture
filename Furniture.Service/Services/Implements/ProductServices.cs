@@ -1,7 +1,4 @@
-﻿using Furniture.Common;
-using Furniture.Core.Dtos.Product;
-using Furniture.Core.Enum;
-namespace Furniture.Service.Services.Implements;
+﻿namespace Furniture.Service;
 public class ProductServices(
 	IProductRepository _repository,
 	IFileStorageService _storageService,

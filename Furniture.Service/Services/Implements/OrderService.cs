@@ -1,8 +1,4 @@
-﻿using Furniture.Common;
-using Furniture.Common.Exceptions;
-using Furniture.Core.Dtos.Order;
-
-namespace Furniture.Service.Services.Implements;
+﻿namespace Furniture.Service;
 
 public class OrderService(
 	IOrderRepository _repository,

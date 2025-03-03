@@ -1,5 +1,4 @@
-﻿using Furniture.Core.Dtos.Product;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Furniture.API.Controllers;
 public class ProductController(IProductServices _services) : BaseApiController

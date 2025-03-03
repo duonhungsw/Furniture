@@ -1,9 +1,8 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
-using Microsoft.AspNetCore.Http;
 
-namespace Furniture.Service.Services.Implements;
+namespace Furniture.Service;
 
 public class FileStorageService : IFileStorageService
 {
@@ -60,9 +59,9 @@ public class FileStorageService : IFileStorageService
 	{
 		var containerClient = _blobServiceClient.GetBlobContainerClient(container);
 		await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
-        var urls = new List<string>();
+		var urls = new List<string>();
 
-        foreach (var file in files)
+		foreach (var file in files)
 		{
 			var contentType = GetContentType(file.FileName);
 			var httpHeaders = new BlobHttpHeaders
@@ -72,14 +71,14 @@ public class FileStorageService : IFileStorageService
 			var blobClient = containerClient.GetBlobClient(file.FileName);
 			using var stream = file.OpenReadStream();
 			await blobClient.UploadAsync(stream, httpHeaders);
-            urls.Add(blobClient.Uri.ToString());
+			urls.Add(blobClient.Uri.ToString());
 
-        }
+		}
 
-        return urls;
-    }
+		return urls;
+	}
 
-    public async Task<string> UploadFileAsync(string containerName, IFormFile file)
+	public async Task<string> UploadFileAsync(string containerName, IFormFile file)
 	{
 		var contentType = GetContentType(file.FileName);
 		var httpHeaders = new BlobHttpHeaders

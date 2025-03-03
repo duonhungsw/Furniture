@@ -1,6 +1,4 @@
-﻿using Furniture.Core.Dtos.Order;
-
-namespace Furniture.Service.Services.Interfaces;
+﻿namespace Furniture.Service;
 
 public interface IOrderService
 {

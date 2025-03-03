@@ -1,7 +1,6 @@
-﻿using Furniture.Infrastructure.Repositories.Implements;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
-namespace Furniture.Infrastructure.Data;
+namespace Furniture.Infrastructure;
 
 public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 {

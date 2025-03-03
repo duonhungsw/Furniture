@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Furniture.Core.Interfaces;
+namespace Furniture.Core;
 
 public interface ISpecification<T>
 {

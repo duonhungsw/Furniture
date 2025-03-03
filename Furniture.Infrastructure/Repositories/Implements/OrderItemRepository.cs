@@ -1,5 +1,4 @@
-﻿
-namespace Furniture.Infrastructure.Repositories.Implements;
+﻿namespace Furniture.Infrastructure;
 
 public class OrderItemRepository : GenericRepository<OrderItem>, IOrderItemRepository
 {

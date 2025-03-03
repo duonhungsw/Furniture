@@ -1,4 +1,4 @@
-﻿namespace Furniture.Core.Models;
+﻿namespace Furniture.Core;
 
 public class Account : BaseEntity
 {

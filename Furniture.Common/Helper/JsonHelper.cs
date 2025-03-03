@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Furniture.Common.Helper;
+namespace Furniture.Common;
 
 public static class JsonHelper
 {

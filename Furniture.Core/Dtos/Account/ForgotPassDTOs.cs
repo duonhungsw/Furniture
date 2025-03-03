@@ -1,4 +1,4 @@
-﻿namespace Furniture.Core.DTOs;
+﻿namespace Furniture.Core;
 
 public class ForgotPassDTOs
 {

@@ -1,51 +1,50 @@
-﻿using Furniture.Common;
-using MailKit.Security;
+﻿using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace Furniture.Service.Services.Implements;
+namespace Furniture.Service;
 
 public class MailService
 {
-    MailSettings _mailSettings;
-    public MailService(IOptions<MailSettings> mailSettings)
-    {
-        _mailSettings = mailSettings.Value;
-    }
-    public async Task<bool> SendMail(MailContent mailContent)
-    {
-        var email = new MimeMessage();
-        email.Sender = new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail);
-        email.From.Add(new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail));
+	MailSettings _mailSettings;
+	public MailService(IOptions<MailSettings> mailSettings)
+	{
+		_mailSettings = mailSettings.Value;
+	}
+	public async Task<bool> SendMail(MailContent mailContent)
+	{
+		var email = new MimeMessage();
+		email.Sender = new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail);
+		email.From.Add(new MailboxAddress(_mailSettings.DisplayName, _mailSettings.Mail));
 
-        email.To.Add(new MailboxAddress(mailContent.To, mailContent.To));
-        email.Subject = mailContent.Subject;
+		email.To.Add(new MailboxAddress(mailContent.To, mailContent.To));
+		email.Subject = mailContent.Subject;
 
-        var builder = new BodyBuilder();
+		var builder = new BodyBuilder();
 
-        builder.HtmlBody = mailContent.Body;
+		builder.HtmlBody = mailContent.Body;
 
-        email.Body = builder.ToMessageBody();
-        using var smtp = new MailKit.Net.Smtp.SmtpClient();
+		email.Body = builder.ToMessageBody();
+		using var smtp = new MailKit.Net.Smtp.SmtpClient();
 
-        try
-        {
-            await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(_mailSettings.Mail, _mailSettings.Password);
-            await smtp.SendAsync(email);
-        }
-        catch 
-        {
-           return false;
-        }
+		try
+		{
+			await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+			await smtp.AuthenticateAsync(_mailSettings.Mail, _mailSettings.Password);
+			await smtp.SendAsync(email);
+		}
+		catch
+		{
+			return false;
+		}
 
-        smtp.Disconnect(true);
-        return true;
-    }
+		smtp.Disconnect(true);
+		return true;
+	}
 }
 public class MailContent
 {
-    public  string? To { get; set; }
-    public  string? Subject { get; set; }
-    public  string? Body { get; set; }
+	public string? To { get; set; }
+	public string? Subject { get; set; }
+	public string? Body { get; set; }
 }

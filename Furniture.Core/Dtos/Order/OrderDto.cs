@@ -1,6 +1,4 @@
-﻿using Furniture.Core.Dtos.Account;
-
-namespace Furniture.Core.Dtos.Order;
+﻿namespace Furniture.Core;
 
 public class OrderDto
 {

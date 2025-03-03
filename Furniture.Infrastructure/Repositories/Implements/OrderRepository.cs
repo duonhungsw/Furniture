@@ -1,8 +1,6 @@
-﻿using Furniture.Core.Dtos.Order;
-using Furniture.Core.Dtos.Product;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Furniture.Infrastructure.Repositories.Implements;
+namespace Furniture.Infrastructure;
 
 public class OrderRepository : GenericRepository<Order>, IOrderRepository
 {

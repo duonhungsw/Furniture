@@ -1,5 +1,4 @@
 ﻿namespace Furniture.Core;
-
 public class CreateOrderDto
 {
 	public Guid Id { get; set; }
