@@ -10,6 +10,7 @@ public class AutoMapperProfiles
 		{
 			cfg.AddProfile<CustomerMappingProfile>();
             cfg.AddProfile<ProductMappingProfile>();
+			cfg.AddProfile<CartItemMappingProfile>();
         });
 
 		return mapperConfiguration.CreateMapper();
