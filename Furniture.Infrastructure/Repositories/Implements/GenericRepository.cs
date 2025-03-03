@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Furniture.Infrastructure.Repositories.Implements;
+namespace Furniture.Infrastructure;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {

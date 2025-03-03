@@ -1,6 +1,4 @@
-﻿using Furniture.Core.Dtos.Order;
-
-namespace Furniture.Service.Mappings;
+﻿namespace Furniture.Service;
 
 public class OrderMappingProfile : Profile
 {

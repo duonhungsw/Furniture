@@ -1,11 +1,9 @@
-﻿using Furniture.Core.Dtos.Cart;
-
-namespace Furniture.Service.Mappings;
+﻿namespace Furniture.Service;
 
 public class CartItemMappingProfile : Profile
 {
-    public CartItemMappingProfile() 
-    {
-        CreateMap<CartItemDto, CartItem>().ReverseMap();
-    }
+	public CartItemMappingProfile()
+	{
+		CreateMap<CartItemDto, CartItem>().ReverseMap();
+	}
 }

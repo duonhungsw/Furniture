@@ -1,4 +1,4 @@
-﻿namespace Furniture.Core.Dtos.Account;
+﻿namespace Furniture.Core;
 
 public class TokenDto
 {

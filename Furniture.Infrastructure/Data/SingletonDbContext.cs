@@ -1,4 +1,4 @@
-﻿namespace Furniture.Infrastructure.Data;
+﻿namespace Furniture.Infrastructure;
 
 public class SingletonDbContext<T> where T : class, new()
 {

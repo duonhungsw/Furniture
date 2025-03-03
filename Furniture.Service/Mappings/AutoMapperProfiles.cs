@@ -1,6 +1,4 @@
-﻿using Furniture.Service.Mappings;
-
-namespace Furniture.API.Mappings;
+﻿namespace Furniture.Service;
 
 public class AutoMapperProfiles
 {
@@ -8,10 +6,10 @@ public class AutoMapperProfiles
 	{
 		var mapperConfiguration = new MapperConfiguration(cfg =>
 		{
-			cfg.AddProfile<CustomerMappingProfile>();
-            cfg.AddProfile<ProductMappingProfile>();
+			cfg.AddProfile<AccountMappingProfile>();
+			cfg.AddProfile<ProductMappingProfile>();
 			cfg.AddProfile<CartItemMappingProfile>();
-        });
+		});
 
 		return mapperConfiguration.CreateMapper();
 	}

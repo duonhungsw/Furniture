@@ -1,12 +1,10 @@
-﻿using Furniture.Core.Models;
-
-namespace Furniture.Infrastructure.Specification;
+﻿namespace Furniture.Infrastructure;
 
 public class BrandListSpecification : BaseSpecification<Product, string>
 {
-    public BrandListSpecification()
-    {
-        AddSelect(x => x.Brand);
-        Distinct();
-    }
+	public BrandListSpecification()
+	{
+		AddSelect(x => x.Brand);
+		Distinct();
+	}
 }

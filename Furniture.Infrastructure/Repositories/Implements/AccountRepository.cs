@@ -1,12 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Furniture.Infrastructure.Repositories.Implements;
-
+﻿namespace Furniture.Infrastructure;
 public class AccountRepository : GenericRepository<Account>, IAccountRepository
 {
 	public AccountRepository(ApplicationDbContext context) : base(context)
 	{
 	}
+
+	public async Task<List<AccountDto>> GetAccountsAsync()
+	{
+		return await appDbContext.Accounts
+			.AsNoTracking()
+			.Select(account => new AccountDto
+			{
+				Id = account.Id,
+				Name = account.Name,
+				Email = account.Email,
+				Avatar = account.Avatar,
+				BirthDay = account.BirthDay,
+				Phone = account.Phone
+			})
+			.ToListAsync();
+	}
+
 	public async Task<Account?> GetByEmailAsync(string Email)
 	{
 		return await appDbContext.Accounts.FirstOrDefaultAsync(x => x.Email == Email);

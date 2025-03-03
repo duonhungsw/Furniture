@@ -1,4 +1,4 @@
-﻿namespace Furniture.API.Validators.Customer;
+﻿namespace Furniture.API;
 
 public class SignUpDtoValidator : AbstractValidator<SignupDTOs>
 {

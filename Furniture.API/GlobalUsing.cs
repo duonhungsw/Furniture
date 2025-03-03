@@ -1,14 +1,7 @@
-﻿global using AutoMapper;
-global using FluentValidation;
+﻿global using FluentValidation;
 global using FluentValidation.AspNetCore;
-global using Furniture.API.Mappings;
 global using Furniture.API.Middleware;
 global using Furniture.Common;
-global using Furniture.Core.DTOs;
-global using Furniture.Core.Models;
-global using Furniture.Infrastructure.Data;
-global using Furniture.Infrastructure.Repositories.Implements;
-global using Furniture.Infrastructure.Repositories.Interfaces;
+global using Furniture.Core;
 global using Furniture.Service;
-global using Furniture.Service.Services.Implements;
-global using Furniture.Service.Services.Interfaces;
+global using Furniture.Infrastructure;

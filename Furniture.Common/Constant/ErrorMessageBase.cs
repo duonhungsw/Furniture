@@ -1,4 +1,4 @@
-﻿namespace Furniture.Common.Constant;
+﻿namespace Furniture.Common;
 
 public static class ErrorMessageBase
 {
@@ -31,4 +31,14 @@ public static class ErrorMessageBase
 
 	public const string MustMatch = "{PropertyName} must match {ComparisonProperty}.";
 	public const string MustNotMatch = "{PropertyName} must not be the same as {ComparisonProperty}.";
+
+	public const string NotFound = "{0} with {1} was not found.";
+	public const string AlreadyExists = "{0} with {1} already exists.";
+	public const string CannotDelete = "{0} cannot be deleted because it is in use.";
+	public const string Unauthorized = "You are not authorized to access this resource.";
+	public const string Forbidden = "Access to {0} is forbidden.";
+	public const string BadRequest = "The request is invalid.";
+
+	public static string Format(string message, params object[] values)
+		=> string.Format(message, values);
 }

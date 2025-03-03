@@ -1,4 +1,4 @@
-﻿namespace Furniture.Core.Enum;
+﻿namespace Furniture.Core;
 
 public enum OrderStatus
 {

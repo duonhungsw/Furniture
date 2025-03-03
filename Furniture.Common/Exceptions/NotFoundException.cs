@@ -1,11 +1,7 @@
-﻿namespace Furniture.Common.Exceptions;
+﻿namespace Furniture.Common;
 
-public class NotFoundException : Exception
+public class NotFoundException : CustomException
 {
-	public NotFoundException(string message) : base(message) { }
-	public NotFoundException(string message, string detail) : base(message)
-	{
-		Details = detail;
-	}
-	public string? Details;
+	public NotFoundException(string message = "Resource not found")
+	   : base(message, StatusCodes.Status404NotFound) { }
 }

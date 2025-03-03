@@ -1,4 +1,4 @@
-﻿namespace Furniture.Service.Services.Interfaces;
+﻿namespace Furniture.Service;
 
 public interface ITokenService
 {

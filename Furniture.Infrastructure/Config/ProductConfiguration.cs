@@ -1,8 +1,7 @@
-﻿using Furniture.Core.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Furniture.Infrastructure.Config;
+namespace Furniture.Infrastructure;
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {

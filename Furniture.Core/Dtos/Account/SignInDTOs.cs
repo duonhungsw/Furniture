@@ -1,5 +1,4 @@
-﻿namespace Furniture.Core.DTOs;
-
+﻿namespace Furniture.Core;
 public class SignInDTOs
 {
     public string? Email { get; set; }

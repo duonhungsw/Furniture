@@ -1,7 +1,4 @@
-﻿using Furniture.Common.Exceptions;
-using Furniture.Core.Dtos.Order;
-
-namespace Furniture.Service.Services.Implements;
+﻿namespace Furniture.Service;
 
 public class OrderService(
 	IOrderRepository _repository,
@@ -41,6 +38,6 @@ public class OrderService(
 		var customer = await _tokenService.Authenticate();
 		if (customer == null)
 			throw new NotFoundException("Unauthentication");
-		return await _repository.GetOrders(customer.Id);
+		return await _repository.GetOrdersAsync(customer.Id);
 	}
 }

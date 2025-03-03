@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Furniture.Core.Models;
+﻿namespace Furniture.Core;
 
 public class CartItem : BaseEntity
 {

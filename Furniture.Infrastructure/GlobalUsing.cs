@@ -1,3 +1,3 @@
-﻿global using Furniture.Core.Models;
-global using Furniture.Infrastructure.Data;
-global using Furniture.Infrastructure.Repositories.Interfaces;
+﻿global using Furniture.Core;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;

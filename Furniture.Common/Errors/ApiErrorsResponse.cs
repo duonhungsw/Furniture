@@ -1,4 +1,4 @@
-﻿namespace Furniture.Common.Errors;
+﻿namespace Furniture.Common;
 
 public class ApiErrorsResponse(int status, string message, string details)
 {

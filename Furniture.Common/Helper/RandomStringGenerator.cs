@@ -1,4 +1,4 @@
-﻿namespace Furniture.Common.Helper;
+﻿namespace Furniture.Common;
 
 public class RandomStringGenerator
 {

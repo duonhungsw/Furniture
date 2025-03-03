@@ -1,12 +1,10 @@
-﻿using Furniture.Core.Models;
-
-namespace Furniture.Infrastructure.Specification;
+﻿namespace Furniture.Infrastructure;
 
 public class TypeListSpecification : BaseSpecification<Product, string>
 {
-    public TypeListSpecification()
-    {
-        AddSelect(x => x.Type);
-        Distinct();
-    }
+	public TypeListSpecification()
+	{
+		AddSelect(x => x.Type);
+		Distinct();
+	}
 }

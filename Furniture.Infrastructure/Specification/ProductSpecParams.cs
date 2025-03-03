@@ -1,4 +1,4 @@
-﻿namespace Furniture.Infrastructure.Specification;
+﻿namespace Furniture.Infrastructure;
 
 public class ProductSpecParams : PagingParams
 {

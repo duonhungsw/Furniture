@@ -1,8 +1,6 @@
-﻿using Furniture.Core.Dtos.Order;
-
-namespace Furniture.Infrastructure.Repositories.Interfaces;
+﻿namespace Furniture.Infrastructure;
 
 public interface IOrderRepository : IGenericRepository<Order>
 {
-	Task<List<OrderItemDto>> GetOrders(Guid id);
+	Task<List<OrderItemDto>> GetOrdersAsync(Guid id);
 }

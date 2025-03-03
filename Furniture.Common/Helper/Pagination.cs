@@ -1,4 +1,4 @@
-﻿namespace Furniture.API.Helper;
+﻿namespace Furniture.Common;
 
 public class Pagination<T>(int count, int pageIndex, int pageSize, IReadOnlyList<T> items)
 {

@@ -1,5 +1,4 @@
-﻿using Furniture.Core.Dtos.Account;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
 using System.Security.Claims;

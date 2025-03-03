@@ -1,4 +1,4 @@
-﻿namespace Furniture.Core.Dtos.Cart;
+﻿namespace Furniture.Core;
 
 public class CartUpdateQuantityDto
 {
