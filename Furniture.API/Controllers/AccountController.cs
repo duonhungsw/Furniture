@@ -44,14 +44,14 @@ public class AccountController(IAccountServices _accountServices, ITokenService 
 	[HttpGet("get-by-id/{id}")]
 	public async Task<ActionResult<AccountDto>> GetCustomerById(Guid id)
 	{
-		var result = await _accountServices.GetAccountById(id);
+		var result = await _accountServices.GetAccountByIdAsync(id);
 		return Ok(result);
 	}
 
 	[HttpPost("forgot-password/email")]
 	public async Task<ActionResult> ForgotPassword([FromQuery] string email)
 	{
-		var user = await _accountServices.GetAccountByEmail(email);
+		var user = await _accountServices.GetAccountByEmailAsync(email);
 		if (user == null) return BadRequest("Email does not exist");
 
 		HttpContext.Session.SetString("UserEmail", email);

@@ -4,10 +4,10 @@ public interface IAccountServices
 {
 	Task<TokenDto?> LoginAsync(SignInDTOs model);
 	Task<bool> RegisterAsync(SignupDTOs Regismodel);
-	Task<AccountDto> GetAccountById(Guid Id);
-	Task<bool> ChangePassword(ChangePasswordDto changePasswordDto);
+	Task<AccountDto> GetAccountByIdAsync(Guid Id);
+	Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
 	Task<bool> UpdateAsync(UpdateAccountDto model);
-	Task<AccountDto> GetAccountByEmail(string Email);
+	Task<AccountDto> GetAccountByEmailAsync(string Email);
 	Task<bool> ResetPasswordAsync(string Email, ForgotPassDTOs Regismodel);
 	Task<List<AccountDto>> GetAccountsAsync();
 }
