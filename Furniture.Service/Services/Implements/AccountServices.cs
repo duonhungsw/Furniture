@@ -7,17 +7,17 @@ public class AccountServices(
 	IMapper _mapper) : IAccountServices
 {
 	private readonly string accountContainer = ContainerName.account.ToString();
-	public Task<bool> ChangePassword(ChangePasswordDto changePasswordDto)
+	public Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
 	{
 		throw new NotImplementedException();
 	}
-	public async Task<AccountDto> GetAccountByEmail(string Email)
+	public async Task<AccountDto> GetAccountByEmailAsync(string Email)
 	{
 		var account = await _repository.GetByEmailAsync(Email);
 		var result = _mapper.Map<AccountDto>(account);
 		return result;
 	}
-	public async Task<AccountDto> GetAccountById(Guid Id)
+	public async Task<AccountDto> GetAccountByIdAsync(Guid Id)
 	{
 		var account = await _repository.GetByIdAsync(Id);
 		if (account == null)
