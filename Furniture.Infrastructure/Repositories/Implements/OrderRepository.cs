@@ -10,7 +10,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 	{
 
 	}
-	public async Task<List<OrderItemDto>> GetOrders(Guid id)
+	public async Task<List<OrderItemDto>> GetOrdersAsync(Guid id)
 	{
 		var entities = await (from order in appDbContext.Orders
 							  join orderItems in appDbContext.OrderItems on order.Id equals orderItems.OrderId

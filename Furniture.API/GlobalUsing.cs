@@ -12,3 +12,4 @@ global using Furniture.Infrastructure.Repositories.Interfaces;
 global using Furniture.Service;
 global using Furniture.Service.Services.Implements;
 global using Furniture.Service.Services.Interfaces;
+global using Furniture.Core;

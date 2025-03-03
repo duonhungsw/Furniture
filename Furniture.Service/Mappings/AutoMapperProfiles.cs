@@ -8,7 +8,7 @@ public class AutoMapperProfiles
 	{
 		var mapperConfiguration = new MapperConfiguration(cfg =>
 		{
-			cfg.AddProfile<CustomerMappingProfile>();
+			cfg.AddProfile<AccountMappingProfile>();
             cfg.AddProfile<ProductMappingProfile>();
 			cfg.AddProfile<CartItemMappingProfile>();
         });

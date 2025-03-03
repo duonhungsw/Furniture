@@ -18,10 +18,10 @@ public class JwtTokenService : ITokenService
 
 	public JwtTokenService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
 	{
+		_httpContextAccessor = httpContextAccessor;
 		_secretKey = configuration["JwtSettings:SecretKey"]!;
 		_issuer = configuration["JwtSettings:ValidIssuer"]!;
 		_audience = configuration["JwtSettings:ValidAudience"]!;
-		_httpContextAccessor = httpContextAccessor;
 	}
 	public async Task<Account?> GetTokenAsync()
 	{
@@ -101,7 +101,8 @@ public class JwtTokenService : ITokenService
 			audience: _audience,
 			claims: claims,
 			expires: DateTime.UtcNow.AddDays(1),
-			signingCredentials: creds);
+			signingCredentials: creds)
+		;
 
 		return new JwtSecurityTokenHandler().WriteToken(token);
 	}

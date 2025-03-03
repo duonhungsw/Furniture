@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,21 +19,41 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("Database"))
 );
-//string? connectionString = builder.Configuration.GetValue<string>("AzureBlobStorage:ConnectionString");
-
-//if (string.IsNullOrEmpty(connectionString))
-//{
-//	throw new InvalidOperationException("Azure Blob Storage connection string is missing or empty.");
-//}
-
-//builder.Services.AddSingleton<IFileStorageService>(provider =>
-//	new FileStorageService(connectionString));
-
 
 builder.Services.AddSingleton<IFileStorageService>(provider =>
 	new FileStorageService(builder.Configuration.GetSection("AzureBlobStorage:ConnectionString").Value!));
 
 builder.Services.AddSingleton(nameof(ApplicationDbContext));
+
+var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtSettings:SecretKey").Value!);
+// Cấu hình Authentication & JWT Middleware
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+	.AddJwtBearer(options =>
+	{
+		options.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidateIssuer = true,
+			ValidateAudience = true,
+			ValidateLifetime = true,
+			ValidateIssuerSigningKey = true,
+			ValidAudience = builder.Configuration.GetSection("JwtSettings:ValidAudience").Value,
+			ValidIssuer = builder.Configuration.GetSection("JwtSettings:ValidIssuer").Value,
+			IssuerSigningKey = new SymmetricSecurityKey(key)
+		};
+
+		// Đọc AccessToken từ Cookie nếu Header không có
+		options.Events = new JwtBearerEvents
+		{
+			OnMessageReceived = context =>
+			{
+				if (context.Request.Cookies.ContainsKey("AccessToken"))
+				{
+					context.Token = context.Request.Cookies["AccessToken"];
+				}
+				return Task.CompletedTask;
+			}
+		};
+	});
 
 //add inject Repositories and Services
 
@@ -48,9 +70,13 @@ builder.Services.AddScoped<IAccountServices, AccountServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartServices, CartServices>();
-//builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
 
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+// Configure email service
+var mailsettings = builder.Configuration.GetSection("MailSettings");
+builder.Services.Configure<MailSettings>(mailsettings);
+builder.Services.AddTransient<MailService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
@@ -60,7 +86,7 @@ builder.Services.AddCors(options =>
 		builder =>
 		{
 			builder.WithOrigins("https://localhost:7000")
-			.AllowCredentials() 
+			.AllowCredentials()
 			.AllowAnyMethod()
 			.AllowAnyHeader()
 			.SetIsOriginAllowedToAllowWildcardSubdomains().AllowCredentials();
@@ -75,14 +101,13 @@ builder.Services.AddSession(options =>
 	options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-// Configure email service
-var mailsettings = builder.Configuration.GetSection("MailSettings");
-builder.Services.Configure<MailSettings>(mailsettings);
-builder.Services.AddTransient<SendMailService>();
+
 
 builder.Services.AddFluentValidationAutoValidation()
 				.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 

@@ -3,6 +3,5 @@
 public enum ContainerName
 {
      product = 1,
-     customer = 2
-
+     account = 2
 }

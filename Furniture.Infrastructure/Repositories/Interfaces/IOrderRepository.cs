@@ -4,5 +4,5 @@ namespace Furniture.Infrastructure.Repositories.Interfaces;
 
 public interface IOrderRepository : IGenericRepository<Order>
 {
-	Task<List<OrderItemDto>> GetOrders(Guid id);
+	Task<List<OrderItemDto>> GetOrdersAsync(Guid id);
 }

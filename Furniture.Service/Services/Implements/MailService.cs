@@ -3,12 +3,12 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace Furniture.Service;
+namespace Furniture.Service.Services.Implements;
 
-public class SendMailService
+public class MailService
 {
     MailSettings _mailSettings;
-    public SendMailService(IOptions<MailSettings> mailSettings)
+    public MailService(IOptions<MailSettings> mailSettings)
     {
         _mailSettings = mailSettings.Value;
     }

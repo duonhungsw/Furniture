@@ -1,4 +1,4 @@
-﻿namespace Furniture.Core.Dtos.Order;
+﻿namespace Furniture.Core;
 
 public class CreateOrderDto
 {
