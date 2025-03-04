@@ -1,8 +1,10 @@
-﻿using Furniture.Web.Services;
+﻿using Furniture.Service;
+using Furniture.Web.Services;
+using System.Numerics;
 
 namespace Furniture.Web.Controllers;
 
-public class Account(IAccountApi accountApi) : Controller
+public class Account(IAccountApi _accountApi) : Controller
 {
 	public IActionResult Login()
 	{
@@ -13,7 +15,7 @@ public class Account(IAccountApi accountApi) : Controller
 	{
 		try
 		{
-			var token = await accountApi.LoginAsync(model);
+			var token = await _accountApi.LoginAsync(model);
 			if (token == null || token.AccessToken == null || token.RefreshToken == null) return RedirectToAction("Login");
 
 			var cookieOptions = new CookieOptions
@@ -24,7 +26,6 @@ public class Account(IAccountApi accountApi) : Controller
 			};
 			HttpContext?.Response.Cookies.Append("AccessToken", token.AccessToken, cookieOptions);
 			HttpContext?.Response.Cookies.Append("RefreshToken", token.RefreshToken, cookieOptions);
-			TempData["SuccessMessage"] = "Đăng nhập thành công!";
 
 			return RedirectToAction("Index", "Home");
 		}
@@ -36,7 +37,7 @@ public class Account(IAccountApi accountApi) : Controller
 	[HttpPost]
 	public async Task<IActionResult> SignUp(SignupDTOs model)
 	{
-		var result = await accountApi.RegisterAsync(model);
+		var result = await _accountApi.RegisterAsync(model);
 		//if (!result!.IsSuccessStatusCode || result.Content == null)
 		//{
 		//	return View();
@@ -53,7 +54,7 @@ public class Account(IAccountApi accountApi) : Controller
 	{
 		try
 		{
-			await accountApi.ForgotPassword(Email);
+			await _accountApi.ForgotPasswordAsync(Email);
 
 			TempData["Success"] = "Reset password email has been sent successfully. Please check your email.";
 		}
@@ -78,7 +79,7 @@ public class Account(IAccountApi accountApi) : Controller
 			return View(forgotPassDTOs);
 		}
 
-		var result = await accountApi.UpdatePassword(forgotPassDTOs);
+		var result = await _accountApi.UpdatePasswordAsync(forgotPassDTOs);
 
 		if (result)
 		{
@@ -91,10 +92,101 @@ public class Account(IAccountApi accountApi) : Controller
 			return View(forgotPassDTOs);
 		}
 	}
-	public IActionResult ViewProfile()
+	public async Task<ActionResult<AccountDto>> ViewProfile()
+	{
+		var response = await _accountApi.GetUserInfoAsync();
+
+		if (response == null || !response.IsSuccessStatusCode || response.Content == null)
+		{
+			return RedirectToAction("Login");
+		}
+
+		var account = response.Content;
+		var result = await _accountApi.GetAccountByIdAsync(account.Id);
+
+		return View(result);
+	}
+	//[HttpPost]
+	//public async Task<IActionResult> UpdateProfile([FromForm] UpdateAccountDto model)
+	//{
+	//	var result = await _services.UpdateAsync(model);
+	//	if(result == true)
+	//	{
+	//		return RedirectToAction("ViewProfile");
+	//	}
+	//		return RedirectToAction("ViewProfile");
+	//	//StreamPart? avatarStream = null;
+
+	//	//if (model.Avatar != null)
+	//	//{
+	//	//	var memoryStream = new MemoryStream();
+	//	//	await model.Avatar.CopyToAsync(memoryStream);
+	//	//	memoryStream.Position = 0;
+
+	//	//	avatarStream = new StreamPart(memoryStream, model.Avatar.FileName, model.Avatar.ContentType);
+	//	//}
+
+	//	//try
+	//	//{
+	//	//	var result = await _accountApi.UpdateProfileAsync(
+	//	//		model.Id, model.Name, model.BirthDay, model.Phone, avatarStream);
+
+	//	//	return RedirectToAction("ViewProfile");
+	//	//}
+	//	//catch (ValidationApiException ex)
+	//	//{
+	//	//	Console.WriteLine($"API Validation Error: {ex.Content}");
+	//	//	ModelState.AddModelError(string.Empty, "Failed to update profile.");
+	//	//	return View(model);
+	//	//}
+	//}
+	[HttpPost]
+	public async Task<IActionResult> UpdateProfile([FromForm] UpdateAccountDto model)
+	{
+		using var client = new HttpClient();
+		client.BaseAddress = new Uri("https://localhost:7000");
+
+		using var content = new MultipartFormDataContent();
+
+		// Thêm dữ liệu thông thường
+		content.Add(new StringContent(model.Id.ToString()), "Id");
+		if (!string.IsNullOrEmpty(model.Name))
+			content.Add(new StringContent(model.Name), "Name");
+		if (!string.IsNullOrEmpty(model.BirthDay))
+			content.Add(new StringContent(model.BirthDay), "BirthDay");
+		if (!string.IsNullOrEmpty(model.Phone))
+			content.Add(new StringContent(model.Phone), "Phone");
+
+		// Thêm file ảnh Avatar nếu có
+		if (model.Avatar != null)
+		{
+			var memoryStream = new MemoryStream();
+			await model.Avatar.CopyToAsync(memoryStream);
+			memoryStream.Position = 0;  // Reset lại vị trí stream
+
+			var fileContent = new StreamContent(memoryStream);
+			fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(model.Avatar.ContentType);
+
+			content.Add(fileContent, "Avatar", model.Avatar.FileName);
+		}
+
+		// Gửi request lên API
+		var response = await client.PutAsync("/accounts/profile", content);
+
+		if (response.IsSuccessStatusCode)
+		{
+			return RedirectToAction("ViewProfile");
+		}
+
+		var error = await response.Content.ReadAsStringAsync();
+		return BadRequest(error);
+	}
+
+	public IActionResult ChangePhoneNumber()
 	{
 		return View();
 	}
+
 	public IActionResult Logout()
 	{
 		//accountApi.Logout();

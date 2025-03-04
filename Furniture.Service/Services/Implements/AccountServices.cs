@@ -82,14 +82,21 @@ public class AccountServices(
 		var existingAccount = await _repository.GetByIdAsync(model.Id);
 		if (existingAccount == null)
 			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", model.Id));
-		bool isDeleted = await _fileStorageService.DeleteFileAsync(accountContainer, Path.GetFileName(existingAccount.Avatar!));
 
 		var account = _mapper.Map(model, existingAccount);
+		if(model.Avatar == null)
+		{
+			account.Avatar = existingAccount.Avatar;
+			account.BirthDay = model.BirthDay;
+
+			_repository.Update(account);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		bool isDeleted = await _fileStorageService.DeleteFileAsync(accountContainer, Path.GetFileName(existingAccount.Avatar!));
 		account.Avatar = await _fileStorageService.UploadFileAsync(accountContainer, model.Avatar!);
-		account.BirthDay = model.BirthDay.ToString();
+		account.BirthDay = model.BirthDay;
 
 		_repository.Update(account);
-
 		return await _repository.SaveChangesAsync() ? true : false;
 	}
 }

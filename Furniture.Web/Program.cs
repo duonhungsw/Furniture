@@ -1,3 +1,5 @@
+using Furniture.Infrastructure;
+using Furniture.Service;
 using Furniture.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,6 @@ builder.Services.AddRefitClient<IAccountApi>()
     {
         c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
     });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
