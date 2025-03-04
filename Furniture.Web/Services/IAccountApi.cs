@@ -2,27 +2,32 @@
 
 public interface IAccountApi
 {
-    [Post("/login")]
+    [Post("/accounts/login")]
     Task<TokenResponse?> LoginAsync(SignInDTOs model);
 
-    [Post("/register")]
+    [Post("/accounts/register")]
     Task<ApiResponse<bool>> RegisterAsync(SignupDTOs Regismodel);
 
-    [Get("/customer/get-by-id/{id}")]
-    Task<AccountDto> GetAccountById(Guid Id);
+    [Get("/accounts/get-by-id/{id}")]
+    Task<AccountDto> GetAccountByIdAsync(Guid Id);
 
-    [Post("/logout")]
-    Task Logout();
+    [Post("/accounts/logout")]
+    Task LogoutAsync();
 
-    [Get("/user_info")]
-    Task<ApiResponse<Account>?> GetUserInfo();
+    [Get("/accounts/user_info")]
+    Task<ApiResponse<Account>?> GetUserInfoAsync();
 
-    [Post("/forgot-password/email")]
-    Task ForgotPassword(string email);
+    [Post("/accounts/forgot-password/email")]
+    Task ForgotPasswordAsync(string email);
 
-    [Post("/update-password")]
-    Task<bool> UpdatePassword(ForgotPassDTOs forgotPasswordModel);
-
-    //Task<bool> ChangePassword(ChangePasswordDto changePasswordDto);
-    //Task<bool> UpdateAsync(AccountDto customerDto, IFormFile avatar);
+    [Post("/accounts/update-password")]
+    Task<bool> UpdatePasswordAsync(ForgotPassDTOs forgotPasswordModel);
+	[Multipart]
+	[Put("/accounts/profile")]
+	Task<bool> UpdateProfileAsync(
+	    [AliasAs("id")] Guid id,
+	    [AliasAs("name")] string? name,
+	    [AliasAs("birthDay")] string? birthDay,
+	    [AliasAs("phone")] string? phone,
+	    [AliasAs("avatar")] StreamPart avatar);
 }

@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace Furniture.API.Controllers;
 
-namespace Furniture.API.Controllers;
 [Route("accounts")]
 public class AccountController(IAccountServices _accountServices, ITokenService tokenService,
 								MailService sendMail) : BaseApiController
