@@ -2,7 +2,7 @@
 
 public interface IAccountServices
 {
-	Task<TokenDto?> LoginAsync(SignInDTOs model);
+	Task<TokenResponse?> LoginAsync(SignInDTOs model);
 	Task<bool> RegisterAsync(SignupDTOs Regismodel);
 	Task<AccountDto> GetAccountByIdAsync(Guid Id);
 	Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto);

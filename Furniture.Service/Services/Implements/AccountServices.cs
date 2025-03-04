@@ -31,7 +31,7 @@ public class AccountServices(
 	public async Task<List<AccountDto>> GetAccountsAsync()
 		=> await _repository.GetAccountsAsync();
 
-	public async Task<TokenDto?> LoginAsync(SignInDTOs model)
+	public async Task<TokenResponse?> LoginAsync(SignInDTOs model)
 	{
 		model.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.HashPassword!);
 		var account = _mapper.Map<Account>(model);
@@ -44,7 +44,7 @@ public class AccountServices(
 		var accessToken = _tokenService.GenerateAccessToken(result);
 		var refreshToken = _tokenService.GenerateAccessToken(result);
 		_tokenService.SetTokensInsideCookie(accessToken, refreshToken);
-		return new TokenDto
+		return new TokenResponse
 		{
 			AccessToken = accessToken,
 			RefreshToken = refreshToken

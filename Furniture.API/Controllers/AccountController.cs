@@ -12,7 +12,7 @@ public class AccountController(IAccountServices _accountServices, ITokenService 
 		return CreatePagedResult(accounts, queryInfo);
 	}
 	[HttpPost("login")]
-	public async Task<ActionResult<TokenDto>> Login([FromBody] SignInDTOs model)
+	public async Task<ActionResult<TokenResponse>> Login([FromBody] SignInDTOs model)
 	{
 		var result = await _accountServices.LoginAsync(model);
 		return Ok(result);

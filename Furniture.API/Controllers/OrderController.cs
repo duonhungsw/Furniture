@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace Furniture.API.Controllers;
 
-namespace Furniture.API.Controllers;
-
+[Route("orders")]
 public class OrderController(IOrderService _service) : BaseApiController
 {
 	[HttpPost("create")]
@@ -16,4 +15,6 @@ public class OrderController(IOrderService _service) : BaseApiController
 		var results = await _service.GetOrdersAsync();
 		return CreatePagedResult(results, queryInfo);
 	}
+	//[HttpPatch("{id}/status")]
+	//public Task<bool> Delivery
 }
