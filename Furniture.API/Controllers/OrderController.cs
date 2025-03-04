@@ -1,8 +1,13 @@
-﻿namespace Furniture.API.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Furniture.API.Controllers;
 
 [Route("orders")]
-public class OrderController(IOrderService _service) : BaseApiController
+public class OrderController(
+	IOrderService _service,
+	ITokenService _tokenService) : BaseApiController
 {
+	[Authorize]
 	[HttpPost("create")]
 	public async Task<bool> CreateOrder([FromBody] CreateOrderDto model)
 	{
@@ -15,6 +20,11 @@ public class OrderController(IOrderService _service) : BaseApiController
 		var results = await _service.GetOrdersAsync();
 		return CreatePagedResult(results, queryInfo);
 	}
-	//[HttpPatch("{id}/status")]
-	//public Task<bool> Delivery
+	[HttpPatch("{orderId}/change-status")]
+	public async Task<bool> ChangeStatus([FromRoute] Guid orderId)
+	{
+		var account = await _tokenService.Authenticate();
+		var result = await _service.ChangeStatusAsync(orderId, account.RoleName);
+		return result;
+	}
 }

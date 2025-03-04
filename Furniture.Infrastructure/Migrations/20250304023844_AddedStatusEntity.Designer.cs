@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Furniture.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250109091040_AddedEntities")]
-    partial class AddedEntities
+    [Migration("20250304023844_AddedStatusEntity")]
+    partial class AddedStatusEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Furniture.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Furniture.Core.Models.Account", b =>
+            modelBuilder.Entity("Furniture.Core.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace Furniture.Infrastructure.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.Cart", b =>
+            modelBuilder.Entity("Furniture.Core.Cart", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,7 +80,7 @@ namespace Furniture.Infrastructure.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.CartItem", b =>
+            modelBuilder.Entity("Furniture.Core.CartItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -113,7 +113,7 @@ namespace Furniture.Infrastructure.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.Order", b =>
+            modelBuilder.Entity("Furniture.Core.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,6 +150,9 @@ namespace Furniture.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("TotalMoney")
                         .HasColumnType("decimal(18,2)");
 
@@ -161,10 +164,12 @@ namespace Furniture.Infrastructure.Migrations
 
                     b.HasIndex("AccountId");
 
+                    b.HasIndex("StatusId");
+
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.OrderItem", b =>
+            modelBuilder.Entity("Furniture.Core.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -188,7 +193,7 @@ namespace Furniture.Infrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.Product", b =>
+            modelBuilder.Entity("Furniture.Core.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -224,9 +229,24 @@ namespace Furniture.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.Cart", b =>
+            modelBuilder.Entity("Furniture.Core.Status", b =>
                 {
-                    b.HasOne("Furniture.Core.Models.Account", "User")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Statuses");
+                });
+
+            modelBuilder.Entity("Furniture.Core.Cart", b =>
+                {
+                    b.HasOne("Furniture.Core.Account", "User")
                         .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -235,15 +255,15 @@ namespace Furniture.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.CartItem", b =>
+            modelBuilder.Entity("Furniture.Core.CartItem", b =>
                 {
-                    b.HasOne("Furniture.Core.Models.Cart", "Cart")
+                    b.HasOne("Furniture.Core.Cart", "Cart")
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Furniture.Core.Models.Product", "Product")
+                    b.HasOne("Furniture.Core.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -254,26 +274,34 @@ namespace Furniture.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.Order", b =>
+            modelBuilder.Entity("Furniture.Core.Order", b =>
                 {
-                    b.HasOne("Furniture.Core.Models.Account", "AppUser")
+                    b.HasOne("Furniture.Core.Account", "AppUser")
                         .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Furniture.Core.Status", "Status")
+                        .WithMany("Orders")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AppUser");
+
+                    b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.OrderItem", b =>
+            modelBuilder.Entity("Furniture.Core.OrderItem", b =>
                 {
-                    b.HasOne("Furniture.Core.Models.Order", "Order")
+                    b.HasOne("Furniture.Core.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Furniture.Core.Models.Product", "Product")
+                    b.HasOne("Furniture.Core.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -284,14 +312,19 @@ namespace Furniture.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.Cart", b =>
+            modelBuilder.Entity("Furniture.Core.Cart", b =>
                 {
                     b.Navigation("CartItems");
                 });
 
-            modelBuilder.Entity("Furniture.Core.Models.Order", b =>
+            modelBuilder.Entity("Furniture.Core.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Furniture.Core.Status", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }
