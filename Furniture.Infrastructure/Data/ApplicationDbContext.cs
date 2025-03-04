@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
 	public virtual DbSet<CartItem> CartItems { get; set; }
 	public virtual DbSet<Order> Orders { get; set; }
 	public virtual DbSet<OrderItem> OrderItems { get; set; }
+	public virtual DbSet<Status> Statuses { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{

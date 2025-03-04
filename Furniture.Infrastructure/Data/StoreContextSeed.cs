@@ -27,7 +27,12 @@ public class StoreContextSeed
             dbContext.Accounts.AddRange(ListAccount);
             await dbContext.SaveChangesAsync();
         }
-    }
+		if (!dbContext.Statuses.Any())
+		{
+			dbContext.Statuses.AddRange(ListStatus);
+			await dbContext.SaveChangesAsync();
+		}
+	}
     public static List<Account> ListAccount => new List<Account>
     {
         new Account
@@ -64,4 +69,27 @@ public class StoreContextSeed
         RoleName = "Admin"
     }
     };
+
+    public static List<Status> ListStatus => new List<Status>
+    {
+    new Status
+    {
+        Id = Guid.NewGuid(),
+        Name = "Pending"
+	},
+    new Status
+    {
+        Id = Guid.NewGuid(),
+        Name = "Shipping"
+	},
+    new Status
+    {
+        Id = Guid.NewGuid(),
+        Name = "Completed"
+	},
+	new Status
+	{
+		Id = Guid.NewGuid(),
+		Name = "Cancelled"
+	}};
 }

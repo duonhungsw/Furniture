@@ -70,6 +70,7 @@ builder.Services.AddScoped<IAccountServices, AccountServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartServices, CartServices>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 
 builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));

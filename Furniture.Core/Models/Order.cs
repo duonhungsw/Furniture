@@ -32,6 +32,9 @@ public class Order : BaseEntity
 
 	[Required]
 	public string? PaymentMethod { get; set; }
+	[ForeignKey("Status")]
+	public Guid StatusId { get; set; }
+	public Status? Status { get; set; }
 
 	public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

@@ -38,4 +38,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 	{
 		return s.Split(',').FirstOrDefault()!;
 	}
+
+	public async Task<Status?> GetStatusByNameAsync(string statusName)
+		=> await appDbContext.Statuses.AsNoTracking().FirstOrDefaultAsync(s => s.Name == statusName);
 }

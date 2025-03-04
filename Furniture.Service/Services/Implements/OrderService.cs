@@ -6,6 +6,7 @@ public class OrderService(
 	ITokenService _tokenService,
 	IMapper _mapper) : IOrderService
 {
+	
 	public async Task<bool> CreateOrderAsync(CreateOrderDto model)
 	{
 		var account = await _tokenService.Authenticate();
@@ -15,6 +16,7 @@ public class OrderService(
 
 		var order = _mapper.Map<Order>(model);
 		order.AccountId = account.Id;
+		order.StatusId = (await _repository.GetStatusByNameAsync(OrderStatus.Pending.ToString()))!.Id;
 		order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.price);
 		_repository.Create(order);
 		if (await _repository.SaveChangesAsync())
@@ -37,7 +39,29 @@ public class OrderService(
 	{
 		var customer = await _tokenService.Authenticate();
 		if (customer == null)
-			throw new NotFoundException("Unauthentication");
+			throw new UnauthorizedException();
 		return await _repository.GetOrdersAsync(customer.Id);
+	}
+	public async Task<bool> ChangeStatusAsync(Guid orderId, string roleName)
+	{
+		var order = await _repository.GetByIdAsync(orderId);
+		if (order == null)
+			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Order", orderId));
+
+		if (roleName == AppRoles.Customer.ToString())
+		{
+			order!.StatusId = (await _repository.GetStatusByNameAsync(OrderStatus.Cancelled.ToString()))!.Id;
+
+			_repository.Update(order);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		if(roleName == AppRoles.Admin.ToString())
+		{
+			order!.StatusId = (await _repository.GetStatusByNameAsync(OrderStatus.Complete.ToString()))!.Id;
+
+			_repository.Update(order);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		return false;
 	}
 }
