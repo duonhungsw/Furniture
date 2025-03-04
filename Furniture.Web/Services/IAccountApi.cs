@@ -3,7 +3,7 @@
 public interface IAccountApi
 {
     [Post("/login")]
-    Task<TokenDto?> LoginAsync(SignInDTOs model);
+    Task<TokenResponse?> LoginAsync(SignInDTOs model);
 
     [Post("/register")]
     Task<ApiResponse<bool>> RegisterAsync(SignupDTOs Regismodel);
