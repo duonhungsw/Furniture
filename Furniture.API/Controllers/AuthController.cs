@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace Furniture.API.Controllers;
 
-namespace Furniture.API.Controllers;
-
-[Route("signin")]
-public class AuthController(IAuthService _service) : BaseApiController
+[Route("sign")]
+public class AuthController(
+	IAuthService _service,
+	ITokenService _tokenService) : BaseApiController
 {
 	[HttpGet("google")]
 	public async Task<TokenResponse> SignInGoogle([FromQuery] string idToken)
@@ -12,7 +12,7 @@ public class AuthController(IAuthService _service) : BaseApiController
 		{
 			var payload = await _service.VerifyGoogleTokenAsync(idToken);
 			var account = await _service.GetOrCreateAccountAsync(payload);
-			var jwtToken =  _service.GenerateJwtTokenAsync(account);
+			var jwtToken = _service.GenerateJwtTokenAsync(account);
 			var refreshToken = _service.GenerateRefreshTokenAsync();
 			return new TokenResponse
 			{

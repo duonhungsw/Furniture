@@ -4,10 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+// Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -15,18 +15,19 @@ builder.Services.AddSingleton(System.TimeProvider.System);
 builder.Services.AddAuthorization();
 builder.Services.AddDistributedMemoryCache();
 
-
+// Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("Database"))
 );
 
+// Configure Azure Blob Storage
 builder.Services.AddSingleton<IFileStorageService>(provider =>
-	new FileStorageService(builder.Configuration.GetSection("AzureBlobStorage:ConnectionString").Value!));
+	new FileStorageService(builder.Configuration.GetValue<string>("AzureBlobStorage:ConnectionString") ?? throw new InvalidOperationException("AzureBlobStorage:ConnectionString is missing"))
+);
 
-builder.Services.AddSingleton(nameof(ApplicationDbContext));
+// Configure JWT Authentication
+var key = Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("JwtSettings:SecretKey") ?? throw new InvalidOperationException("JwtSettings:SecretKey is missing"));
 
-var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtSettings:SecretKey").Value!);
-// Cấu hình Authentication & JWT Middleware
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddJwtBearer(options =>
 	{
@@ -36,27 +37,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			ValidateAudience = true,
 			ValidateLifetime = true,
 			ValidateIssuerSigningKey = true,
-			ValidAudience = builder.Configuration.GetSection("JwtSettings:ValidAudience").Value,
-			ValidIssuer = builder.Configuration.GetSection("JwtSettings:ValidIssuer").Value,
+			ValidAudience = builder.Configuration.GetValue<string>("JwtSettings:ValidAudience"),
+			ValidIssuer = builder.Configuration.GetValue<string>("JwtSettings:ValidIssuer"),
 			IssuerSigningKey = new SymmetricSecurityKey(key)
-		};
-
-		// Đọc AccessToken từ Cookie nếu Header không có
-		options.Events = new JwtBearerEvents
-		{
-			OnMessageReceived = context =>
-			{
-				if (context.Request.Cookies.ContainsKey("AccessToken"))
-				{
-					context.Token = context.Request.Cookies["AccessToken"];
-				}
-				return Task.CompletedTask;
-			}
 		};
 	});
 
-//add inject Repositories and Services
-
+// Register Repositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -65,6 +52,7 @@ builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
+// Register Services
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
 builder.Services.AddScoped<IAccountServices, AccountServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
@@ -73,26 +61,30 @@ builder.Services.AddScoped<ICartServices, CartServices>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 
-builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
-// Configure email service
-var mailsettings = builder.Configuration.GetSection("MailSettings");
-builder.Services.Configure<MailSettings>(mailsettings);
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Configure Email Service
+var mailSettings = builder.Configuration.GetSection("MailSettings");
+builder.Services.Configure<MailSettings>(mailSettings);
 builder.Services.AddTransient<MailService>();
 
+// Add AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+// Configure CORS
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy(name: MyAllowSpecificOrigins,
+	options.AddPolicy(MyAllowSpecificOrigins,
 		builder =>
 		{
 			builder.WithOrigins("https://localhost:7000", "https://localhost:7070")
-			.AllowCredentials()
-			.AllowAnyMethod()
-			.AllowAnyHeader()
-			.SetIsOriginAllowedToAllowWildcardSubdomains().AllowCredentials();
+				.AllowCredentials()
+				.AllowAnyMethod()
+				.AllowAnyHeader();
 		});
 });
+
+// Configure Session
 builder.Services.AddSession(options =>
 {
 	options.IdleTimeout = TimeSpan.FromMinutes(5);
@@ -102,24 +94,29 @@ builder.Services.AddSession(options =>
 	options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
+// Configure Application Cookies
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+	options.Cookie.SameSite = SameSiteMode.None;
+	options.Cookie.HttpOnly = true;
+});
 
-
+// Add FluentValidation
 builder.Services.AddFluentValidationAutoValidation()
 				.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-builder.Services.AddAuthorization();
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
-app.UseHttpsRedirection();
 
+app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 app.UseSession();
 app.UseRouting();
@@ -128,9 +125,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<TokenMiddleware>();
 
 app.MapControllers();
 
+// Run Database Migrations and Seeding
 try
 {
 	using var scope = app.Services.CreateScope();
@@ -138,13 +137,11 @@ try
 	var context = services.GetRequiredService<ApplicationDbContext>();
 	await context.Database.MigrateAsync();
 	await StoreContextSeed.SeedAsync(context);
-
 }
 catch (Exception ex)
 {
-	Console.WriteLine(ex.ToString());
+	Console.WriteLine($"Error during migration: {ex.Message}");
 	throw;
 }
 
 app.Run();
-

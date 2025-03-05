@@ -13,6 +13,7 @@ public class AccountServices(
 	}
 	public async Task<AccountDto> GetAccountByEmailAsync(string Email)
 	{
+
 		var account = await _repository.GetByEmailAsync(Email);
 		var result = _mapper.Map<AccountDto>(account);
 		return result;
@@ -28,6 +29,11 @@ public class AccountServices(
 		return result;
 	}
 
+	public async Task<Guid?> GetAccountIdAsync()
+	{
+		var account = await _tokenService.GetTokenAsync();
+		return account?.Id;
+	}
 	public async Task<List<AccountDto>> GetAccountsAsync()
 		=> await _repository.GetAccountsAsync();
 
@@ -83,10 +89,11 @@ public class AccountServices(
 		if (existingAccount == null)
 			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", model.Id));
 
+		var oldAvatar = existingAccount.Avatar;
 		var account = _mapper.Map(model, existingAccount);
 		if(model.Avatar == null)
 		{
-			account.Avatar = existingAccount.Avatar;
+			account.Avatar = oldAvatar;
 			account.BirthDay = model.BirthDay;
 
 			_repository.Update(account);
@@ -96,6 +103,16 @@ public class AccountServices(
 		account.Avatar = await _fileStorageService.UploadFileAsync(accountContainer, model.Avatar!);
 		account.BirthDay = model.BirthDay;
 
+		_repository.Update(account);
+		return await _repository.SaveChangesAsync() ? true : false;
+	}
+
+	public async Task<bool> UpdatePhoneNumberAsync(Guid accountId, string phoneNumber)
+	{
+		var account = await _repository.GetByIdAsync(accountId);
+		if (account == null)
+			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", accountId));
+		account.Phone = phoneNumber;
 		_repository.Update(account);
 		return await _repository.SaveChangesAsync() ? true : false;
 	}

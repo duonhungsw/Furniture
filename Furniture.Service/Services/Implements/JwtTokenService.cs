@@ -25,58 +25,81 @@ public class JwtTokenService : ITokenService
 	{
 		try
 		{
-			var accessToken = _httpContextAccessor.HttpContext?.Request.Cookies[AccessToken];
-			if (accessToken == null)
+			var context = _httpContextAccessor.HttpContext;
+			if (context == null)
 			{
 				return null;
 			}
-			var principalAccessToken = ValidateToken(accessToken!);
-			if (IsTokenExpired(accessToken))
+
+			var accessToken = context.Request.Cookies[AccessToken];
+			var refreshToken = context.Request.Cookies[RefreshToken];
+
+			if (string.IsNullOrEmpty(accessToken))
 			{
-				var emailAccount = principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+				return null;
+			}
 
-				var refreshToken = _httpContextAccessor.HttpContext?.Request.Cookies[RefreshToken];
-
-				if (string.IsNullOrEmpty(refreshToken!.ToString()) || IsTokenExpired(refreshToken.ToString()!))
+			var principalAccessToken = ValidateToken(accessToken);
+			if (principalAccessToken == null || IsTokenExpired(accessToken))
+			{
+				if (string.IsNullOrEmpty(refreshToken) || IsTokenExpired(refreshToken))
 				{
 					RemoveTokenInCookie();
 					return null;
 				}
 
-				if (principalAccessToken == null)
+				var emailAccount = GetClaimValue(principalAccessToken!, ClaimTypes.Email);
+				var idClaim = GetClaimValue(principalAccessToken!, ClaimTypes.NameIdentifier);
+				var nameClaim = GetClaimValue(principalAccessToken!, ClaimTypes.Name);
+				var roleClaim = GetClaimValue(principalAccessToken!, ClaimTypes.Role);
+
+				if (string.IsNullOrEmpty(emailAccount) || string.IsNullOrEmpty(idClaim) ||
+					string.IsNullOrEmpty(nameClaim) || string.IsNullOrEmpty(roleClaim))
 				{
 					RemoveTokenInCookie();
 					return null;
 				}
+
 				var customerDto = new Account
 				{
-					Id = new Guid(principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!),
-					Name = principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!,
-					Email = principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
-					RoleName = principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
+					Id = new Guid(idClaim),
+					Name = nameClaim,
+					Email = emailAccount,
+					RoleName = roleClaim
 				};
 
 				var newAccessToken = GenerateAccessToken(customerDto);
 				SetTokensInsideCookie(newAccessToken, refreshToken);
 
-				return await Task.FromResult(customerDto);
+				return customerDto;
 			}
 
-			var result = new Account
+			return new Account
 			{
-				Id = new Guid(principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!),
-				Name = principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!,
-				Email = principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
-				RoleName = principalAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value!,
+				Id = new Guid(GetClaimValue(principalAccessToken, ClaimTypes.NameIdentifier)!),
+				Name = GetClaimValue(principalAccessToken, ClaimTypes.Name)!,
+				Email = GetClaimValue(principalAccessToken, ClaimTypes.Email)!,
+				RoleName = GetClaimValue(principalAccessToken, ClaimTypes.Role)!
 			};
-			return result;
 		}
-		catch
+		catch (SecurityTokenException)
 		{
 			RemoveTokenInCookie();
 			return null;
 		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error in GetTokenAsync: {ex.Message}");
+			return null;
+		}
 	}
+
+
+	private string? GetClaimValue(ClaimsPrincipal principal, string claimType)
+	{
+		return principal.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
+	}
+
 
 	public string GenerateAccessToken(Account customerDto)
 	{
@@ -121,14 +144,8 @@ public class JwtTokenService : ITokenService
 	}
 	public void SetTokensInsideCookie(string accessToken, string refreshToken)
 	{
-		var cookieOptions = new CookieOptions
-		{
-			HttpOnly = false,
-			Secure = false,
-			SameSite = SameSiteMode.Lax,
-		};
-		_httpContextAccessor.HttpContext?.Response.Cookies.Append(AccessToken, accessToken, cookieOptions);
-		_httpContextAccessor.HttpContext?.Response.Cookies.Append(RefreshToken, refreshToken, cookieOptions);
+		_httpContextAccessor.HttpContext?.Response.Cookies.Append(AccessToken, accessToken, CookieHelper.GetCustomCookieOptions(1, true));
+		_httpContextAccessor.HttpContext?.Response.Cookies.Append(RefreshToken, refreshToken, CookieHelper.GetCustomCookieOptions(7, true));
 	}
 	public void RemoveTokenInCookie()
 	{

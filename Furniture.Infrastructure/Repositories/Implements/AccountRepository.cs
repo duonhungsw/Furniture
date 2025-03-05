@@ -1,4 +1,5 @@
-﻿namespace Furniture.Infrastructure;
+﻿
+namespace Furniture.Infrastructure;
 
 public class AccountRepository : GenericRepository<Account>, IAccountRepository
 {
