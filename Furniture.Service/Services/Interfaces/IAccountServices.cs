@@ -10,4 +10,6 @@ public interface IAccountServices
 	Task<AccountDto> GetAccountByEmailAsync(string Email);
 	Task<bool> ResetPasswordAsync(string Email, ForgotPassDTOs Regismodel);
 	Task<List<AccountDto>> GetAccountsAsync();
+	Task<bool> UpdatePhoneNumberAsync(Guid accountId, string phoneNumber);
+	Task<Guid?> GetAccountIdAsync();
 }

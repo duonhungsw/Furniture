@@ -75,41 +75,112 @@
     </style>
 </head>
 <body>
+    @{
+        ViewData["Title"] = "Change Phone Number";
+    }
     <div class="container mt-4">
         <div class="row">
-             @await Html.PartialAsync("_Sidebar")
+            @await Html.PartialAsync("_Sidebar")
 
-            <!-- Nội dung chính bên phải (chiếm 9 cột) -->
+            <!-- Nội dung chính bên phải -->
             <div class="col-md-9">
                 <div class="profile-container">
                     <h4 class="text-center">Change Phone Number</h4>
                     <p class="text-center">For your safety, please follow the steps below to change your phone number</p>
 
+                    <!-- Hiển thị thông báo -->
+                    <div id="messageContainer">
+                        @if (TempData["Message"] != null)
+                        {
+                            <div class="alert alert-@TempData["MessageType"]">
+                                @TempData["Message"]
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Bước tiến trình -->
                     <div class="step-indicator">
                         <div class="step"><span>1</span><br>Verification</div>
                         <hr style="flex: 1; border: 1px solid #28a745; margin: 0 10px;">
                         <div class="step"><span>2</span><br>Authentication</div>
                         <hr style="flex: 1; border: 1px solid #28a745; margin: 0 10px;">
-                        <div class="step active"><span>3</span><br>Update Phone Number</div>
-                        <hr style="flex: 1; border: 1px solid #ddd; margin: 0 10px;">
-                        <div class="step"><span style="background:#ddd;">✔</span><br>Complete</div>
+                        <div class="step @(TempData["MessageType"] == "success" ? "" : "active")">
+                            <span>3</span><br>Update Phone Number
+                        </div>
+                        <hr style="flex: 1; border: 1px solid @(TempData["MessageType"] == "success" ? "#28a745" : "#ddd"); margin: 0 10px;">
+                        <div class="step">
+                            <span style="background:@(TempData["MessageType"] == "success" ? "#28a745" : "#ddd");">✔</span><br>Complete
+                        </div>
                     </div>
 
-                    <form>
+                    <!-- Form thay đổi số điện thoại -->
+                    <form asp-controller="Account" asp-action="ChangePhoneNumber" method="post">
                         <div class="mb-3">
                             <label class="form-label">New Phone Number</label>
-                            <input type="text" class="form-control" name="phone" placeholder="Enter your phone number" required>
+                            <input type="text" class="form-control" id="phoneNumber" name="phone" placeholder="Enter your phone number" required>
                         </div>
                         <div class="mb-3 d-flex">
-                            <input type="text" class="form-control" placeholder="Verification Code" required>
-                            <button type="button" class="btn btn-outline-primary ms-2">Send Code</button>
+                            <input type="text" class="form-control" name="session" placeholder="Verification Code" required>
+                            <button type="button" id="sendCodeBtn" class="btn btn-outline-primary ms-2">Send Code</button>
                         </div>
+
                         <button type="submit" class="btn btn-primary w-100">Confirm</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</body>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var messageContainer = document.getElementById("messageContainer");
+            if (messageContainer) {
+                setTimeout(function () {
+                    messageContainer.innerHTML = "";
+                }, 5000); // Xóa thông báo sau 5 giây
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#sendCodeBtn").click(function () {
+                var phone = $("#phoneNumber").val(); // Lấy số điện thoại
+                if (!phone) {
+                    alert("Please enter your phone number.");
+                    return;
+                }
+
+                $.ajax({
+                    url: "/Notification/SendSms",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ to: phone }), // Gửi số điện thoại
+                    success: function (response) {
+                        $("#messageContainer").html('<div class="alert alert-success">✅ SMS sent successfully. Check your phone!</div>');
+                        startCountdown();
+                    },
+                    error: function () {
+                        $("#messageContainer").html('<div class="alert alert-danger">❌ Failed to send SMS. Please try again!</div>');
+                    }
+                });
+            });
+
+            function startCountdown() {
+                $("#sendCodeBtn").prop("disabled", true);
+                let counter = 60;
+                $("#sendCodeBtn").text(`Wait ${counter}s`);
+                const interval = setInterval(() => {
+                    counter--;
+                    $("#sendCodeBtn").text(`Wait ${counter}s`);
+                    if (counter === 0) {
+                        clearInterval(interval);
+                        $("#sendCodeBtn").prop("disabled", false).text("Send Code");
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+    <script src="~/js/form-validation.js"></script>
+</body>
 </html>

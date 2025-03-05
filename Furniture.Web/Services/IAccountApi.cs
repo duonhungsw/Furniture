@@ -22,6 +22,7 @@ public interface IAccountApi
 
     [Post("/accounts/update-password")]
     Task<bool> UpdatePasswordAsync(ForgotPassDTOs forgotPasswordModel);
+
 	[Multipart]
 	[Put("/accounts/profile")]
 	Task<bool> UpdateProfileAsync(
@@ -30,4 +31,7 @@ public interface IAccountApi
 	    [AliasAs("birthDay")] string? birthDay,
 	    [AliasAs("phone")] string? phone,
 	    [AliasAs("avatar")] StreamPart avatar);
+
+    [Patch("/accounts/changePhoneNumber")]
+    Task<bool> UpdatePhoneNumber([Body] ChangePhoneNumberDto model);
 }

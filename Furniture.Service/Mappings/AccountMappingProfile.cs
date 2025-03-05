@@ -10,6 +10,6 @@ public class AccountMappingProfile : Profile
 			.ForMember(c => c.HashPassword, options => options.MapFrom(m => m.Password));
 
 		CreateMap<Account, AccountDto>().ReverseMap();
-		CreateMap<Account, UpdateAccountDto>().ReverseMap();
+		CreateMap<UpdateAccountDto, Account>();
 	}
 }

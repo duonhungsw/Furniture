@@ -1,56 +1,62 @@
-﻿namespace Furniture.API.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
+namespace Furniture.API.Controllers;
 
 [Route("accounts")]
-public class AccountController(IAccountServices _accountServices, ITokenService tokenService,
+public class AccountController(IAccountServices _service, ITokenService _tokenService,
 								MailService sendMail) : BaseApiController
 {
+	//var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 	[HttpGet]
 	public async Task<ActionResult<PagedResult<AccountDto>>> GetAccounts([FromQuery] QueryInfo queryInfo)
 	{
-		var accounts = await _accountServices.GetAccountsAsync();
+		var accounts = await _service.GetAccountsAsync();
 		return CreatePagedResult(accounts, queryInfo);
 	}
 	[HttpPost("login")]
 	public async Task<ActionResult<TokenResponse>> Login([FromBody] SignInDTOs model)
 	{
-		var result = await _accountServices.LoginAsync(model);
+		var result = await _service.LoginAsync(model);
 		return Ok(result);
 	}
 	[HttpPost("register")]
 	public async Task<IActionResult> Register([FromBody] SignupDTOs signupDTOs)
 	{
-		var result = await _accountServices.RegisterAsync(signupDTOs);
+		var result = await _service.RegisterAsync(signupDTOs);
 		return Ok($"Success: {result}");
 	}
 	[HttpPost("logout")]
 	public IActionResult Logout()
 	{
-		tokenService.RemoveTokenInCookie();
+		_tokenService.RemoveTokenInCookie();
 		return NoContent();
 	}
+
 	[HttpGet("user_info")]
-	public async Task<ActionResult<Account>> GetUserInfo()
+	public ActionResult<Account> GetUserInfo()
 	{
-		var account = await tokenService.Authenticate();
-
-		if (account == null)
+		var account = new Account
 		{
-			return NotFound(new { message = "User not found" });
-		}
+			Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+			Name = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+			Email = User.FindFirstValue(ClaimTypes.Name)!,
+			RoleName = User.FindFirstValue(ClaimTypes.Role)!
 
+		};
 		return Ok(account);
 	}
 	[HttpGet("get-by-id/{id}")]
 	public async Task<ActionResult<AccountDto>> GetCustomerById(Guid id)
 	{
-		var result = await _accountServices.GetAccountByIdAsync(id);
+		var result = await _service.GetAccountByIdAsync(id);
 		return Ok(result);
 	}
 
 	[HttpPost("forgot-password/email")]
 	public async Task<ActionResult> ForgotPassword([FromQuery] string email)
 	{
-		var user = await _accountServices.GetAccountByEmailAsync(email);
+		var user = await _service.GetAccountByEmailAsync(email);
 		if (user == null) return BadRequest("Email does not exist");
 
 		HttpContext.Session.SetString("UserEmail", email);
@@ -83,7 +89,7 @@ public class AccountController(IAccountServices _accountServices, ITokenService 
 		var email = HttpContext.Session.GetString("UserEmail");
 		if (email == null) return false;
 
-		var result = await _accountServices.ResetPasswordAsync(email, forgotPasswordModel);
+		var result = await _service.ResetPasswordAsync(email, forgotPasswordModel);
 		if (!result)
 			return false;
 
@@ -92,7 +98,11 @@ public class AccountController(IAccountServices _accountServices, ITokenService 
 	[HttpPut("profile")]
 	public async Task<bool> UpdateProfile([FromForm] UpdateAccountDto model)
 	{
-		return await _accountServices.UpdateAsync(model);
+		return await _service.UpdateAsync(model);
 	}
-
+	[HttpPatch("changePhoneNumber")]
+	public async Task<bool> UpdatePhoneNumber([FromBody] ChangePhoneNumberDto model)
+	{
+		return await _service.UpdatePhoneNumberAsync(model.Id, model.Phone!);
+	}
 }

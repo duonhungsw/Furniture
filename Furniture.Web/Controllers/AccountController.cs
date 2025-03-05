@@ -1,6 +1,4 @@
-﻿using Furniture.Service;
-using Furniture.Web.Services;
-using System.Numerics;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace Furniture.Web.Controllers;
 
@@ -20,9 +18,10 @@ public class Account(IAccountApi _accountApi) : Controller
 
 			var cookieOptions = new CookieOptions
 			{
-				HttpOnly = false,
-				Secure = false,
-				SameSite = SameSiteMode.Strict,
+				HttpOnly = true,
+				Secure = true,
+				SameSite = SameSiteMode.None,
+				Expires = DateTime.UtcNow.AddDays(7)
 			};
 			HttpContext?.Response.Cookies.Append("AccessToken", token.AccessToken, cookieOptions);
 			HttpContext?.Response.Cookies.Append("RefreshToken", token.RefreshToken, cookieOptions);
@@ -182,9 +181,47 @@ public class Account(IAccountApi _accountApi) : Controller
 		return BadRequest(error);
 	}
 
+	[HttpGet]
 	public IActionResult ChangePhoneNumber()
 	{
 		return View();
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> ChangePhoneNumber([FromForm] ChangePhoneNumberDto model)
+	{
+		var otpSession = HttpContext.Session.GetString("OtpCode");
+
+		if (otpSession != model.session)
+		{
+			TempData["Message"] = "Verification code is incorrect!";
+			TempData["MessageType"] = "danger";
+			return RedirectToAction("ChangePhoneNumber");
+		}
+		var response = await _accountApi.GetUserInfoAsync();
+
+		if (response == null || !response.IsSuccessStatusCode || response.Content == null)
+		{
+			return RedirectToAction("Login");
+		}
+
+		var account = response.Content;
+
+		model.Id = account.Id; 
+		var result = await _accountApi.UpdatePhoneNumber(model);
+
+		if (result)
+		{
+			TempData["Message"] = "Phone number updated successfully!";
+			TempData["MessageType"] = "success";
+		}
+		else
+		{
+			TempData["Message"] = "Failed to update phone number.";
+			TempData["MessageType"] = "danger";
+		}
+
+		return RedirectToAction("ChangePhoneNumber");
 	}
 
 	public IActionResult Logout()

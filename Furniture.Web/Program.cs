@@ -1,17 +1,39 @@
-using Furniture.Infrastructure;
-using Furniture.Service;
-using Furniture.Web.Services;
+﻿using System.Net;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddMemoryCache();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(30);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+// Đăng ký Refit Client
 builder.Services.AddRefitClient<IAccountApi>()
-    .ConfigureHttpClient(c =>
-    {
-        c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
-    });
+	.ConfigureHttpClient((serviceProvider, httpClient) =>
+	{
+		var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+		var token = httpContextAccessor.HttpContext?.Request.Cookies["AccessToken"];
+
+		if (!string.IsNullOrEmpty(token))
+		{
+			httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+		}
+
+		httpClient.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+	});
+builder.Services.AddRefitClient<INotificationApi>()
+	.ConfigureHttpClient(c =>
+	{
+		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+	});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,6 +42,7 @@ if (!app.Environment.IsDevelopment())
 	app.UseExceptionHandler("/Home/Error");
 	app.UseHsts();
 }
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -31,4 +54,4 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
-	app.Run();
+app.Run();
