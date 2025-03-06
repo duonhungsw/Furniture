@@ -1,12 +1,11 @@
-﻿using Furniture.Web.Models;
+﻿using Furniture.Common.Domain.Query;
+using Furniture.Web.Models;
 
-namespace Furniture.Web.Services
+namespace Furniture.Web.Services;
+
+public interface IProductApi
 {
-	public interface IProductApi
-	{
-		[Get("/Product")]
-		Task<ProductPagingModel> GetProductsAsync(
-			[Query] int? PageIndex = 1,
-			[Query] int? PageSize = 8);
-	}
+	[Get("/Product")]
+	Task<PagedResult<ProductDto>> GetProductsAsync(
+		[Query] int? PageIndex);
 }
