@@ -64,4 +64,6 @@ public class OrderService(
 		}
 		return false;
 	}
+	public async Task<List<OrderCheckout>> GetOrdersForAccountAsync(Guid id)
+	 => await _repository.GetOrdersForAccountAsync(id);
 }

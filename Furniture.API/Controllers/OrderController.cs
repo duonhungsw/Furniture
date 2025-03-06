@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Furniture.API.Controllers;
 
@@ -26,5 +27,11 @@ public class OrderController(
 		var account = await _tokenService.Authenticate();
 		var result = await _service.ChangeStatusAsync(orderId, account.RoleName);
 		return result;
+	}
+	[HttpGet("checkout")]
+	public async Task<List<OrderCheckout>> GetOrdersForAccount(Guid id)
+	{
+		var results = await _service.GetOrdersForAccountAsync(id);
+		return results;
 	}
 }
