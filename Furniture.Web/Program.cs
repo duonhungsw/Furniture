@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +34,11 @@ builder.Services.AddRefitClient<INotificationApi>()
 	{
 		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
 	});
+builder.Services.AddRefitClient<IProductApi>()
+    .ConfigureHttpClient(c =>
+    {
+        c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
