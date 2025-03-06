@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Furniture.Web.Controllers;
+﻿namespace Furniture.Web.Controllers;
 
 public class OrderController : Controller
 {
-    public IActionResult Checkout()
-    {
-        return View();
-    }
+	public IActionResult Checkout()
+	{
+		return View();
+	}
 }

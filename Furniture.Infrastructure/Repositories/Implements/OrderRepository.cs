@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Furniture.Infrastructure;
+﻿namespace Furniture.Infrastructure;
 
 public class OrderRepository : GenericRepository<Order>, IOrderRepository
 {
@@ -41,4 +39,19 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 
 	public async Task<Status?> GetStatusByNameAsync(string statusName)
 		=> await appDbContext.Statuses.AsNoTracking().FirstOrDefaultAsync(s => s.Name == statusName);
+
+	public async Task<List<OrderCheckout>> GetOrdersForAccountAsync(Guid id)
+	{
+		var entities = await (from cartItem in appDbContext.CartItems
+							  join cart in appDbContext.Carts on cartItem.CartId equals cart.Id
+							  where cart.AccountId == id && cartItem.Status == true
+							  select new OrderCheckout
+							  {
+								  ProductId = cartItem.ProductId,
+								  ProductName = cartItem.Product == null ? null : cartItem.Product.Name,
+								  Price = cartItem.Price,
+								  TotalMoney = cartItem.Price * cartItem.Quantity
+							  }).ToListAsync();
+		return entities;
+	}
 }

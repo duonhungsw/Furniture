@@ -31,7 +31,7 @@ async function fetchProvinces() {
         const data = await response.json();
 
         const dropdown = document.getElementById('provinceDropdown');
-        const provinceInput = document.getElementById('provinceName'); // Input ẩn
+        const provinceInput = document.getElementById('provinceName');
 
         dropdown.innerHTML = '<option value="">Province...</option>';
 
@@ -46,7 +46,7 @@ async function fetchProvinces() {
         dropdown.addEventListener('change', function () {
             const selectedProvinceId = dropdown.value;
             const selectedProvinceText = dropdown.options[dropdown.selectedIndex].text;
-            provinceInput.value = selectedProvinceText; // Cập nhật tên tỉnh vào input ẩn
+            provinceInput.value = selectedProvinceText;
 
             if (selectedProvinceId) {
                 fetchDistrict(selectedProvinceId);
@@ -59,11 +59,11 @@ async function fetchProvinces() {
 
 async function fetchDistrict(id) {
     try {
-        const response = await fetch('https://open.oapi.vn/location/districts?page=0&size=63&provinceId=' + id);
+        const response = await fetch(`https://open.oapi.vn/location/districts/${id}?page=0&size=63`);
         const data = await response.json();
 
         const dropdown = document.getElementById('districtDropdown');
-        const districtInput = document.getElementById('districtName'); // Input ẩn
+        const districtInput = document.getElementById('districtName'); 
 
         dropdown.innerHTML = '<option value="">District...</option>';
 
@@ -78,7 +78,7 @@ async function fetchDistrict(id) {
         dropdown.addEventListener('change', function () {
             const selectedDistrictId = dropdown.value;
             const selectedDistrictText = dropdown.options[dropdown.selectedIndex].text;
-            districtInput.value = selectedDistrictText; // Cập nhật tên quận vào input ẩn
+            districtInput.value = selectedDistrictText; 
 
             if (selectedDistrictId) {
                 fetchWard(selectedDistrictId);
@@ -91,11 +91,11 @@ async function fetchDistrict(id) {
 
 async function fetchWard(id) {
     try {
-        const response = await fetch('https://open.oapi.vn/location/wards?page=0&size=30&districtId=' + id);
+        const response = await fetch(`https://open.oapi.vn/location/wards/${id}?page=0&size=63`);
         const data = await response.json();
 
         const dropdown = document.getElementById('wardDropdown');
-        const wardInput = document.getElementById('wardName'); // Input ẩn
+        const wardInput = document.getElementById('wardName'); 
 
         dropdown.innerHTML = '<option value="">Ward...</option>';
 
@@ -109,7 +109,7 @@ async function fetchWard(id) {
 
         dropdown.addEventListener('change', function () {
             const selectedWardText = dropdown.options[dropdown.selectedIndex].text;
-            wardInput.value = selectedWardText; // Cập nhật tên phường vào input ẩn
+            wardInput.value = selectedWardText; 
         });
     } catch (error) {
         console.error("Lỗi khi lấy dữ liệu phường:", error);
