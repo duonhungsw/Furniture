@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Furniture.Common\Furniture.Common.csproj" />
     <ProjectReference Include="..\Furniture.Core\Furniture.Core.csproj" />
     <ProjectReference Include="..\Furniture.Service\Furniture.Service.csproj" />
   </ItemGroup>

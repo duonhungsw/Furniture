@@ -12,7 +12,7 @@ public class ProductController(IProductApi _productApi) : Controller
 	}
     public async Task<IActionResult> ProductHome(int pageIndex = 1)
     {
-        var result = await _productApi.GetProductsAsync(pageIndex, 8);
+        var result = await _productApi.GetProductsAsync(pageIndex);
 		return View(result);
     }
 }

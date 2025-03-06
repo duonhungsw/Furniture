@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Furniture.Common.Domain.Query;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Furniture.API.Controllers;
 public class ProductController(IProductServices _services) : BaseApiController
