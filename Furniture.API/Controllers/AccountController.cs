@@ -1,5 +1,4 @@
-﻿using Furniture.Common.Domain.Query;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace Furniture.API.Controllers;

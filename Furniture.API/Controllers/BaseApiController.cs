@@ -1,5 +1,4 @@
-﻿using Furniture.Common.Domain.Query;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Furniture.API.Controllers;
 
