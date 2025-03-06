@@ -42,7 +42,6 @@ public class AccountController(IAccountServices _service, ITokenService _tokenSe
 			Name = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
 			Email = User.FindFirstValue(ClaimTypes.Name)!,
 			RoleName = User.FindFirstValue(ClaimTypes.Role)!
-
 		};
 		return Ok(account);
 	}
