@@ -1,4 +1,4 @@
-﻿namespace Furniture.Common;
+namespace Furniture.Common;
 
 public class PagedResult<T>
 {
