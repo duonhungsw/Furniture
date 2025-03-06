@@ -1,8 +1,8 @@
 ﻿namespace Furniture.Web.Controllers;
 
-public class ProductController : Controller
+public class ProductController(IProductApi _productApi) : Controller
 {
-	public IActionResult ViewProducts()
+    public IActionResult ViewProducts()
 	{
 		return View();
 	}
@@ -10,4 +10,9 @@ public class ProductController : Controller
 	{
 		return View();
 	}
+    public async Task<IActionResult> ProductHome(int pageIndex = 1)
+    {
+        var result = await _productApi.GetProductsAsync(pageIndex);
+		return View(result);
+    }
 }
