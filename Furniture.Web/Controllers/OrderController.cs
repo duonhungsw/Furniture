@@ -1,4 +1,4 @@
-﻿using Furniture.Web.Models;
+using Furniture.Web.Models;
 
 namespace Furniture.Web.Controllers;
 
