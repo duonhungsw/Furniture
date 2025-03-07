@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+<<<<<<< Updated upstream
 builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -16,6 +17,9 @@ builder.Services.AddSession(options =>
 	options.Cookie.IsEssential = true;
 });
 // Đăng ký Refit Client
+=======
+builder.Services.AddHttpContextAccessor();
+>>>>>>> Stashed changes
 builder.Services.AddRefitClient<IAccountApi>()
 	.ConfigureHttpClient((serviceProvider, httpClient) =>
 	{
@@ -39,13 +43,18 @@ builder.Services.AddRefitClient<IProductApi>()
     {
         c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
     });
+builder.Services.AddRefitClient<ICartApi>()
+    .ConfigureHttpClient(c =>
+    {
+        c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
-	app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 app.UseSession();
 app.UseHttpsRedirection();
@@ -56,7 +65,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

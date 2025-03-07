@@ -25,9 +25,16 @@ builder.Services.AddSingleton<IFileStorageService>(provider =>
 	new FileStorageService(builder.Configuration.GetValue<string>("AzureBlobStorage:ConnectionString") ?? throw new InvalidOperationException("AzureBlobStorage:ConnectionString is missing"))
 );
 
+<<<<<<< Updated upstream
 // Configure JWT Authentication
 var key = Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("JwtSettings:SecretKey") ?? throw new InvalidOperationException("JwtSettings:SecretKey is missing"));
 
+=======
+builder.Services.AddSingleton(nameof(ApplicationDbContext));
+builder.Services.AddHttpContextAccessor();
+var key = Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtSettings:SecretKey").Value!);
+// Cấu hình Authentication & JWT Middleware
+>>>>>>> Stashed changes
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddJwtBearer(options =>
 	{
@@ -120,7 +127,6 @@ app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 app.UseSession();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

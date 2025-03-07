@@ -1,4 +1,6 @@
-﻿namespace Furniture.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Furniture.Infrastructure;
 
 public class CartRepository : GenericRepository<Cart>, ICartRepository
 {
@@ -30,6 +32,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 										  ProductPrice = cartItem.Price,
 										  UrlImage = product.PictureUrl,
 										  Status = cartItem.Status,
+										  TotalMoney = cartItem.TotalMoney
 									  }).ToListAsync();
 
 			return cartProducts;
@@ -63,10 +66,11 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 	}
 	public async Task UpdateCartItemByQuantityAsync(Guid cartItemID, int quantity)
 	{
-		var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
+		var cartItem = await appDbContext.CartItems.FirstOrDefaultAsync(c => c.Id.Equals(cartItemID));
 		if (cartItem != null)
 		{
 			cartItem.Quantity = quantity;
+			cartItem.TotalMoney = quantity * cartItem.Price;
 			await appDbContext.SaveChangesAsync();
 		}
 	}
@@ -79,13 +83,6 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 			{
 				await UpdateCartItemByQuantityAsync(cartItemID, quantity);
 				return true;
-#pragma warning disable CS0162 // Unreachable code detected
-				break;
-#pragma warning restore CS0162 // Unreachable code detected
-			}
-			else
-			{
-				return false;
 			}
 		}
 		return false;
@@ -137,5 +134,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 	{
 		return await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
 	}
+   
+
 
 }

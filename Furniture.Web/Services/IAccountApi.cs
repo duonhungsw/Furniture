@@ -22,6 +22,7 @@ public interface IAccountApi
 
     [Post("/accounts/update-password")]
     Task<bool> UpdatePasswordAsync(ForgotPassDTOs forgotPasswordModel);
+<<<<<<< Updated upstream
 
 	[Multipart]
 	[Put("/accounts/profile")]
@@ -34,4 +35,14 @@ public interface IAccountApi
 
     [Patch("/accounts/changePhoneNumber")]
     Task<bool> UpdatePhoneNumber([Body] ChangePhoneNumberDto model);
+=======
+    [Multipart]
+    [Put("/accounts/profile")]
+    Task<bool> UpdateProfileAsync(
+        [AliasAs("id")] Guid id,
+        [AliasAs("name")] string? name,
+        [AliasAs("birthDay")] string? birthDay,
+        [AliasAs("phone")] string? phone,
+        [AliasAs("avatar")] StreamPart avatar);
+>>>>>>> Stashed changes
 }
