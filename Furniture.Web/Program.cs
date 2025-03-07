@@ -35,10 +35,15 @@ builder.Services.AddRefitClient<INotificationApi>()
 		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
 	});
 builder.Services.AddRefitClient<IProductApi>()
-    .ConfigureHttpClient(c =>
-    {
-        c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
-    });
+	.ConfigureHttpClient(c =>
+	{
+		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+	});
+builder.Services.AddRefitClient<ICartApi>()
+	.ConfigureHttpClient(c =>
+	{
+		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+	});
 builder.Services.AddRefitClient<IOrderApi>()
 	.ConfigureHttpClient(c =>
 	{

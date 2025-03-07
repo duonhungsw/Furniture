@@ -123,7 +123,6 @@ app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 app.UseSession();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

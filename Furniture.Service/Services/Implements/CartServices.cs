@@ -1,7 +1,10 @@
-﻿namespace Furniture.Service;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Furniture.Service;
 
 public class CartServices(
 	ICartRepository cartRepository, 
+	IAccountRepository accountRepository,
 	IProductRepository productRepository, 
 	ITokenService tokenService, 
 	IMapper mapper, 
@@ -10,7 +13,9 @@ public class CartServices(
 	public async Task<List<CartItemDto>?> GetCartsAsync()
 	{
 
-		var account = await tokenService.Authenticate();
+        //var account = await tokenService.Authenticate();
+        Guid guid = Guid.Parse("F1A50C43-5708-40F2-9744-ADDCBC93A438"); 
+        var account = await accountRepository.GetByIdAsync(guid);
 		if (account != null)
 		{
 			return await cartRepository.GetCartProductsAsync(account.Id);
@@ -19,8 +24,10 @@ public class CartServices(
 	}
 	public async Task<bool> DeleteCartItemAsync(Guid cartItemID)
 	{
-		var account = await tokenService.Authenticate();
-		if (account != null)
+        //var account = await tokenService.Authenticate();
+        Guid guid = Guid.Parse("F1A50C43-5708-40F2-9744-ADDCBC93A438");
+        var account = await accountRepository.GetByIdAsync(guid);
+        if (account != null)
 		{
 			var checkDelelte = await cartRepository.DeleteCartItemAsync(account.Id, cartItemID);
 			if (checkDelelte)
@@ -36,13 +43,15 @@ public class CartServices(
 	}
 	public async Task<bool> UpdateCartItemByQuantityAsync(Guid cartItemId, int quantity)
 	{
-		var account = await tokenService.Authenticate();
-		if (account != null)
+        //var account = await tokenService.Authenticate();
+        Guid guid = Guid.Parse("F1A50C43-5708-40F2-9744-ADDCBC93A438");
+        var account = await accountRepository.GetByIdAsync(guid);
+        if (account != null)
 		{
 			var checkUpdate = await cartRepository.UpdateCartItemByQuantityAsync(account.Id, cartItemId, quantity);
 			if (checkUpdate)
 			{
-				return true;
+				return true;	
 			}
 			else
 			{
@@ -55,8 +64,10 @@ public class CartServices(
 	}
 	public async Task<bool> UpdateCartItemByStatusAsync(Guid cartItemId)
 	{
-		var account = await tokenService.Authenticate();
-		if (account != null)
+        //var account = await tokenService.Authenticate();
+        Guid guid = Guid.Parse("F1A50C43-5708-40F2-9744-ADDCBC93A438");
+        var account = await accountRepository.GetByIdAsync(guid);
+        if (account != null)
 		{
 			var checkUpdate = await cartRepository.UpdateCartItemByStatusAsync(account.Id, cartItemId);
 			if (checkUpdate)
@@ -108,4 +119,6 @@ public class CartServices(
 		}
 		return null;
 	}
+
+
 }

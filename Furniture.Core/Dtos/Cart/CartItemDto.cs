@@ -11,5 +11,5 @@ public class CartItemDto
     public decimal ProductPrice { get; set; }
     public int Quatity { get; set; }
     public bool Status {  get; set; }
-
+    public decimal TotalMoney {  get; set; }
 }

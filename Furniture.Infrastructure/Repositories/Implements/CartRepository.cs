@@ -1,4 +1,6 @@
-﻿namespace Furniture.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Furniture.Infrastructure;
 
 public class CartRepository : GenericRepository<Cart>, ICartRepository
 {
@@ -30,6 +32,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 										  ProductPrice = cartItem.Price,
 										  UrlImage = product.PictureUrl,
 										  Status = cartItem.Status,
+										  TotalMoney = cartItem.TotalMoney
 									  }).ToListAsync();
 
 			return cartProducts;
@@ -53,20 +56,11 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 	}
 	public async Task DeleteCartItemAsync(Guid cartItemID)
 	{
-		var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
-		if (cartItem != null)
+        var cartItem = await appDbContext.CartItems.FirstOrDefaultAsync(c => c.Id.Equals(cartItemID));
+        if (cartItem != null)
 		{
 			appDbContext.CartItems.Remove(cartItem);
 			appDbContext.SaveChanges();
-			await appDbContext.SaveChangesAsync();
-		}
-	}
-	public async Task UpdateCartItemByQuantityAsync(Guid cartItemID, int quantity)
-	{
-		var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
-		if (cartItem != null)
-		{
-			cartItem.Quantity = quantity;
 			await appDbContext.SaveChangesAsync();
 		}
 	}
@@ -77,15 +71,10 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 		{
 			if (cartItem.Id.Equals(cartItemID))
 			{
-				await UpdateCartItemByQuantityAsync(cartItemID, quantity);
-				return true;
-#pragma warning disable CS0162 // Unreachable code detected
-				break;
-#pragma warning restore CS0162 // Unreachable code detected
-			}
-			else
-			{
-				return false;
+                cartItem.Quatity = quantity;
+                cartItem.TotalMoney = quantity * cartItem.ProductPrice;
+                await appDbContext.SaveChangesAsync();
+                return true;
 			}
 		}
 		return false;
@@ -137,5 +126,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 	{
 		return await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
 	}
+   
+
 
 }

@@ -17,8 +17,8 @@
   <ItemGroup>
     <None Include="wwwroot\js\validation.js" />
   </ItemGroup>
-
-  <ItemGroup>
+    <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
   </ItemGroup>
 
