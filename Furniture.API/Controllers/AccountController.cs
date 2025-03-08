@@ -105,8 +105,8 @@ public class AccountController(IAccountServices _service, ITokenService _tokenSe
 		return await _service.UpdatePhoneNumberAsync(model.Id, model.Phone!);
 	}
 
-=======
->>>>>>> Stashed changes
+
+
     [HttpPatch("role")]
     public async Task<bool> UpdateRole([FromBody] AccountDto model)
     {
