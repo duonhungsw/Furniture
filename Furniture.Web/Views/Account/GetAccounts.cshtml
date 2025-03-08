@@ -1,25 +1,22 @@
 ﻿@model List<Furniture.Core.AccountDto>
-
 @{
     ViewData["Title"] = "Danh sách tài khoản";
 }
-
 <h2 class="text-center">Danh sách tài khoản</h2>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <a class="btn btn-secondary" asp-controller="Admin" asp-action="Index">
-        <i class="fas fa-arrow-left"></i> Home Admin</a>
-</div>
+        <i class="fas fa-arrow-left"></i> Home Admin</a></div>
 <div class="account-list-container mb-4">
 <table class="table table-bordered table-hover">
     <thead class="table-dark">
         <tr>
             <th>ID</th>
-            <th>Tên</th>
+            <th>Name</th>
             <th>Email</th>
             <th>Avatar</th>
-            <th>Ngày sinh</th>
-            <th>Số điện thoại</th>
-            <th>Vai trò</th>
+            <th>BirthDay</th>
+            <th>Phone</th>
+            <th>Role</th>
         </tr>
     </thead>
     <tbody>
@@ -56,7 +53,7 @@
         else
         {
             <tr>
-                <td colspan="7" class="text-center">Không có tài khoản nào!</td>
+                <td colspan="7" class="text-center">No Account!</td>
             </tr>
         }
     </tbody>

@@ -1,50 +1,48 @@
 ﻿
 namespace Furniture.Service;
 public class ProductServices(
-	IProductRepository _repository,
-	IFileStorageService _storageService,
-	IMapper _mapper) : IProductServices
+    IProductRepository _repository,
+    IFileStorageService _storageService,
+    IMapper _mapper) : IProductServices
 {
-	public async Task<bool> DeleteAsync(Guid id)
-	{
-		var product = await _repository.GetByIdAsync(id);
-		if (product == null)
-			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", id));
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var product = await _repository.GetByIdAsync(id);
+        if (product == null)
+            throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", id));
 
-		string containerName = ContainerName.product.ToString();
-		if (!string.IsNullOrEmpty(product.PictureUrl))
-		{
-			var imageUrls = product.PictureUrl.Split(',');
-			foreach (var imageUrl in imageUrls)
-			{
-				var uri = new Uri(imageUrl);
-				string blobName = Path.GetFileName(uri.LocalPath);
+        string containerName = ContainerName.product.ToString();
+        if (!string.IsNullOrEmpty(product.PictureUrl))
+        {
+            var imageUrls = product.PictureUrl.Split(',');
+            foreach (var imageUrl in imageUrls)
+            {
+                var uri = new Uri(imageUrl);
+                string blobName = Path.GetFileName(uri.LocalPath);
 
-				bool fileExists = await _storageService.FileExistsAsync(containerName, blobName);
-				if (fileExists)
-				{
-					bool isDeleted = await _storageService.DeleteFileAsync(containerName, blobName);
-					if (!isDeleted)
-					{
-						throw new BadRequestException(string.Format(ErrorMessageBase.BadRequest, "Invalid data format"));
-					}
-				}
-			}
-		}
-		_repository.Delete(product);
-		return await _repository.SaveChangesAsync();
-	}
-	public async Task<ProductDto?> GetProductByIdAsync(Guid id)
-	{
-		var product = await _repository.GetByIdAsync(id);
-		if (product == null)
-			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", id));
+                bool fileExists = await _storageService.FileExistsAsync(containerName, blobName);
+                if (fileExists)
+                {
+                    bool isDeleted = await _storageService.DeleteFileAsync(containerName, blobName);
+                    if (!isDeleted)
+                    {
+                        throw new BadRequestException(string.Format(ErrorMessageBase.BadRequest, "Invalid data format"));
+                    }
+                }
+            }
+        }
+        _repository.Delete(product);
+        return await _repository.SaveChangesAsync();
+    }
+    public async Task<ProductDto?> GetProductByIdAsync(Guid id)
+    {
+        var product = await _repository.GetByIdAsync(id);
+        if (product == null)
+            throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", id));
 
-		var result = _mapper.Map<ProductDto>(product);
-		return result;
-	}
-
-
+        var result = _mapper.Map<ProductDto>(product);
+        return result;
+    }
     public async Task<bool> CreateAsync(ProductDto model)
     {
         string containerName = ContainerName.product.ToString();
@@ -73,24 +71,20 @@ public class ProductServices(
         await _repository.SaveChangesAsync();
         return true;
     }
-
     public async Task<List<ProductDto>> GetProductsAsync()
-	{
-		var products = await _repository.GetAllAsync();
-		return _mapper.Map<List<ProductDto>>(products);
-	}
-
-	public async Task<List<ProductDto>> SearchProductsAsync(string keyword)
-	{
-		var products = await _repository.SearchProductsAsync(keyword);
-		return _mapper.Map<List<ProductDto>>(products);
-	}
-	protected string? picture;
-
+    {
+        var products = await _repository.GetAllAsync();
+        return _mapper.Map<List<ProductDto>>(products);
+    }
+    public async Task<List<ProductDto>> SearchProductsAsync(string keyword)
+    {
+        var products = await _repository.SearchProductsAsync(keyword);
+        return _mapper.Map<List<ProductDto>>(products);
+    }
+    protected string? picture;
     public async Task<bool> UpdateAsync(ProductDto model)
     {
         string containerName = ContainerName.product.ToString();
-
         var existingProduct = await _repository.GetByIdAsync(model.Id);
         if (existingProduct == null)
             throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", model.Id));
@@ -115,8 +109,6 @@ public class ProductServices(
                 await _repository.SaveChangesAsync();
                 return true;
             }
-
-            // Nếu có ảnh mới, xóa ảnh cũ trước
             if (!string.IsNullOrEmpty(existingProduct.PictureUrl))
             {
                 var oldImageUrls = existingProduct.PictureUrl.Split(',');
@@ -137,25 +129,18 @@ public class ProductServices(
                     }
                 }
             }
-
-            // Lưu ảnh mới
             newPictureUrls = await _storageService.SaveFilesAsync(containerName, model.Images);
         }
         else
         {
-            // Nếu không cập nhật ảnh mới, giữ nguyên ảnh cũ
             newPictureUrls = existingProduct.PictureUrl?.Split(',').ToList() ?? new List<string>();
         }
-
-        // Cập nhật danh sách ảnh mới vào `PictureUrl`
         model.PictureUrl = string.Join(",", newPictureUrls);
 
         var updatedProduct = _mapper.Map(model, existingProduct);
         updatedProduct.PictureUrl = model.PictureUrl;
         _repository.Update(updatedProduct);
         await _repository.SaveChangesAsync();
-
         return true;
     }
-
 }
