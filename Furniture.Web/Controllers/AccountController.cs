@@ -191,7 +191,7 @@ public class Account(IAccountApi _accountApi) : Controller
     public async Task<IActionResult> ChangePhoneNumber([FromForm] ChangePhoneNumberDto model)
     {
         var otpSession = HttpContext.Session.GetString("OtpCode");
-<<<<<<< Updated upstream
+
 		//model.Session is OTP was send from form
 
 

@@ -124,7 +124,7 @@ public class ProductServices(
                         bool isDeleted = await _storageService.DeleteFileAsync(containerName, oldBlobName);
                         if (!isDeleted)
                         {
-                            throw new Exception($"Không thể xóa ảnh cũ: {oldBlobName}");
+                            throw new Exception($"Can't delete old picture: {oldBlobName}");
                         }
                     }
                 }
