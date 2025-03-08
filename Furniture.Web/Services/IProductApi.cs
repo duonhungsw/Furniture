@@ -7,7 +7,6 @@ public interface IProductApi
 	[Get("/products")]
 	Task<PagedResult<ProductDto>> GetProductsAsync(
 		[Query] int? PageIndex);
-
     [Multipart]
     [Post("/products/create")]
     Task<bool> Create([FromForm] MultipartFormDataContent formData);
