@@ -192,7 +192,7 @@ public class Account(IAccountApi _accountApi) : Controller
     {
         var otpSession = HttpContext.Session.GetString("OtpCode");
 
-<<<<<<< Updated upstream
+
         //model.Session is OTP was send from form
 
         if (otpSession != model.session)
@@ -240,45 +240,46 @@ public class Account(IAccountApi _accountApi) : Controller
         return View();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> VerifyByPassword([FromForm] AccountActionDto request)
-    {
-        request.Action = AccountAction.VerifyByPassword.ToString();
-        var response = await _accountApi.HandleAccountAction(request);
-        if (!response)
-        {
-            TempData["ErrorMessage"] = "Password verification failed. Please try again.";
-            return View();
-        }
-        return RedirectToAction("ChangePassword");
-    }
-    [HttpGet]
-    public IActionResult ChangePassword()
-    {
-        return View();
-    }
-    [HttpPost]
-    public async Task<IActionResult> ChangePassword([FromForm] AccountActionDto request)
-    {
-        request.Action = AccountAction.ChangePassword.ToString();
-        var response = await _accountApi.HandleAccountAction(request);
-        if (!response)
-        {
-            TempData["ErrorMessage"] = "Password change failed. Please try again.";
-            return View();
-        }
-        TempData["SuccessMessage"] = "Password changed successfully!";
-        TempData.Keep("SuccessMessage");
-        return RedirectToAction("ViewProfile");
-    }
+	[HttpPost]
+	public async Task<IActionResult> VerifyByPassword([FromForm] AccountActionDto request)
+	{
+		request.Action = AccountAction.VerifyByPassword.ToString();
+		var response = await _accountApi.HandleAccountAction(request);
+		if (!response)
+		{
+			TempData["ErrorMessage"] = "Password verification failed. Please try again.";
+			return View();
+		}
+		return RedirectToAction("ChangePassword");
+	}
+	[HttpGet]
+	public IActionResult ChangePassword()
+	{
+		return View();
+	}
+	[HttpPost]
+	public async Task<IActionResult> ChangePassword([FromForm] AccountActionDto request)
+	{
+		request.Action = AccountAction.ChangePassword.ToString();
+		var response = await _accountApi.HandleAccountAction(request);
+		if (!response)
+		{
+			TempData["ErrorMessage"] = "Password change failed. Please try again.";
+			return View();
+		}
+		TempData["SuccessMessage"] = "Password changed successfully!";
+		TempData.Keep("SuccessMessage");
+		return RedirectToAction("ViewProfile");
+	}
+	public IActionResult Logout()
+	{
+		//accountApi.Logout();
+		HttpContext?.Response.Cookies.Delete("AccessToken");
+		HttpContext?.Response.Cookies.Delete("RefreshToken");
+		return RedirectToAction("Login");
+	}
 
-    public IActionResult Logout()
-    {
-        //accountApi.Logout();
-        HttpContext?.Response.Cookies.Delete("AccessToken");
-        HttpContext?.Response.Cookies.Delete("RefreshToken");
-        return RedirectToAction("Login");
-    }
+
     [HttpGet]
     public async Task<IActionResult> GetAccounts(int pageIndex = 1, int pageSize = 5)
     {
@@ -294,12 +295,11 @@ public class Account(IAccountApi _accountApi) : Controller
         return View(product);
     }
     [HttpPost]
-<<<<<<< Updated upstream
-    public async Task<IActionResult> UpdateRole([FromForm] AccountDto model)
+    public async Task<IActionResult> UpdateRole([FromForm]AccountDto model)
     {
         var result = await _accountApi.UpdateRole(model);
         return RedirectToAction("GetAccounts");
-        
+
     }
-<<<<<<< Updated upstream
 }
+

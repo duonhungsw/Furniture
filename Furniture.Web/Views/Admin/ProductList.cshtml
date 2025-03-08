@@ -1,4 +1,5 @@
 ﻿@model List<Furniture.Core.ProductDto>
+
 @{
     ViewData["Title"] = "List Product";
     var pageIndex = ViewBag.PageIndex ?? 1;
@@ -13,8 +14,10 @@
         <i class="fas fa-plus"></i> Add New Product
     </a>
 </div>
+
 <table class="table table-hover shadow-sm rounded text-center">
     <thead class="bg-dark text-white">
+
         <tr>
             <th>ID</th>
             <th>Product Name</th>

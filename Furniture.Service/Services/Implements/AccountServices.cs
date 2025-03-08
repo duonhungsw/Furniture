@@ -123,7 +123,9 @@ public class AccountServices(
 		_repository.Update(account);
 		return await _repository.SaveChangesAsync() ? true : false;
 	}
-		public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
+
+
+	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
 	{
 		var account = await _repository.GetByIdAsync(request.Id);
 		if (account == null)
@@ -153,7 +155,7 @@ public class AccountServices(
 		}
 		return false;
 	}
-    public async Task<bool> UpdateRoleAsync(AccountDto model)
+	public async Task<bool> UpdateRoleAsync(AccountDto model)
 	{
         var existingAccount = await _repository.GetByIdAsync(model.Id);
         if (existingAccount == null) return false;
@@ -161,6 +163,4 @@ public class AccountServices(
         _repository.Update(existingAccount);
         return await _repository.SaveChangesAsync();
     }
-
-
 }
