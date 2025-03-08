@@ -7,8 +7,6 @@
 
 =======
 ﻿using Furniture.Core;
-
->>>>>>> Stashed changes
 namespace Furniture.Service;
 
 public class AccountServices(

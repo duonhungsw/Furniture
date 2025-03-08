@@ -47,7 +47,6 @@ public class AdminController(IProductApi _productApi) : Controller
         var product = await _productApi.GetProductById(id);
         return View(product);
     }
-
     [HttpPost]
     public async Task<IActionResult> Update(ProductDto model)
     {
@@ -64,7 +63,6 @@ public class AdminController(IProductApi _productApi) : Controller
             {
                 formData.Add(new StringContent(model.PictureUrl), "PictureUrl");
             }
-
             if (model.Images != null && model.Images.Count > 0)
             {
                 foreach (var file in model.Images)
@@ -74,7 +72,6 @@ public class AdminController(IProductApi _productApi) : Controller
                     formData.Add(streamContent, "Images", file.FileName);
                 }
             }
-
             var result = await _productApi.Update(formData);
             if (result)
             {
@@ -94,7 +91,6 @@ public class AdminController(IProductApi _productApi) : Controller
         bool result = await _productApi.Delete(id);
         if (result)
             return RedirectToAction("ProductList");
-
         ModelState.AddModelError("", "Delete Failed.");
         return RedirectToAction("ProductList");
     }
