@@ -6,6 +6,17 @@ public class AdminController(IProductApi _productApi) : Controller
     {
         return View();
     }
+    public async Task<IActionResult> ProductList(QueryInfo queryInfo)
+{
+    var result = await _productApi.GetProductsAsync(queryInfo.PageIndex);
+    ViewBag.PageIndex = queryInfo.PageIndex;
+    ViewBag.PageSize = queryInfo.PageSize;
+    ViewBag.SearchText = queryInfo.SearchText;
+    ViewBag.TotalPages = (int)Math.Ceiling((double)result.TotalCount / queryInfo.PageSize);
+
+    return View(result.Items);
+}
+
     public IActionResult Create()
     {
         return View();

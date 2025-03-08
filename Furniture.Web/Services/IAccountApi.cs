@@ -23,29 +23,27 @@ public interface IAccountApi
     [Post("/accounts/update-password")]
     Task<bool> UpdatePasswordAsync(ForgotPassDTOs forgotPasswordModel);
 
-    [Multipart]
-    [Put("/accounts/profile")]
-    Task<bool> UpdateProfileAsync(
-        [AliasAs("id")] Guid id,
-        [AliasAs("name")] string? name,
-        [AliasAs("birthDay")] string? birthDay,
-        [AliasAs("phone")] string? phone,
-        [AliasAs("avatar")] StreamPart avatar);
+	[Multipart]
+	[Put("/accounts/profile")]
+	Task<bool> UpdateProfileAsync(
+	    [AliasAs("id")] Guid id,
+	    [AliasAs("name")] string? name,
+	    [AliasAs("birthDay")] string? birthDay,
+	    [AliasAs("phone")] string? phone,
+	    [AliasAs("avatar")] StreamPart avatar);
 
     [Patch("/accounts/changePhoneNumber")]
     Task<bool> UpdatePhoneNumber([Body] ChangePhoneNumberDto model);
-
-
-	[Get("/accounts/email")]
+	
+    [Get("/accounts/email")]
 	Task<ApiResponse<Account>?> GetAccountByEmailAsync(string email);
 
     [Post("/accounts/action")]
     Task<bool> HandleAccountAction([FromBody] AccountActionDto request);
-
-
+=======
     [Get("/accounts")]
     Task<PagedResult<AccountDto>> GetAccounts([Query] QueryInfo queryInfo);
     [Patch("/accounts/role")]
     Task<bool> UpdateRole([Body] AccountDto model);
-    
+>>>>>>> Stashed changes
 }
