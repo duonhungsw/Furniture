@@ -60,16 +60,30 @@
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             <li class="page-item @(pageIndex == 1 ? "disabled" : "")">
-                <a class="page-link" asp-action="ProductList" asp-route-pageIndex="@(pageIndex - 1)" asp-route-pageSize="5">« Trước</a>
-           </li>
+                <a class="page-link"
+                   asp-action="ProductList"
+                   asp-route-PageIndex="@(pageIndex - 1)"
+                   asp-route-PageSize="@ViewBag.PageSize"
+                   asp-route-SearchText="@ViewBag.SearchText">«Backward</a>
+            </li>
+
             @for (int i = 1; i <= totalPages; i++)
             {
                 <li class="page-item @(i == pageIndex ? "active" : "")">
-                    <a class="page-link" asp-action="ProductList" asp-route-pageIndex="@i" asp-route-pageSize="5">@i</a>
+                    <a class="page-link"
+                       asp-action="ProductList"
+                       asp-route-PageIndex="@i"
+                       asp-route-PageSize="@ViewBag.PageSize"
+                       asp-route-SearchText="@ViewBag.SearchText">@i</a>
                 </li>
             }
+
             <li class="page-item @(pageIndex == totalPages ? "disabled" : "")">
-                <a class="page-link" asp-action="ProductList" asp-route-pageIndex="@(pageIndex + 1)" asp-route-pageSize="5">Tiếp »</a>
+                <a class="page-link"
+                   asp-action="ProductList"
+                   asp-route-PageIndex="@(pageIndex + 1)"
+                   asp-route-PageSize="@ViewBag.PageSize"
+                   asp-route-SearchText="@ViewBag.SearchText">Forward»</a>
             </li>
         </ul>
     </nav>
@@ -82,13 +96,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you certain want to delete product "<b id="productName"></b>" không?</p>
+                <p>Are you certain want to delete product "<b id="productName"></b>" No?</p>
             </div>
             <div class="modal-footer">
                 <form id="deleteForm" method="post">
                     <input type="hidden" name="id" id="productId" />
                     <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
                 </form>
             </div>
         </div>

@@ -1,8 +1,8 @@
 ﻿@model Furniture.Core.ProductDto;
 <h2>Confirm Delete Product</h2>
-<p>Are you certain want to delete product"<b>@Model.Name</b>" không?</p>
+<p>Are you certain want to delete product"<b>@Model.Name</b>" No?</p>
 <form asp-action="DeleteProduct" asp-controller="Admin" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
     <button type="submit" class="btn btn-danger">Yes, Delete</button>
-    <a asp-action="ProductList" asp-controller="Admin" class="btn btn-secondary">Không</a>
+    <a asp-action="ProductList" asp-controller="Admin" class="btn btn-secondary">No</a>
 </form>
