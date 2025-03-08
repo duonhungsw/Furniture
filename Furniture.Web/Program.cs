@@ -39,6 +39,20 @@ builder.Services.AddRefitClient<IProductApi>()
     {
         c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
     });
+builder.Services.AddRefitClient<IOrderApi>()
+	.ConfigureHttpClient(c =>
+	{
+		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+	});
+
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian lưu session
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,6 +61,8 @@ if (!app.Environment.IsDevelopment())
 	app.UseExceptionHandler("/Home/Error");
 	app.UseHsts();
 }
+app.UseSession();
+
 app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();

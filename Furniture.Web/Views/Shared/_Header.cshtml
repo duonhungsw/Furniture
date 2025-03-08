@@ -13,10 +13,10 @@
 				<li class="nav-item active">
 					<a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
 				</li>
-				<li><a class="nav-link" asp-controller="Product" asp-action="ViewProducts">Shop</a></li>
+				<li><a class="nav-link" asp-controller="Product" asp-action="ProductHome">Shop</a></li>
 				<li><a class="nav-link" href="about.html">About us</a></li>
 				<li><a class="nav-link" href="services.html">Services</a></li>
-				<li><a class="nav-link" href="blog.html">Blog</a></li>
+				<li><a class="nav-link" asp-controller="Order" asp-action="Checkout">Checkout</a></li>
 				<li><a class="nav-link" href="contact.html">Contact us</a></li>
 			</ul>
 
@@ -37,6 +37,7 @@
 						{
 							<li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a></li>
 						}
+					</ul>
 				</li>
 
 				<li><a class="nav-link" asp-controller="Cart" asp-action="ShoppingCart"><img src="~/images/cart.svg"></a></li>

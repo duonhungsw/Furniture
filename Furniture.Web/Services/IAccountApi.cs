@@ -34,4 +34,9 @@ public interface IAccountApi
 
     [Patch("/accounts/changePhoneNumber")]
     Task<bool> UpdatePhoneNumber([Body] ChangePhoneNumberDto model);
+	[Get("/accounts/email")]
+	Task<ApiResponse<Account>?> GetAccountByEmailAsync(string email);
+
+    [Post("/accounts/action")]
+    Task<bool> HandleAccountAction([FromBody] AccountActionDto request);
 }

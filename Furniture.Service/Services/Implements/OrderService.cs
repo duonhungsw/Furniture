@@ -9,15 +9,17 @@ public class OrderService(
 	
 	public async Task<bool> CreateOrderAsync(CreateOrderDto model)
 	{
-		var account = await _tokenService.Authenticate();
+		//var account = await _tokenService.Authenticate();
 
-		if (account == null)
-			throw new UnauthorizedAccessException();
+		//if (account == null)
+		//	throw new UnauthorizedAccessException();
 
 		var order = _mapper.Map<Order>(model);
-		order.AccountId = account.Id;
+		//Mock data
+		order.Country = "Viet Nam"; 
+		order.AccountId = model.AccountId;
 		order.StatusId = (await _repository.GetStatusByNameAsync(OrderStatus.Pending.ToString()))!.Id;
-		order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.price);
+		order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.Price);
 		_repository.Create(order);
 		if (await _repository.SaveChangesAsync())
 		{
@@ -64,4 +66,6 @@ public class OrderService(
 		}
 		return false;
 	}
+	public async Task<List<OrderCheckout>> GetOrdersForAccountAsync(Guid id)
+	 => await _repository.GetOrdersForAccountAsync(id);
 }
