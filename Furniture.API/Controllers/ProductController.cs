@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Furniture.API.Controllers;
+[Route("products")]
 public class ProductController(IProductServices _services) : BaseApiController
 {
 	[HttpGet("{id}")]
