@@ -1,11 +1,5 @@
-<<<<<<< Updated upstream
-﻿using Azure;
-using Microsoft.AspNetCore.Authorization;
-
 namespace Furniture.Web.Controllers;
-=======
-﻿namespace Furniture.Web.Controllers;
->>>>>>> Stashed changes
+
 
 public class Account(IAccountApi _accountApi) : Controller
 {
@@ -197,17 +191,8 @@ public class Account(IAccountApi _accountApi) : Controller
     {
         var otpSession = HttpContext.Session.GetString("OtpCode");
 
-<<<<<<< Updated upstream
-		//model.Session is OTP was send from form
+        //model.Session is OTP was send from form
 
-		if (otpSession != model.session)
-		{
-			TempData["Message"] = "Verification code is incorrect!";
-			TempData["MessageType"] = "danger";
-			return RedirectToAction("ChangePhoneNumber");
-		}
-		var response = await _accountApi.GetUserInfoAsync();
-=======
         if (otpSession != model.session)
         {
             TempData["Message"] = "Verification code is incorrect!";
@@ -215,7 +200,6 @@ public class Account(IAccountApi _accountApi) : Controller
             return RedirectToAction("ChangePhoneNumber");
         }
         var response = await _accountApi.GetUserInfoAsync();
->>>>>>> Stashed changes
 
         if (response == null || !response.IsSuccessStatusCode || response.Content == null)
         {
@@ -224,84 +208,21 @@ public class Account(IAccountApi _accountApi) : Controller
 
         var account = response.Content;
 
-<<<<<<< Updated upstream
-		var accountAction = new AccountActionDto
-		{
-			Id = account.Id,
-			NewPhoneNumber = model.Phone,
-			Action = AccountAction.ChangeNumber.ToString()
-		};
-		var result = await _accountApi.HandleAccountAction(accountAction);
-
-		if (result)
-		{
-			TempData["Message"] = "Phone number updated successfully!";
-			TempData["MessageType"] = "success";
-
-			HttpContext.Session.Remove("OtpCode");
-			HttpContext.Session.Remove("OtpExpiry");
-		}
-		else
-		{
-			TempData["Message"] = "Failed to update phone number.";
-			TempData["MessageType"] = "danger";
-		}
-
-		return RedirectToAction("ChangePhoneNumber");
-	}
-	[HttpGet]
-	public IActionResult VerifyByPassword()
-	{
-		return View();
-	}
-
-	[HttpPost]
-	public async Task<IActionResult> VerifyByPassword([FromForm] AccountActionDto request)
-	{
-		request.Action = AccountAction.VerifyByPassword.ToString();
-		var response = await _accountApi.HandleAccountAction(request);
-		if (!response)
-		{
-			TempData["ErrorMessage"] = "Password verification failed. Please try again.";
-			return View();
-		}
-		return RedirectToAction("ChangePassword");
-	}
-	[HttpGet]
-	public IActionResult ChangePassword()
-	{
-		return View();
-	}
-	[HttpPost]
-	public async Task<IActionResult> ChangePassword([FromForm] AccountActionDto request)
-	{
-		request.Action = AccountAction.ChangePassword.ToString();
-		var response = await _accountApi.HandleAccountAction(request);
-		if (!response)
-		{
-			TempData["ErrorMessage"] = "Password change failed. Please try again.";
-			return View();
-		}
-		TempData["SuccessMessage"] = "Password changed successfully!";
-		TempData.Keep("SuccessMessage");
-		return RedirectToAction("ViewProfile");
-	}
-	public IActionResult Logout()
-	{
-		//accountApi.Logout();
-		HttpContext?.Response.Cookies.Delete("AccessToken");
-		HttpContext?.Response.Cookies.Delete("RefreshToken");
-		return RedirectToAction("Login");
-	}
-}
-=======
-        model.Id = account.Id;
-        var result = await _accountApi.UpdatePhoneNumber(model);
+        var accountAction = new AccountActionDto
+        {
+            Id = account.Id,
+            NewPhoneNumber = model.Phone,
+            Action = AccountAction.ChangeNumber.ToString()
+        };
+        var result = await _accountApi.HandleAccountAction(accountAction);
 
         if (result)
         {
             TempData["Message"] = "Phone number updated successfully!";
             TempData["MessageType"] = "success";
+
+            HttpContext.Session.Remove("OtpCode");
+            HttpContext.Session.Remove("OtpExpiry");
         }
         else
         {
@@ -311,7 +232,43 @@ public class Account(IAccountApi _accountApi) : Controller
 
         return RedirectToAction("ChangePhoneNumber");
     }
+    [HttpGet]
+    public IActionResult VerifyByPassword()
+    {
+        return View();
+    }
 
+    [HttpPost]
+    public async Task<IActionResult> VerifyByPassword([FromForm] AccountActionDto request)
+    {
+        request.Action = AccountAction.VerifyByPassword.ToString();
+        var response = await _accountApi.HandleAccountAction(request);
+        if (!response)
+        {
+            TempData["ErrorMessage"] = "Password verification failed. Please try again.";
+            return View();
+        }
+        return RedirectToAction("ChangePassword");
+    }
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword([FromForm] AccountActionDto request)
+    {
+        request.Action = AccountAction.ChangePassword.ToString();
+        var response = await _accountApi.HandleAccountAction(request);
+        if (!response)
+        {
+            TempData["ErrorMessage"] = "Password change failed. Please try again.";
+            return View();
+        }
+        TempData["SuccessMessage"] = "Password changed successfully!";
+        TempData.Keep("SuccessMessage");
+        return RedirectToAction("ViewProfile");
+    }
     public IActionResult Logout()
     {
         //accountApi.Logout();
@@ -334,11 +291,12 @@ public class Account(IAccountApi _accountApi) : Controller
         return View(product);
     }
     [HttpPost]
-    public async Task<IActionResult> UpdateRole([FromForm]AccountDto model)
+    public async Task<IActionResult> UpdateRole([FromForm] AccountDto model)
     {
         var result = await _accountApi.UpdateRole(model);
         return RedirectToAction("GetAccounts");
 
     }
 }
->>>>>>> Stashed changes
+
+

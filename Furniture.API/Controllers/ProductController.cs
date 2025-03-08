@@ -35,10 +35,10 @@ public class ProductController(IProductServices _services) : BaseApiController
 		var result = await _services.DeleteAsync(id);
 		return result;
 	}
-	[HttpPost]
-	public async Task<bool> Create([FromForm] ProductDto model)
-	{
-		var result = await _services.CreateAsync(model);
-		return result;
-	}
+    [HttpPost("create")]
+    public async Task<bool> Create([FromForm] ProductDto model)
+    {
+        var result = await _services.CreateAsync(model);
+        return result;
+    }
 }

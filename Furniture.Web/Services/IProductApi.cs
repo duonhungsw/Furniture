@@ -4,9 +4,18 @@ namespace Furniture.Web.Services;
 
 public interface IProductApi
 {
-	[Get("/Product")]
+	[Get("/products")]
 	Task<PagedResult<ProductDto>> GetProductsAsync(
 		[Query] int? PageIndex);
-    [Get("/products")]
-    Task<PagedResult<ProductDto>> GetProductsWithPaging([Query] QueryInfo queryInfo);
+    [Multipart]
+    [Post("/products/create")]
+    Task<bool> Create([FromForm] MultipartFormDataContent formData);
+    [Patch("/products/update")]
+    Task<bool> Update([Body] MultipartFormDataContent formData);
+
+    [Delete("/products/delete/{id}")]
+    Task<bool> Delete(Guid id);
+
+    [Get("/products/{id}")]
+    Task<ProductDto> GetProductById(Guid id);
 }
