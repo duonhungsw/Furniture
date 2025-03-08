@@ -9,4 +9,6 @@ public interface IProductApi
 		[Query] int? PageIndex);
 	[Get("/Product/{id}")]
 	Task<ProductDto> GetProductByIdAsync(Guid id);
+    [Get("/products")]
+    Task<PagedResult<ProductDto>> GetProductsWithPaging([Query] QueryInfo queryInfo);
 }
