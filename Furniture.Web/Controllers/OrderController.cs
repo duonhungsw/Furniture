@@ -58,4 +58,9 @@ public class OrderController(
 	{
 		return View();
 	}
+	[HttpGet]
+	public IActionResult Purchase()
+	{
+		return View();
+	}
 }

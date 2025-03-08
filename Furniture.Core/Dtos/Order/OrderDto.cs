@@ -14,5 +14,8 @@ public class OrderDto
 	public string? Note { get; set; }
 	public decimal TotalMoney { get; set; }
 	public string? PaymentMethod { get; set; }
+	public Guid StatusId { get; set; }
+	public StatusDto? Status { get; set; }
+
 	public List<CreateOrderItemDto> OrderItems { get; set; } = new List<CreateOrderItemDto>();
 }

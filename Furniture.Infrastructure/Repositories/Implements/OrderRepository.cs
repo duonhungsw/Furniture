@@ -18,6 +18,12 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 								  Order = order != null ? new OrderDto
 								  {
 									  TotalMoney = order.TotalMoney,
+									  Status = order.Status!= null ? new StatusDto
+									  {
+										  Id = order.StatusId,
+										  Name = order.Status.Name
+									  } : null,
+
 								  } : null,
 								  ProductId = orderItems.ProductId,
 								  Product = orderItems.Product != null ? new ProductDto
@@ -27,6 +33,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 									  PictureUrl = First(orderItems.Product.PictureUrl),
 									  Price = orderItems.Product.Price
 								  } : null,
+								  
 								  Quantity = orderItems.Quantity
 							  }).ToListAsync();
 
