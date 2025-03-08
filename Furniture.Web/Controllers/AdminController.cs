@@ -104,5 +104,11 @@ public class AdminController(IProductApi _productApi) : Controller
             return RedirectToAction("ProductList");
         ModelState.AddModelError("", "Delete Failed.");
         return RedirectToAction("ProductList");
+=======
+        var queryInfo = new QueryInfo { PageIndex = pageIndex, PageSize = pageSize };
+        var pagedResult = await _productApi.GetProductsWithPaging(queryInfo);
+
+        return View(pagedResult.Items);
+>>>>>>> Stashed changes
     }
 }
