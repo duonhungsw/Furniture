@@ -34,16 +34,16 @@ public interface IAccountApi
 
     [Patch("/accounts/changePhoneNumber")]
     Task<bool> UpdatePhoneNumber([Body] ChangePhoneNumberDto model);
-<<<<<<< Updated upstream
+
 	[Get("/accounts/email")]
 	Task<ApiResponse<Account>?> GetAccountByEmailAsync(string email);
 
     [Post("/accounts/action")]
     Task<bool> HandleAccountAction([FromBody] AccountActionDto request);
-=======
+
     [Get("/accounts")]
     Task<PagedResult<AccountDto>> GetAccounts([Query] QueryInfo queryInfo);
     [Patch("/accounts/role")]
     Task<bool> UpdateRole([Body] AccountDto model);
->>>>>>> Stashed changes
+
 }

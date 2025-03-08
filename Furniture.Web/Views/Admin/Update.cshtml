@@ -1,0 +1,71 @@
+﻿@model Furniture.Core.ProductDto;
+
+<h2>Update Product</h2>
+
+<form asp-action="Update" asp-controller="Admin" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label for="Name">Product Name</label>
+        <input type="text" asp-for="Name" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Description</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+
+
+    <!-- Thêm Type -->
+    <div class="form-group">
+        <label for="Type">Type</label>
+        <select asp-for="Type" class="form-control">
+            <option value="Sofa">Sofa</option>
+            <option value="Bàn">Bàn</option>
+            <option value="Ghế">Ghế</option>
+        </select>
+    </div>
+
+    <!-- Thêm Brand -->
+    <div class="form-group">
+        <label for="Brand">Brand</label>
+        <select asp-for="Brand" class="form-control">
+            <option value="IKEA">IKEA</option>
+            <option value="Ashley">Ashley</option>
+            <option value="La-Z-Boy">La-Z-Boy</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Giá</label>
+        <input type="number" asp-for="Price" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Stock">Quantity</label>
+        <input type="number" asp-for="QuantityInStock" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Present picture:</label>
+        <br />
+        @if (!string.IsNullOrEmpty(Model.PictureUrl))
+        {
+            var images = Model.PictureUrl.Split(',');
+            @foreach (var image in images)
+            {
+                <img src="@image" alt="Ảnh sản phẩm" width="150" style="margin-right: 10px;" />
+            }
+        }
+        else
+        {
+            <p>Don't have picture'</p>
+        }
+    </div>
+    <div class="form-group">
+        <label for="Images">Choose new picture</label>
+        <input type="file" asp-for="Images" class="form-control" multiple />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a href="@Url.Action("ProductList", "Admin")" class="btn btn-secondary">Hủy</a>
+</form>
