@@ -1,13 +1,10 @@
 ﻿@model List<Furniture.Core.ProductDto>
-
 @{
     ViewData["Title"] = "List Product";
     var pageIndex = ViewBag.PageIndex ?? 1;
     var totalPages = ViewBag.TotalPages ?? 1;
 }
-
 <h2 class="text-center mt-4">List Product</h2>
-
 <div class="d-flex justify-content-between align-items-center mb-3">
     <a class="btn btn-secondary" asp-controller="Admin" asp-action="Index">
         <i class="fas fa-arrow-left"></i> Home Admin
@@ -16,7 +13,6 @@
         <i class="fas fa-plus"></i> Add New Product
     </a>
 </div>
-
 <table class="table table-hover shadow-sm rounded text-center">
     <thead class="bg-dark text-white">
         <tr>
@@ -52,7 +48,6 @@
                     <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@product.Id" data-name="@product.Name">
                         <i class="fas fa-trash-alt"></i> Delete
                     </button>
-
                 </td>
             </tr>
         }
@@ -64,27 +59,21 @@
 {
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
-            <!-- Nút trang trước -->
             <li class="page-item @(pageIndex == 1 ? "disabled" : "")">
                 <a class="page-link" asp-action="ProductList" asp-route-pageIndex="@(pageIndex - 1)" asp-route-pageSize="5">« Trước</a>
-            </li>
-
-            <!-- Các số trang -->
+           </li>
             @for (int i = 1; i <= totalPages; i++)
             {
                 <li class="page-item @(i == pageIndex ? "active" : "")">
                     <a class="page-link" asp-action="ProductList" asp-route-pageIndex="@i" asp-route-pageSize="5">@i</a>
                 </li>
             }
-
-            <!-- Nút trang tiếp theo -->
             <li class="page-item @(pageIndex == totalPages ? "disabled" : "")">
                 <a class="page-link" asp-action="ProductList" asp-route-pageIndex="@(pageIndex + 1)" asp-route-pageSize="5">Tiếp »</a>
             </li>
         </ul>
     </nav>
 }
-<!-- Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -109,14 +98,11 @@
     document.addEventListener("DOMContentLoaded", function () {
         var deleteModal = document.getElementById("deleteModal");
         deleteModal.addEventListener("show.bs.modal", function (event) {
-            var button = event.relatedTarget; // Nút bấm mở modal
+            var button = event.relatedTarget;
             var productId = button.getAttribute("data-id");
             var productName = button.getAttribute("data-name");
-
             document.getElementById("productId").value = productId;
             document.getElementById("productName").textContent = productName;
-
-            // Cập nhật action form
             document.getElementById("deleteForm").action = "/Admin/DeleteProduct";
         });
     });
