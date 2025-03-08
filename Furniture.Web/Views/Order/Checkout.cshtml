@@ -2,6 +2,7 @@
 
 <!doctype html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -47,12 +48,14 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6 mb-5 mb-md-0">
-					<form asp-controller="Order" asp-action="Checkout" method="post" class="needs-validation" novalidate>
+					<form asp-controller="Order" asp-action="Checkout" method="post" class="needs-validation"
+						novalidate>
 						<h2 class="h3 mb-3 text-black">Billing Details</h2>
 						<div class="p-3 p-lg-5 border bg-white">
 							<!-- Province -->
 							<div class="form-group">
-								<label for="provinceDropdown" class="text-black">Province <span class="text-danger">*</span></label>
+								<label for="provinceDropdown" class="text-black">Province <span
+										class="text-danger">*</span></label>
 								<select id="provinceDropdown" class="form-control" required>
 									<option value="">Select a province...</option>
 								</select>
@@ -62,7 +65,8 @@
 
 							<!-- District -->
 							<div class="form-group">
-								<label for="districtDropdown" class="text-black">District <span class="text-danger">*</span></label>
+								<label for="districtDropdown" class="text-black">District <span
+										class="text-danger">*</span></label>
 								<select id="districtDropdown" class="form-control" required>
 									<option value="">Select a district...</option>
 								</select>
@@ -72,7 +76,8 @@
 
 							<!-- Ward -->
 							<div class="form-group">
-								<label for="wardDropdown" class="text-black">Ward <span class="text-danger">*</span></label>
+								<label for="wardDropdown" class="text-black">Ward <span
+										class="text-danger">*</span></label>
 								<select id="wardDropdown" class="form-control" required>
 									<option value="">Select a ward...</option>
 								</select>
@@ -89,14 +94,17 @@
 
 							<!-- Address -->
 							<div class="form-group">
-								<label for="c_address" class="text-black">Address <span class="text-danger">*</span></label>
-								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address" placeholder="Detail address" required>
+								<label for="c_address" class="text-black">Address <span
+										class="text-danger">*</span></label>
+								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address"
+									placeholder="Detail address" required>
 								<div class="invalid-feedback">Please enter your address.</div>
 							</div>
 
 							<!-- Email -->
 							<div class="form-group">
-								<label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
+								<label for="c_email_address" class="text-black">Email Address <span
+										class="text-danger">*</span></label>
 								<input type="email" class="form-control" id="c_email_address" required>
 								<div class="invalid-feedback">Please enter a valid email address.</div>
 							</div>
@@ -104,31 +112,36 @@
 							<!-- Phone -->
 							<div class="form-group">
 								<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone" placeholder="Phone Number" pattern="[0-9]{10,11}" required>
+								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone"
+									placeholder="Phone Number" pattern="[0-9]{10,11}" required>
 								<div class="invalid-feedback">Please enter a valid phone number (10-11 digits).</div>
 							</div>
 
 							<!-- Order Notes -->
 							<div class="form-group">
 								<label for="c_order_notes" class="text-black">Order Notes</label>
-								<textarea asp-for="CreateOrder.Note" id="c_order_notes" cols="30" rows="5" class="form-control" placeholder="Write your notes here..."></textarea>
+								<textarea asp-for="CreateOrder.Note" id="c_order_notes" cols="30" rows="5"
+									class="form-control" placeholder="Write your notes here..."></textarea>
 							</div>
 
 							<div class="form-group">
 								<label class="text-black">Payment Method</label>
 
 								<div class="form-check">
-									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio" value="CashOnDelivery" id="cashOnDelivery" required>
+									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
+										value="CashOnDelivery" id="cashOnDelivery" required>
 									<label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
 								</div>
 
 								<div class="form-check">
-									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio" value="VNPAY" id="vnpay">
+									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
+										value="VNPAY" id="vnpay">
 									<label class="form-check-label" for="vnpay">VNPay</label>
 								</div>
 
 								<div class="form-check">
-									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio" value="QR" id="qrPayment">
+									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
+										value="QR" id="qrPayment">
 									<label class="form-check-label" for="qrPayment">QR</label>
 								</div>
 
@@ -152,7 +165,8 @@
 
 							<label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
 							<div class="input-group w-75 couponcode-wrap">
-								<input type="text" class="form-control me-2" id="c_code" placeholder="Coupon Code" aria-label="Coupon Code" aria-describedby="button-addon2">
+								<input type="text" class="form-control me-2" id="c_code" placeholder="Coupon Code"
+									aria-label="Coupon Code" aria-describedby="button-addon2">
 								<div class="input-group-append">
 									<button class="btn btn-black btn-sm" type="button" id="button-addon2">Apply</button>
 								</div>
@@ -168,22 +182,17 @@
 						<div class="p-3 p-lg-5 border bg-white">
 							<table class="table site-block-order-table mb-5">
 								<thead>
-
-								<th>Product</th>
-								<th>Total</th>
+									<th>Product</th>
+									<th>Total</th>
 								</thead>
 								<tbody>
-<<<<<<< HEAD
 									@foreach (var item in Model.Orders)
-=======
-									@* @foreach (var item in Model)
->>>>>>> c84da07 (write api get orders)
 									{
 										<tr>
 											<td>@item.ProductName <strong class="mx-2">x</strong> @item.Quantity</td>
 											<td>@item.TotalMoney $</td>
 										</tr>
-									} *@
+									}
 								</tbody>
 							</table>
 						</div>
