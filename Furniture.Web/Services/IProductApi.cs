@@ -7,7 +7,7 @@ public interface IProductApi
 	[Get("/products")]
 	Task<PagedResult<ProductDto>> GetProductsAsync(
 		[Query] int? PageIndex);
-<<<<<<< Updated upstream
+
     [Multipart]
     [Post("/products/create")]
     Task<bool> Create([FromForm] MultipartFormDataContent formData);
@@ -19,8 +19,4 @@ public interface IProductApi
 
     [Get("/products/{id}")]
     Task<ProductDto> GetProductById(Guid id);
-=======
-    [Get("/products")]
-    Task<PagedResult<ProductDto>> GetProductsWithPaging([Query] QueryInfo queryInfo);
->>>>>>> Stashed changes
 }
