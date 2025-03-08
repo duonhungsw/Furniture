@@ -1,12 +1,6 @@
 <<<<<<< Updated upstream
-
-﻿using Microsoft.AspNetCore.Mvc;
-
 ﻿using Furniture.Core;
 
-
-=======
-﻿using Furniture.Core;
 namespace Furniture.Service;
 
 public class AccountServices(
@@ -129,53 +123,16 @@ public class AccountServices(
 		_repository.Update(account);
 		return await _repository.SaveChangesAsync() ? true : false;
 	}
-<<<<<<< Updated upstream
-
-
-	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
-	{
-		var account = await _repository.GetByIdAsync(request.Id);
-		if (account == null)
-			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", request.Id));
-
-		if (request.Action == AccountAction.VerifyByPassword.ToString())
-		{
-			return await _repository.VerifyAccountByPasswordAsync(account.Id, PasswordHasher.HashPasswordPBKDF2(request.Password!));
-		}
-		if (request.Action == AccountAction.ChangeNumber.ToString())
-		{
-			account.Phone = request.NewPhoneNumber;
-			_repository.Update(account);
-			return await _repository.SaveChangesAsync() ? true : false;
-		}
-		if (request.Action == AccountAction.ChangeEmail.ToString())
-		{
-			account.Email = request.NewEmail!;
-			_repository.Update(account);
-			return await _repository.SaveChangesAsync() ? true : false;
-		}
-		if (request.Action == AccountAction.ChangePassword.ToString())
-		{
-			account.HashPassword = PasswordHasher.HashPasswordPBKDF2(request.NewPassword!);
-			_repository.Update(account);
-			return await _repository.SaveChangesAsync() ? true : false;
-		}
-		return false;
-	}
-
-=======
+	=======
 >>>>>>> Stashed changes
-    public async Task<bool> UpdateRoleAsync(AccountDto model)
+	    public async Task<bool> UpdateRoleAsync(AccountDto model)
 	{
-
         var existingAccount = await _repository.GetByIdAsync(model.Id);
         if (existingAccount == null) return false;
         existingAccount.RoleName = model.RoleName;
         _repository.Update(existingAccount);
         return await _repository.SaveChangesAsync();
     }
-<<<<<<< Updated upstream
-
-=======
+	=======
 >>>>>>> Stashed changes
 }

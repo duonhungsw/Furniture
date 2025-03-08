@@ -68,15 +68,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-<<<<<<< Updated upstream
-=======
-app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
->>>>>>> Stashed changes
-app.UseAuthorization();
+
+>>>>>>> Stashed changesapp.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",

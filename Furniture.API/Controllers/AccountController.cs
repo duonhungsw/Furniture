@@ -104,14 +104,7 @@ public class AccountController(IAccountServices _service, ITokenService _tokenSe
 	{
 		return await _service.UpdatePhoneNumberAsync(model.Id, model.Phone!);
 	}
-<<<<<<< Updated upstream
 
-	[HttpPost("action")]
-	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
-	{
-		request.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-		return await _service.HandleAccountAction(request);
-	}
 =======
 >>>>>>> Stashed changes
     [HttpPatch("role")]
@@ -119,9 +112,5 @@ public class AccountController(IAccountServices _service, ITokenService _tokenSe
     {
 		bool result = await _service.UpdateRoleAsync(model);
 		return result;
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 	}
 }
