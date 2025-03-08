@@ -1,4 +1,6 @@
-﻿namespace Furniture.Service;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Furniture.Service;
 
 public interface IAccountServices
 {
@@ -12,4 +14,5 @@ public interface IAccountServices
 	Task<List<AccountDto>> GetAccountsAsync();
 	Task<bool> UpdatePhoneNumberAsync(Guid accountId, string phoneNumber);
 	Task<Guid?> GetAccountIdAsync();
+	Task<bool> HandleAccountAction([FromBody] AccountActionDto request);
 }

@@ -7,7 +7,6 @@ public class OrderController(
 	IOrderService _service,
 	ITokenService _tokenService) : BaseApiController
 {
-	[Authorize]
 	[HttpPost("create")]
 	public async Task<bool> CreateOrder([FromBody] CreateOrderDto model)
 	{

@@ -27,8 +27,8 @@ public class SmsService : ISmsService
 			{
 				new
 				{
-					destinations = new[] { new { to = "84869098413" } },
-					from = smsRequest.From,
+					destinations = new[] { new { to = smsRequest.To } },
+					from = "447491163443",
 					text = smsRequest.Text
 				}
 			}

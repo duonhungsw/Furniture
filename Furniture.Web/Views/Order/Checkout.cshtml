@@ -1,5 +1,6 @@
-﻿@* @model IEnumerable<CartItemDto>
- *@<!doctype html>
+﻿@model CheckoutViewModel
+
+<!doctype html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -46,65 +47,99 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6 mb-5 mb-md-0">
-					<form action="Order" method="post">
+					<form asp-controller="Order" asp-action="Checkout" method="post" class="needs-validation" novalidate>
 						<h2 class="h3 mb-3 text-black">Billing Details</h2>
 						<div class="p-3 p-lg-5 border bg-white">
+							<!-- Province -->
 							<div class="form-group">
-								<label for="c_country" class="text-black">Province <span class="text-danger">*</span></label>
-								<select id="provinceDropdown" class="form-control" name="province">
-									<option value="">Province...</option>
+								<label for="provinceDropdown" class="text-black">Province <span class="text-danger">*</span></label>
+								<select id="provinceDropdown" class="form-control" required>
+									<option value="">Select a province...</option>
 								</select>
-								<input type="hidden" id="provinceName" name="provinceName" />
+								<input asp-for="CreateOrder.City" type="hidden" id="provinceName" />
+								<div class="invalid-feedback">Please select a province.</div>
+							</div>
 
-								<label for="c_country" class="text-black">District <span class="text-danger">*</span></label>
-								<select class="form-control" id="districtDropdown">
-									<option value="">District...</option>
+							<!-- District -->
+							<div class="form-group">
+								<label for="districtDropdown" class="text-black">District <span class="text-danger">*</span></label>
+								<select id="districtDropdown" class="form-control" required>
+									<option value="">Select a district...</option>
 								</select>
-								<input type="hidden" id="districtName" name="districtName" />
+								<input asp-for="CreateOrder.District" type="hidden" id="districtName" />
+								<div class="invalid-feedback">Please select a district.</div>
+							</div>
 
-								<label for="c_country" class="text-black">Ward <span class="text-danger">*</span></label>
-								<select class="form-control" id="wardDropdown">
-									<option value="">Ward...</option>
+							<!-- Ward -->
+							<div class="form-group">
+								<label for="wardDropdown" class="text-black">Ward <span class="text-danger">*</span></label>
+								<select id="wardDropdown" class="form-control" required>
+									<option value="">Select a ward...</option>
 								</select>
-								<input type="hidden" id="wardName" name="wardName" />
+								<input asp-for="CreateOrder.Town" type="hidden" id="wardName" />
+								<div class="invalid-feedback">Please select a ward.</div>
 							</div>
 
-							<div class="form-group row">
-								<div class="col-md-6">
-									<label for="c_fname" class="text-black">First Name <span class="text-danger">*</span></label>
-									<input type="text" class="form-control" id="c_fname" name="c_fname">
-								</div>
-								<div class="col-md-6">
-									<label for="c_lname" class="text-black">Last Name <span class="text-danger">*</span></label>
-									<input type="text" class="form-control" id="c_lname" name="c_lname">
-								</div>
+							<!-- Name -->
+							<div class="form-group">
+								<label for="c_fname" class="text-black">Name <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="c_fname" disabled required>
+								<div class="invalid-feedback">Name is required.</div>
 							</div>
 
-							<div class="form-group row">
-								<div class="col-md-12">
-									<label for="c_address" class="text-black">Address <span class="text-danger">*</span></label>
-									<input type="text" class="form-control" id="c_address" name="Address" placeholder="Street address">
-								</div>
+							<!-- Address -->
+							<div class="form-group">
+								<label for="c_address" class="text-black">Address <span class="text-danger">*</span></label>
+								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address" placeholder="Detail address" required>
+								<div class="invalid-feedback">Please enter your address.</div>
 							</div>
 
-							<div class="form-group row mb-5">
-								<div class="col-md-6">
-									<label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
-									<input type="text" class="form-control" id="c_email_address" name="c_email_address">
-								</div>
-								<div class="col-md-6">
-									<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-									<input type="text" class="form-control" id="c_phone" name="phone" placeholder="Phone Number">
-								</div>
+							<!-- Email -->
+							<div class="form-group">
+								<label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
+								<input type="email" class="form-control" id="c_email_address" required>
+								<div class="invalid-feedback">Please enter a valid email address.</div>
 							</div>
 
+							<!-- Phone -->
+							<div class="form-group">
+								<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
+								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone" placeholder="Phone Number" pattern="[0-9]{10,11}" required>
+								<div class="invalid-feedback">Please enter a valid phone number (10-11 digits).</div>
+							</div>
+
+							<!-- Order Notes -->
 							<div class="form-group">
 								<label for="c_order_notes" class="text-black">Order Notes</label>
-								<textarea name="Note" id="c_order_notes" cols="30" rows="5" class="form-control" placeholder="Write your notes here..."></textarea>
+								<textarea asp-for="CreateOrder.Note" id="c_order_notes" cols="30" rows="5" class="form-control" placeholder="Write your notes here..."></textarea>
 							</div>
+
 							<div class="form-group">
+								<label class="text-black">Payment Method</label>
+
+								<div class="form-check">
+									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio" value="CashOnDelivery" id="cashOnDelivery" required>
+									<label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
+								</div>
+
+								<div class="form-check">
+									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio" value="VNPAY" id="vnpay">
+									<label class="form-check-label" for="vnpay">VNPay</label>
+								</div>
+
+								<div class="form-check">
+									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio" value="QR" id="qrPayment">
+									<label class="form-check-label" for="qrPayment">QR</label>
+								</div>
+
+								<div class="invalid-feedback">Please select a payment method.</div>
+							</div>
+
+							<div class="form-group" style="margin-top:20px">
 								<button class="btn btn-black btn-lg py-3 btn-block" type="submit">Place Order</button>
 							</div>
+
+
 					</form>
 				</div>
 			</div>
@@ -133,22 +168,20 @@
 						<div class="p-3 p-lg-5 border bg-white">
 							<table class="table site-block-order-table mb-5">
 								<thead>
+
 								<th>Product</th>
 								<th>Total</th>
 								</thead>
 								<tbody>
-									@* @foreach (var item in Model)
+									@foreach (var item in Model.Orders)
 									{
 										<tr>
-											<td>@item.ProductDto.Name <strong class="mx-2">x</strong> 1</td>
-											<td>@item.Price $</td>
+											<td>@item.ProductName <strong class="mx-2">x</strong> @item.Quantity</td>
+											<td>@item.TotalMoney $</td>
 										</tr>
-									} *@
+									}
 								</tbody>
 							</table>
-
-
-
 						</div>
 					</div>
 				</div>
@@ -161,7 +194,21 @@
 	<script src="~/js/tiny-slider.js"></script>
 	<script src="~/js/custom.js"></script>
 	<script src="~/js/address.js"></script>
-
+	<script>
+		(function () {
+			'use strict';
+			var forms = document.querySelectorAll('.needs-validation');
+			Array.prototype.slice.call(forms).forEach(function (form) {
+				form.addEventListener('submit', function (event) {
+					if (!form.checkValidity()) {
+						event.preventDefault();
+						event.stopPropagation();
+					}
+					form.classList.add('was-validated');
+				}, false);
+			});
+		})();
+	</script>
 </body>
 
 </html>

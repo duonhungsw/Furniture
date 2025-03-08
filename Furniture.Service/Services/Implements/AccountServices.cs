@@ -1,4 +1,6 @@
-﻿namespace Furniture.Service;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Furniture.Service;
 
 public class AccountServices(
 	IAccountRepository _repository,
@@ -27,6 +29,11 @@ public class AccountServices(
 
 		var result = _mapper.Map<AccountDto>(account);
 		return result;
+	}
+
+	public Task<AccountDto> GetAccountByPasswordAsync(Guid id, string password)
+	{
+		throw new NotImplementedException();
 	}
 
 	public async Task<Guid?> GetAccountIdAsync()
@@ -91,7 +98,7 @@ public class AccountServices(
 
 		var oldAvatar = existingAccount.Avatar;
 		var account = _mapper.Map(model, existingAccount);
-		if(model.Avatar == null)
+		if (model.Avatar == null)
 		{
 			account.Avatar = oldAvatar;
 			account.BirthDay = model.BirthDay;
@@ -106,7 +113,6 @@ public class AccountServices(
 		_repository.Update(account);
 		return await _repository.SaveChangesAsync() ? true : false;
 	}
-
 	public async Task<bool> UpdatePhoneNumberAsync(Guid accountId, string phoneNumber)
 	{
 		var account = await _repository.GetByIdAsync(accountId);
@@ -115,5 +121,36 @@ public class AccountServices(
 		account.Phone = phoneNumber;
 		_repository.Update(account);
 		return await _repository.SaveChangesAsync() ? true : false;
+	}
+
+	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
+	{
+		var account = await _repository.GetByIdAsync(request.Id);
+		if (account == null)
+			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", request.Id));
+
+		if (request.Action == AccountAction.VerifyByPassword.ToString())
+		{
+			return await _repository.VerifyAccountByPasswordAsync(account.Id, PasswordHasher.HashPasswordPBKDF2(request.Password!));
+		}
+		if (request.Action == AccountAction.ChangeNumber.ToString())
+		{
+			account.Phone = request.NewPhoneNumber;
+			_repository.Update(account);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		if (request.Action == AccountAction.ChangeEmail.ToString())
+		{
+			account.Email = request.NewEmail!;
+			_repository.Update(account);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		if (request.Action == AccountAction.ChangePassword.ToString())
+		{
+			account.HashPassword = PasswordHasher.HashPasswordPBKDF2(request.NewPassword!);
+			_repository.Update(account);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		return false;
 	}
 }

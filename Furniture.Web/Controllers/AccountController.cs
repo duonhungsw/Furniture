@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Furniture.Web.Controllers;
 
@@ -192,6 +193,8 @@ public class Account(IAccountApi _accountApi) : Controller
 	{
 		var otpSession = HttpContext.Session.GetString("OtpCode");
 
+		//model.Session is OTP was send from form
+
 		if (otpSession != model.session)
 		{
 			TempData["Message"] = "Verification code is incorrect!";
@@ -207,13 +210,21 @@ public class Account(IAccountApi _accountApi) : Controller
 
 		var account = response.Content;
 
-		model.Id = account.Id; 
-		var result = await _accountApi.UpdatePhoneNumber(model);
+		var accountAction = new AccountActionDto
+		{
+			Id = account.Id,
+			NewPhoneNumber = model.Phone,
+			Action = AccountAction.ChangeNumber.ToString()
+		};
+		var result = await _accountApi.HandleAccountAction(accountAction);
 
 		if (result)
 		{
 			TempData["Message"] = "Phone number updated successfully!";
 			TempData["MessageType"] = "success";
+
+			HttpContext.Session.Remove("OtpCode");
+			HttpContext.Session.Remove("OtpExpiry");
 		}
 		else
 		{
@@ -223,7 +234,43 @@ public class Account(IAccountApi _accountApi) : Controller
 
 		return RedirectToAction("ChangePhoneNumber");
 	}
+	[HttpGet]
+	public IActionResult VerifyByPassword()
+	{
+		return View();
+	}
 
+	[HttpPost]
+	public async Task<IActionResult> VerifyByPassword([FromForm] AccountActionDto request)
+	{
+		request.Action = AccountAction.VerifyByPassword.ToString();
+		var response = await _accountApi.HandleAccountAction(request);
+		if (!response)
+		{
+			TempData["ErrorMessage"] = "Password verification failed. Please try again.";
+			return View();
+		}
+		return RedirectToAction("ChangePassword");
+	}
+	[HttpGet]
+	public IActionResult ChangePassword()
+	{
+		return View();
+	}
+	[HttpPost]
+	public async Task<IActionResult> ChangePassword([FromForm] AccountActionDto request)
+	{
+		request.Action = AccountAction.ChangePassword.ToString();
+		var response = await _accountApi.HandleAccountAction(request);
+		if (!response)
+		{
+			TempData["ErrorMessage"] = "Password change failed. Please try again.";
+			return View();
+		}
+		TempData["SuccessMessage"] = "Password changed successfully!";
+		TempData.Keep("SuccessMessage");
+		return RedirectToAction("ViewProfile");
+	}
 	public IActionResult Logout()
 	{
 		//accountApi.Logout();
