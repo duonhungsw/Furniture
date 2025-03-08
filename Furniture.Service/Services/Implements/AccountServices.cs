@@ -1,12 +1,6 @@
 
-
-﻿using Microsoft.AspNetCore.Mvc;
-
 ﻿using Furniture.Core;
-
-
-=======
-﻿using Furniture.Core;
+using Microsoft.AspNetCore.Mvc;
 namespace Furniture.Service;
 
 public class AccountServices(
@@ -129,9 +123,6 @@ public class AccountServices(
 		_repository.Update(account);
 		return await _repository.SaveChangesAsync() ? true : false;
 	}
-<<<<<<< Updated upstream
-
-
 	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
 	{
 		var account = await _repository.GetByIdAsync(request.Id);
@@ -162,9 +153,6 @@ public class AccountServices(
 		}
 		return false;
 	}
-
-=======
->>>>>>> Stashed changes
     public async Task<bool> UpdateRoleAsync(AccountDto model)
 	{
         var existingAccount = await _repository.GetByIdAsync(model.Id);
