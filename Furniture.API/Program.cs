@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
@@ -17,8 +18,10 @@ builder.Services.AddDistributedMemoryCache();
 
 // Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("Database"))
-);
+{
+	options.UseSqlServer(builder.Configuration.GetConnectionString("Database"));
+	options.AddInterceptors(new AuditableEntityInterceptor());
+});
 
 // Configure Azure Blob Storage
 builder.Services.AddSingleton<IFileStorageService>(provider =>
