@@ -8,6 +8,7 @@ public class AdminController(IProductApi _productApi) : Controller
     }
     public async Task<IActionResult> ProductList(int pageIndex = 1, int pageSize = 5)
     {
+<<<<<<< Updated upstream
         var result = await _productApi.GetProductsAsync(pageIndex);
 
         ViewBag.PageIndex = pageIndex;
@@ -107,5 +108,11 @@ public class AdminController(IProductApi _productApi) : Controller
 
         ModelState.AddModelError("", "Delete Failed.");
         return RedirectToAction("ProductList");
+=======
+        var queryInfo = new QueryInfo { PageIndex = pageIndex, PageSize = pageSize };
+        var pagedResult = await _productApi.GetProductsWithPaging(queryInfo);
+
+        return View(pagedResult.Items);
+>>>>>>> Stashed changes
     }
 }

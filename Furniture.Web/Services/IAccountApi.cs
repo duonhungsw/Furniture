@@ -34,6 +34,7 @@ public interface IAccountApi
 
     [Patch("/accounts/changePhoneNumber")]
     Task<bool> UpdatePhoneNumber([Body] ChangePhoneNumberDto model);
+<<<<<<< Updated upstream
 
 	[Get("/accounts/email")]
 	Task<ApiResponse<Account>?> GetAccountByEmailAsync(string email);
@@ -41,9 +42,14 @@ public interface IAccountApi
     [Post("/accounts/action")]
     Task<bool> HandleAccountAction([FromBody] AccountActionDto request);
 
+=======
+>>>>>>> Stashed changes
     [Get("/accounts")]
     Task<PagedResult<AccountDto>> GetAccounts([Query] QueryInfo queryInfo);
     [Patch("/accounts/role")]
     Task<bool> UpdateRole([Body] AccountDto model);
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 }
