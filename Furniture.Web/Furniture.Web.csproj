@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\templateAdmin\**" />
-    <Content Remove="wwwroot\templateAdmin\**" />
-    <EmbeddedResource Remove="wwwroot\templateAdmin\**" />
-    <None Remove="wwwroot\templateAdmin\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="wwwroot\js\validation.js" />
   </ItemGroup>
 
