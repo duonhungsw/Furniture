@@ -40,10 +40,10 @@ public interface IAccountApi
 
     [Post("/accounts/action")]
     Task<bool> HandleAccountAction([FromBody] AccountActionDto request);
-=======
+
     [Get("/accounts")]
     Task<PagedResult<AccountDto>> GetAccounts([Query] QueryInfo queryInfo);
     [Patch("/accounts/role")]
     Task<bool> UpdateRole([Body] AccountDto model);
->>>>>>> Stashed changes
+
 }
