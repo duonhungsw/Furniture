@@ -69,7 +69,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
->>>>>>> Stashed changesapp.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",

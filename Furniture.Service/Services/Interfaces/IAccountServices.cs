@@ -14,7 +14,7 @@ public interface IAccountServices
 	Task<List<AccountDto>> GetAccountsAsync();
 	Task<bool> UpdatePhoneNumberAsync(Guid accountId, string phoneNumber);
 	Task<Guid?> GetAccountIdAsync();
-=======	
+	Task<bool> HandleAccountAction([FromBody] AccountActionDto request);
 	Task<bool> UpdateRoleAsync(AccountDto model);
-	>>>>>>> Stashed changes
+
 }

@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 namespace Furniture.Web.Controllers;
 
 
@@ -192,7 +192,7 @@ public class Account(IAccountApi _accountApi) : Controller
     {
         var otpSession = HttpContext.Session.GetString("OtpCode");
 
-        <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         //model.Session is OTP was send from form
 
         if (otpSession != model.session)
@@ -271,7 +271,7 @@ public class Account(IAccountApi _accountApi) : Controller
         TempData.Keep("SuccessMessage");
         return RedirectToAction("ViewProfile");
     }
-    >>>>>>> Stashed changes
+
     public IActionResult Logout()
     {
         //accountApi.Logout();
@@ -294,12 +294,12 @@ public class Account(IAccountApi _accountApi) : Controller
         return View(product);
     }
     [HttpPost]
-    <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     public async Task<IActionResult> UpdateRole([FromForm] AccountDto model)
     {
         var result = await _accountApi.UpdateRole(model);
         return RedirectToAction("GetAccounts");
-
+        
     }
-    <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 }
