@@ -5,6 +5,10 @@
 ﻿using Furniture.Core;
 
 
+=======
+﻿using Furniture.Core;
+
+>>>>>>> Stashed changes
 namespace Furniture.Service;
 
 public class AccountServices(
@@ -127,6 +131,7 @@ public class AccountServices(
 		_repository.Update(account);
 		return await _repository.SaveChangesAsync() ? true : false;
 	}
+<<<<<<< Updated upstream
 
 
 	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
@@ -160,6 +165,8 @@ public class AccountServices(
 		return false;
 	}
 
+=======
+>>>>>>> Stashed changes
     public async Task<bool> UpdateRoleAsync(AccountDto model)
 	{
         var existingAccount = await _repository.GetByIdAsync(model.Id);

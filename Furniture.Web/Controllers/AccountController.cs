@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 namespace Furniture.Web.Controllers;
+=======
+﻿namespace Furniture.Web.Controllers;
+>>>>>>> Stashed changes
 
 
 public class Account(IAccountApi _accountApi) : Controller
@@ -270,6 +274,40 @@ public class Account(IAccountApi _accountApi) : Controller
         TempData.Keep("SuccessMessage");
         return RedirectToAction("ViewProfile");
     }
+=======
+        if (otpSession != model.session)
+        {
+            TempData["Message"] = "Verification code is incorrect!";
+            TempData["MessageType"] = "danger";
+            return RedirectToAction("ChangePhoneNumber");
+        }
+        var response = await _accountApi.GetUserInfoAsync();
+
+        if (response == null || !response.IsSuccessStatusCode || response.Content == null)
+        {
+            return RedirectToAction("Login");
+        }
+
+        var account = response.Content;
+
+        model.Id = account.Id;
+        var result = await _accountApi.UpdatePhoneNumber(model);
+
+        if (result)
+        {
+            TempData["Message"] = "Phone number updated successfully!";
+            TempData["MessageType"] = "success";
+        }
+        else
+        {
+            TempData["Message"] = "Failed to update phone number.";
+            TempData["MessageType"] = "danger";
+        }
+
+        return RedirectToAction("ChangePhoneNumber");
+    }
+
+>>>>>>> Stashed changes
     public IActionResult Logout()
     {
         //accountApi.Logout();
@@ -292,12 +330,20 @@ public class Account(IAccountApi _accountApi) : Controller
         return View(product);
     }
     [HttpPost]
+<<<<<<< Updated upstream
     public async Task<IActionResult> UpdateRole([FromForm] AccountDto model)
+=======
+    public async Task<IActionResult> UpdateRole([FromForm]AccountDto model)
+>>>>>>> Stashed changes
     {
         var result = await _accountApi.UpdateRole(model);
         return RedirectToAction("GetAccounts");
 
     }
+<<<<<<< Updated upstream
 }
 
 
+=======
+}
+>>>>>>> Stashed changes
