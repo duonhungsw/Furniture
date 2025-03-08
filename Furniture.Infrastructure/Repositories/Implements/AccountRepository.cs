@@ -1,4 +1,5 @@
 ﻿
+
 namespace Furniture.Infrastructure;
 
 public class AccountRepository : GenericRepository<Account>, IAccountRepository
@@ -35,5 +36,12 @@ public class AccountRepository : GenericRepository<Account>, IAccountRepository
 					(x.Name.Equals(account!.Name) ||
 					x.Email.Equals(account.Email)) &&
 					x.HashPassword == account.HashPassword);
+	}
+
+	public async Task<bool> VerifyAccountByPasswordAsync(Guid id, string password)
+	{
+		return await appDbContext.Accounts
+			.AsNoTracking()
+			.AnyAsync(x => x.Id == id && x.HashPassword.Equals(password));
 	}
 }

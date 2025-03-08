@@ -49,6 +49,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 							  {
 								  ProductId = cartItem.ProductId,
 								  ProductName = cartItem.Product == null ? null : cartItem.Product.Name,
+								  Quantity = cartItem.Quantity,
 								  Price = cartItem.Price,
 								  TotalMoney = cartItem.Price * cartItem.Quantity
 							  }).ToListAsync();

@@ -64,6 +64,13 @@
             <div class="col-md-9">
                 <div class="profile-content">
                     <h4>My Profile</h4>
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
                     <form asp-action="UpdateProfile" enctype="multipart/form-data">
                     <div class="row">
                                 <div class="col-md-8">
