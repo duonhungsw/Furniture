@@ -1,13 +1,10 @@
 ﻿@model List<Furniture.Core.ProductDto>
-
 @{
     ViewData["Title"] = "List Product";
     var pageIndex = ViewBag.PageIndex ?? 1;
     var totalPages = ViewBag.TotalPages ?? 1;
 }
-
 <h2 class="text-center mt-4">List Product</h2>
-
 <div class="d-flex justify-content-between align-items-center mb-3">
     <a class="btn btn-secondary" asp-controller="Admin" asp-action="Index">
         <i class="fas fa-arrow-left"></i> Home Admin
@@ -16,7 +13,6 @@
         <i class="fas fa-plus"></i> Add New Product
     </a>
 </div>
-
 <table class="table table-hover shadow-sm rounded text-center">
     <thead class="bg-dark text-white">
         <tr>
