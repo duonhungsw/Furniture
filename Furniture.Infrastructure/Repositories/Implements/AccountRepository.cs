@@ -20,7 +20,6 @@ public class AccountRepository : GenericRepository<Account>, IAccountRepository
 				Avatar = account.Avatar,
 				BirthDay = account.BirthDay,
 				Phone = account.Phone,
-				RoleName = account.RoleName
 			})
 			.ToListAsync();
 	}
