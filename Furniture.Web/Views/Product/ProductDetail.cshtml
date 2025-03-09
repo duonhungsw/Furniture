@@ -1,4 +1,4 @@
-﻿@* @model ProductDto *@
+﻿@model ProductDto
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,47 +20,6 @@
 </head>
 
 <body>
-	<!-- Start Header/Navigation -->
-	<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
-
-		<div class="container">
-			<a class="navbar-brand" href="index.html">Furni<span>.</span></a>
-
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-
-			<div class="collapse navbar-collapse" id="navbarsFurni">
-				<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-					<li class="nav-item ">
-						<a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-					</li>
-					<li class="active"><a class="nav-link" asp-controller="Product" asp-action="ProductIndex">Shop</a></li>
-					<li><a class="nav-link" href="about.html">About us</a></li>
-					<li><a class="nav-link" href="services.html">Services</a></li>
-					<li><a class="nav-link" href="blog.html">Blog</a></li>
-					<li><a class="nav-link" href="contact.html">Contact us</a></li>
-				</ul>
-
-				<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<img src="~/images/user.svg">
-						</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a></li>
-							<li><a class="dropdown-item" href="#">LoginOut</a></li>
-							<li><hr class="dropdown-divider"></li>
-							<li><a class="dropdown-item" href="#">Something else here</a></li>
-						</ul>
-					</li>
-					<li><a class="nav-link" asp-controller="Cart" asp-action="ShoppingCart"><img src="~/images/cart.svg"></a></li>
-				</ul>
-			</div>
-		</div>
-
-	</nav>
-	<!-- End Header/Navigation -->
 	<!-- Start Hero Section -->
 	<div class="hero">
 		<div class="container">
@@ -78,7 +37,7 @@
 	<!-- End Hero Section -->
 	<div class="product-detail-container">
 		<div class="product-image">
-			<img src="~/@Model.PictureUrl" alt="Product Image">
+			<img src="@Model.PictureUrl.Split(',')[0]" alt="Product Image">
 		</div>
 		<div class="product-info">
 			<h1 class="product-title">@Model.Name</h1>
@@ -92,9 +51,10 @@
 			</div>
 			<button class="add-to-cart-btn">Add to Cart</button>
 		</div>
+	</div>
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-		<script>
+		@* <script>
 			$(document).ready(function () {
 				$(".add-to-cart-btn").click(function () {
 					var quantity = $("#quantity").val(); // Lấy số lượng
@@ -127,7 +87,7 @@
 					return false; // Ngăn form submit lại trang
 				});
 			});
-		</script>
+		</script> *@
 </body>
 
 

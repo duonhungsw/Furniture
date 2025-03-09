@@ -6,9 +6,10 @@ public class ProductController(IProductApi _productApi) : Controller
 	{
 		return View();
 	}
-	public IActionResult ProductDetail()
+	public async Task<IActionResult> ProductDetail(Guid id)
 	{
-		return View();
+		var product = await _productApi.GetProductByIdAsync(id);
+		return View(product);
 	}
     public async Task<IActionResult> ProductHome(int pageIndex = 1)
     {
