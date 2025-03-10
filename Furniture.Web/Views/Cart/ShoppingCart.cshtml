@@ -26,7 +26,9 @@
 								@if (Model == null || !Model.Any())
 								{
 									<tr>
-										<td colspan="7"><p>Không có sản phẩm trong giỏ hàng</p></td>
+										<td colspan="7">
+											<p>Không có sản phẩm trong giỏ hàng</p>
+										</td>
 									</tr>
 								}
 								else
@@ -35,7 +37,8 @@
 									{
 										<tr id="cart-item-@items.Id">
 											<td>
-												<input type="checkbox" class="cart-item-checkbox" data-cartitem-id="@items.Id" @(items.Status ? "checked" : "") />
+												<input type="checkbox" class="cart-item-checkbox" data-cartitem-id="@items.Id"
+													@(items.Status ? "checked" : "") />
 											</td>
 
 
@@ -47,9 +50,10 @@
 											</td>
 											<td class="price" data-price="@items.ProductPrice">@items.ProductPrice $</td>
 											<td>
-												<input type="number" name="Quantities" value="@items.Quatity" min="1" class="form-control quantity"
-													   data-cartItem-id="@items.Id" style="width: 80px; display: inline-block;"
-													   onchange="updateCartItemQuantity('@items.Id')" />
+												<input type="number" name="Quantities" value="@items.Quatity" min="1"
+													class="form-control quantity" data-cartItem-id="@items.Id"
+													style="width: 80px; display: inline-block;"
+													onchange="updateCartItemQuantity('@items.Id')" />
 											</td>
 
 											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney</span> $</td>
@@ -57,8 +61,10 @@
 
 
 
-											<td><a href="#" data-cartItem-id="@items.Id" onclick="deleteCartItem('@items.Id', event)" class="btn btn-black btn-sm">X</a></td>
-											
+											<td><a href="#" data-cartItem-id="@items.Id"
+													onclick="deleteCartItem('@items.Id', event)"
+													class="btn btn-black btn-sm">X</a></td>
+
 
 
 										</tr>
@@ -78,7 +84,8 @@
 							<button class="btn btn-black btn-sm btn-block">Update Cart</button>
 						</div>
 						<div class="col-md-6">
-							<button class="btn btn-outline-black btn-sm btn-block" asp-controller="Product" asp-action="ProductIndex">Continue Shopping</button>
+							<button class="btn btn-outline-black btn-sm btn-block" asp-controller="Product"
+								asp-action="ProductIndex">Continue Shopping</button>
 						</div>
 					</div>
 					<div class="row">
@@ -122,7 +129,8 @@
 							<div class="row">
 								<form action="/order/checkout" method="get">
 									<div class="col-md-12">
-										<button type="submit" class="btn btn-black btn-lg py-3 btn-block">Proceed To Checkout</button>
+										<button type="submit" class="btn btn-black btn-lg py-3 btn-block">Proceed To
+											Checkout</button>
 									</div>
 								</form>
 							</div>
@@ -140,7 +148,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script>
 
-			function updateCartItemQuantity(cartItemId, quantity) {
+		function updateCartItemQuantity(cartItemId, quantity) {
 			$.ajax({
 				url: "/Cart/UpdateCartItemByQuantity",
 				type: "PATCH",
@@ -163,7 +171,7 @@
 			updateCartItemQuantity(cartItemId, quantity);
 		});
 
-				function updateProductTotalPrice(cartItemId) {
+		function updateProductTotalPrice(cartItemId) {
 			let input = document.querySelector(`[data-cartItem-id="${cartItemId}"]`);
 			let quantity = parseInt(input.value) || 0;
 			let price = parseFloat(input.closest("tr").querySelector(".price").dataset.price);
@@ -186,7 +194,7 @@
 			$(`#productTotalPrice-${cartItemId}`).text(totalPrice.toLocaleString("vi-VN") + " $");
 		});
 
-				$(document).on("change", ".cart-item-checkbox", function () {
+		$(document).on("change", ".cart-item-checkbox", function () {
 			event.preventDefault();
 
 			let cartItemId = $(this).data("cartitem-id");
@@ -205,7 +213,7 @@
 				data: JSON.stringify({ status: isChecked }), // Gửi trạng thái checked
 				success: function (response) {
 					console.log("Response:", response);
-				
+
 				},
 				error: function (xhr, status, error) {
 					console.error("Lỗi:", xhr.responseText);
@@ -215,37 +223,28 @@
 		}
 
 		function deleteCartItem(cartItemId) {
-	$.ajax({
-	url: `/Cart/DeleteCartItem/${cartItemId}`, // Sử dụng template string
-	type: "DELETE",
-	success: function (response) {
-		console.log("Xóa thành công!");
-		$("#cart-item-" + cartItemId).fadeOut(500, function () {
-			$(this).remove();
+			$.ajax({
+				url: `/Cart/DeleteCartItem/${cartItemId}`, // Sử dụng template string
+				type: "DELETE",
+				success: function (response) {
+					console.log("Xóa thành công!");
+					$("#cart-item-" + cartItemId).fadeOut(500, function () {
+						$(this).remove();
+					});
+				},
+				error: function (xhr, status, error) {
+					console.error("Lỗi xóa sản phẩm:", xhr.responseText);
+				}
+			});
+
+		}
+
+		// Bắt sự kiện khi bấm nút xóa
+		$(document).on("click", ".btn-delete-cart-item", function (event) {
+			event.preventDefault();
+			let cartItemId = $(this).data("cartitem-id");
+			deleteCartItem(cartItemId);
 		});
-	},
-	error: function (xhr, status, error) {
-		console.error("Lỗi xóa sản phẩm:", xhr.responseText);
-	}
-});
-
-}
-
-// Bắt sự kiện khi bấm nút xóa
-$(document).on("click", ".btn-delete-cart-item", function (event) {
-	event.preventDefault();
-	let cartItemId = $(this).data("cartitem-id");
-	deleteCartItem(cartItemId);
-});
-
-
-
-
-				
-
-
-
-
 	</script>
 </body>
 

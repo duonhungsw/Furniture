@@ -56,8 +56,8 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 	}
 	public async Task DeleteCartItemAsync(Guid cartItemID)
 	{
-        var cartItem = await appDbContext.CartItems.FirstOrDefaultAsync(c => c.Id.Equals(cartItemID));
-        if (cartItem != null)
+		var cartItem = await appDbContext.CartItems.FirstOrDefaultAsync(c => c.Id.Equals(cartItemID));
+		if (cartItem != null)
 		{
 			appDbContext.CartItems.Remove(cartItem);
 			appDbContext.SaveChanges();
@@ -71,10 +71,10 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 		{
 			if (cartItem.Id.Equals(cartItemID))
 			{
-                cartItem.Quatity = quantity;
-                cartItem.TotalMoney = quantity * cartItem.ProductPrice;
-                await appDbContext.SaveChangesAsync();
-                return true;
+				cartItem.Quatity = quantity;
+				cartItem.TotalMoney = quantity * cartItem.ProductPrice;
+				await appDbContext.SaveChangesAsync();
+				return true;
 			}
 		}
 		return false;
@@ -126,7 +126,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 	{
 		return await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
 	}
-   
+
 
 
 }
