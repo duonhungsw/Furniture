@@ -4,12 +4,9 @@ public class OrderDto
 {
 	public Guid Id { get; set; }
 	public Guid AccountId { get; set; }
-	public AccountDto? Accounnt { get; set; }
-	public string? Country { get; set; }
-	public string? City { get; set; }
-	public string? District { get; set; }
-	public string? Town { get; set; }
-	public string? Detail { get; set; }
+	public AccountDto? Account { get; set; }
+	public string? Address { get; set; }
+	public string? CreateAt { get; set; }
 	public string? Phone { get; set; }
 	public string? Note { get; set; }
 	public decimal TotalMoney { get; set; }

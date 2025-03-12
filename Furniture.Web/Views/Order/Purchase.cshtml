@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model PurchaseViewModel
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,148 +10,157 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
         }
 
         .profile-sidebar {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
         }
 
         .profile-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            position: relative;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        position: relative;
         }
 
         .nav-link {
-            color: #333;
-            transition: background 0.3s;
+        color: #333;
+        transition: background 0.3s;
         }
 
-            .nav-link.active, .nav-link:hover {
-                font-weight: bold;
-                color: #3B5D50;
-                background-color: #ffeae5;
-                border-radius: 5px;
-            }
+        .nav-link.active, .nav-link:hover {
+        font-weight: bold;
+        color: #3B5D50;
+        background-color: #ffeae5;
+        border-radius: 5px;
+        }
 
 
         .order-container {
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
         }
 
         .order-nav {
-            display: flex;
-            justify-content: space-around;
-            background: #f8f8f8;
-            padding: 10px;
-            border-bottom: 2px solid #ddd;
+        display: flex;
+        justify-content: space-around;
+        background: #f8f8f8;
+        padding: 10px;
+        border-bottom: 2px solid #ddd;
         }
 
-            .order-nav a {
-                text-decoration: none;
-                color: black;
-                padding: 10px;
-            }
+        .order-nav a {
+        text-decoration: none;
+        color: black;
+        padding: 10px;
+        }
 
-                .order-nav a.active {
-                    color: #3B5D50;
-                    font-weight: bold;
-                }
+        .order-nav a.active {
+        color: #3B5D50;
+        font-weight: bold;
+        }
 
         .search-bar {
-            margin: 20px 0;
-            text-align: center;
+        margin: 20px 0;
+        text-align: center;
         }
 
-            .search-bar input {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-            }
+        .search-bar input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        }
 
         .order-list {
-            margin-top: 20px;
+        margin-top: 20px;
         }
 
         .order-item {
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            background: #fff;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        background: #fff;
+         flex-direction: column;
         }
 
         .order-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
         }
 
         .product {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
         }
 
-            .product img {
-                width: 60px;
-                height: 60px;
-                border-radius: 5px;
-                margin-right: 10px;
-            }
-
+        .product img {
+        width: 60px;
+        height: 60px;
+                gap: 15px;
+        border-radius: 5px;
+        margin-right: 10px;
+        }
+        .product-image {
+            width: 80px; /* Giảm kích thước ảnh */
+            height: 80px;
+            object-fit: contain;
+            margin-right: 15px;
+            border-radius: 5px;
+}
         .product-info {
-            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-name {
-            font-weight: bold;
+        font-weight: bold;
         }
 
         .order-footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
         }
 
         .order-total {
-            font-size: 16px;
-            font-weight: bold;
+        font-size: 16px;
+        font-weight: bold;
         }
 
         .rate-btn,
         .refund-btn {
-            background-color: #3B5D50;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        background-color: #3B5D50;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
         }
 
-            .rate-btn:hover,
-            .refund-btn:hover {
-                opacity: 0.8;
-            }
+        .rate-btn:hover,
+        .refund-btn:hover {
+        opacity: 0.8;
+        }
 
         .no-orders {
-            text-align: center;
-            font-size: 18px;
-            color: #888;
-            margin-top: 50px;
+        text-align: center;
+        font-size: 18px;
+        color: #888;
+        margin-top: 50px;
         }
     </style>
 </head>
@@ -163,45 +173,64 @@
 
             <!-- Nội dung chính -->
             <div class="col-md-9">
-    <div class="order-container">
-        <div class="order-nav">
-            <a href="#" class="nav-link active" onclick="setActive(this)">All</a>
-            <a href="#" class="nav-link" onclick="setActive(this)">To Pay</a>
-            <a href="#" class="nav-link" onclick="setActive(this)">To Ship</a>
-            <a href="#" class="nav-link" onclick="setActive(this)">To Receive</a>
-            <a href="#" class="nav-link" onclick="setActive(this)">Completed</a>
-            <a href="#" class="nav-link" onclick="setActive(this)">Cancelled</a>
-            <a href="#" class="nav-link" onclick="setActive(this)">Return Refund</a>
-        </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search by Seller Name, Order ID or Product name">
-        </div>
-        <div class="order-list">
-            <div class="order-item">
-                <div class="order-header">
-                    <span class="shop-name">Shop ABC</span>
-                    <span class="order-status">Completed</span>
-                </div>
-                <div class="product">
-                    <img src="https://via.placeholder.com/60" alt="Product">
-                    <div class="product-info">
-                        <p class="product-name">Product 1</p>
-                        <p class="product-variation">Variation: Red</p>
-                        <p class="product-quantity">x 2</p>
-                        <p class="product-price">$20.00</p>
+                <div class="order-container">
+                    <div class="order-nav">
+                        <a href="@Url.Action("Purchase", "Order")" class="nav-link @(Model.SelectedStatusId == null ? "active" : "")">
+                            All
+                        </a>
+                        @foreach (var status in Model.Statuses)
+                        {
+                            <a href="@Url.Action("Purchase", "Order", new { statusId = status.Id })"
+                            class="nav-link @(Model.SelectedStatusId == status.Id ? "active" : "")">
+                                @status.Name
+                            </a>
+                        }
                     </div>
+
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search by Seller Name, Order ID or Product name">
+                    </div>
+                    <div class="order-list">
+                        @if (Model.Orders == null || !Model.Orders.Any())
+                        {
+                            <div class="no-orders">
+                                <p>No order yet</p>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var order in Model.Orders)
+                            {
+                                <div class="order-item">
+                                    <div class="order-header">
+                                        <span class="shop-name">Furniture Shop</span>
+                                        <span class="order-status">
+                                            @(order.Status != null ? order.Status.Name : "Unknown")
+                                        </span>
+                                    </div>
+                                    <div class="product">
+                                        @foreach (var product in order.OrderItems)
+                                        {
+                                            <img src="@product.Product!.PictureUrl!.Split(',')[0]" alt="Product" class="product-image">
+                                            <div class="product-info">
+                                                <p class="product-name">@product.Product.Name</p>
+                                                <p class="product-variation">Payment: @order.PaymentMethod</p>
+                                                <p class="product-quantity">Quantity: @product.Quantity</p>
+                                                <p class="product-price">$@product.Price</p>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="order-footer">
+                                        <p class="order-total">Order Total: <strong>$@order.TotalMoney</strong></p>
+                                        @* <button class="rate-btn">Rate</button>
+                                         <button class="refund-btn">Request Refund</button> *@
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
                 </div>
-                <div class="order-footer">
-                    <p class="order-total">Order Total: <strong>$40.00</strong></p>
-                    <button class="rate-btn">Rate</button>
-                    <button class="refund-btn">Request Refund</button>
-                </div>
-            </div>
-            <div class="no-orders">
-                <p>NO order yet</p>
-            </div>
-        </div>
-    </div>
             </div>
         </div>
     </div>
