@@ -5,4 +5,5 @@ global using Furniture.Common;
 global using Furniture.Core;
 global using Furniture.Infrastructure;
 global using Furniture.Service;
+global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;

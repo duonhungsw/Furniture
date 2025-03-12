@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Furniture.API.Controllers;
 
@@ -13,11 +13,11 @@ public class OrderController(
 		var result = await _service.CreateOrderAsync(model);
 		return result;
 	}
-	[HttpGet("paging")]
-	public async Task<ActionResult<PagedResult<OrderItemDto>>> GetOrdersWithPaging([FromQuery] QueryInfo queryInfo)
+	[HttpGet("{accountId}/purchase")]
+	public async Task<List<OrderDto>> GetPurchaseOfAccounts([FromRoute] Guid accountId, [FromQuery] Guid statusId, [FromQuery] QueryInfo queryInfo)
 	{
-		var results = await _service.GetOrdersAsync();
-		return CreatePagedResult(results, queryInfo);
+		var results = await _service.GetOrdersAsync(accountId, queryInfo, statusId);
+		return results;
 	}
 	[HttpPatch("{orderId}/change-status")]
 	public async Task<bool> ChangeStatus([FromRoute] Guid orderId)

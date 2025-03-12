@@ -6,4 +6,6 @@ public interface IOrderApi
 	Task<List<OrderCheckout>> GetOrdersForAccount(Guid id);
 	[Post("/orders/create")]
 	Task<bool> CreateOrder([Body] CreateOrderDto model);
+	[Get("/orders/{accountId}/purchase")]
+	Task<List<OrderDto>> GetPurchases(Guid accountId, [Query] Guid? statusId, [Query] QueryInfo queryInfo);
 }

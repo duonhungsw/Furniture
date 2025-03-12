@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Furniture.API.Controllers;
+﻿namespace Furniture.API.Controllers;
 
 [Route("/[controller]")]
 [ApiController]

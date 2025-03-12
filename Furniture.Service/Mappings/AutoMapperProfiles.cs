@@ -9,6 +9,7 @@ public class AutoMapperProfiles
 			cfg.AddProfile<AccountMappingProfile>();
 			cfg.AddProfile<ProductMappingProfile>();
 			cfg.AddProfile<CartItemMappingProfile>();
+			cfg.AddProfile<StatusMappingProfile>();
 		});
 
 		return mapperConfiguration.CreateMapper();
