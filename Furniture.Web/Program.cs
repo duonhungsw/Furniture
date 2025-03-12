@@ -44,6 +44,11 @@ builder.Services.AddRefitClient<IOrderApi>()
 	{
 		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
 	});
+builder.Services.AddRefitClient<ICartApi>()
+    .ConfigureHttpClient(c =>
+    {	
+        c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
+    });
 
 builder.Services.AddSession(options =>
 {

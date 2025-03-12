@@ -2,6 +2,6 @@
 
 public class CartUpdateQuantityDto
 {
-    public Guid CartId { get; set; }
+    public Guid CartItemId { get; set; }
     public int Quantity {  get; set; }
 }

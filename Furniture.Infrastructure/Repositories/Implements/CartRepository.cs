@@ -26,108 +26,19 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 										  Id = cartItem.Id,
 										  ProductId = product.Id,
 										  ProductName = product.Name,
-										  Quatity = cartItem.Quantity,
-										  ProductPrice = cartItem.Price,
+										  Quantity = cartItem.Quantity,
+										  Price = cartItem.Price,
 										  UrlImage = product.PictureUrl,
 										  Status = cartItem.Status,
+										  TotalMoney = cartItem.TotalMoney,
+										  CartId = product.Id,
+										  QuantityInStock = product.QuantityInStock
 									  }).ToListAsync();
 
 			return cartProducts;
 		}
 	}
-	public async Task<bool> DeleteCartItemAsync(Guid accountId, Guid cartItemID)
-	{
-		var listCartItems = await GetCartProductsAsync(accountId);
-		foreach (var cartItem in listCartItems)
-		{
-			if (cartItem.Id.Equals(cartItemID))
-			{
-				await DeleteCartItemAsync(cartItemID);
-				return true;
-#pragma warning disable CS0162 // Unreachable code detected
-				break;
-#pragma warning restore CS0162 // Unreachable code detected
-			}
-		}
-		return false;
-	}
-	public async Task DeleteCartItemAsync(Guid cartItemID)
-	{
-		var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
-		if (cartItem != null)
-		{
-			appDbContext.CartItems.Remove(cartItem);
-			appDbContext.SaveChanges();
-			await appDbContext.SaveChangesAsync();
-		}
-	}
-	public async Task UpdateCartItemByQuantityAsync(Guid cartItemID, int quantity)
-	{
-		var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
-		if (cartItem != null)
-		{
-			cartItem.Quantity = quantity;
-			await appDbContext.SaveChangesAsync();
-		}
-	}
-	public async Task<bool> UpdateCartItemByQuantityAsync(Guid accountId, Guid cartItemID, int quantity)
-	{
-		var listCartItems = await GetCartProductsAsync(accountId);
-		foreach (var cartItem in listCartItems)
-		{
-			if (cartItem.Id.Equals(cartItemID))
-			{
-				await UpdateCartItemByQuantityAsync(cartItemID, quantity);
-				return true;
-#pragma warning disable CS0162 // Unreachable code detected
-				break;
-#pragma warning restore CS0162 // Unreachable code detected
-			}
-			else
-			{
-				return false;
-			}
-		}
-		return false;
-	}
-	public async Task UpdateCartItemByStatusAsync(Guid cartItemID)
-	{
-		var cartItem = await appDbContext.CartItems.FindAsync(cartItemID);
-		if (cartItem != null)
-		{
-			if (cartItem.Status)
-			{
-				cartItem.Status = false;
-				await appDbContext.SaveChangesAsync();
-			}
-			else if (!cartItem.Status)
-			{
-				cartItem.Status = true;
-				await appDbContext.SaveChangesAsync();
-			}
 
-		}
-	}
-	public async Task<bool> UpdateCartItemByStatusAsync(Guid accountId, Guid cartItemID)
-	{
-		var listCartItems = await GetCartProductsAsync(accountId);
-		foreach (var cartItem in listCartItems)
-		{
-			if (cartItem.Id.Equals(cartItemID))
-			{
-				await UpdateCartItemByStatusAsync(cartItemID);
-				return true;
-#pragma warning disable CS0162 // Unreachable code detected
-				break;
-#pragma warning restore CS0162 // Unreachable code detected
-			}
-			else
-			{
-				return false;
-			}
-		}
-		return false;
-	}
 	public async Task AddCartItemAsync(CartItem cartItem)
 	{
 		appDbContext.CartItems.Add(cartItem);
