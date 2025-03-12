@@ -54,6 +54,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
 // Register Services
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
@@ -63,6 +64,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartServices, CartServices>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

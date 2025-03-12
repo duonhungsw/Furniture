@@ -6,51 +6,55 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 	{
 
 	}
-	public async Task<List<OrderItemDto>> GetOrdersAsync(Guid id)
+	public async Task<List<OrderDto>> GetOrdersAsync(Guid id, QueryInfo queryInfo, Guid statusId)
 	{
-		var entities = await (from order in appDbContext.Orders
-							  join orderItems in appDbContext.OrderItems on order.Id equals orderItems.OrderId
+		var entities = await (from order in appDbContext.Orders.AsNoTracking()
+							  join orderItems in appDbContext.OrderItems.AsNoTracking() on order.Id equals orderItems.OrderId
+							  join products in appDbContext.Products.AsNoTracking() on orderItems.ProductId equals products.Id
+							  join statuses in appDbContext.Statuses.AsNoTracking() on order.StatusId equals statuses.Id
 							  where order.AccountId == id
-							  select new OrderItemDto
+									&& (statusId == Guid.Empty || order.StatusId == statusId)
+									//&& (queryInfo.SearchText == string.Empty || order.Id == Guid.Parse(queryInfo.SearchText!))
+							  orderby order.LastModified descending
+							  group new { order, orderItems, products, statuses } by order into grouped
+							  select new OrderDto
 							  {
-								  Id = orderItems.Id,
-								  OrderId = order.Id,
-								  Order = order != null ? new OrderDto
+								  Id = grouped.Key.Id,
+								  Address = grouped.Key.Detail + ", " + grouped.Key.Town + ", " + grouped.Key.District + ", " + grouped.Key.City + ", " + grouped.Key.Country,
+								  TotalMoney = grouped.Key.TotalMoney,
+								  PaymentMethod = grouped.Key.PaymentMethod,
+								  CreateAt = grouped.Key.CreatedAt!.Value.ToString("dd-MM-yyyy"),
+								  StatusId = grouped.Key.StatusId,
+								  Status = grouped.Key.StatusId != null ? new StatusDto
 								  {
-									  TotalMoney = order.TotalMoney,
-									  Status = order.Status!= null ? new StatusDto
+									  Id = grouped.Key.StatusId,
+									  Name = grouped.First().statuses != null ? grouped.First().statuses.Name : "Unknown"
+								  } : null,
+								  OrderItems = grouped.Select(g => new CreateOrderItemDto
+								  {
+									  ProductId = g.products.Id,
+									  Product = new ProductDto
 									  {
-										  Id = order.StatusId,
-										  Name = order.Status.Name
-									  } : null,
-
-								  } : null,
-								  ProductId = orderItems.ProductId,
-								  Product = orderItems.Product != null ? new ProductDto
-								  {
-									  Id = orderItems.ProductId,
-									  Name = orderItems.Product.Name,
-									  PictureUrl = First(orderItems.Product.PictureUrl),
-									  Price = orderItems.Product.Price
-								  } : null,
-								  
-								  Quantity = orderItems.Quantity
+										  Name = g.products.Name,
+										  PictureUrl = First(g.products.PictureUrl),
+									  },
+									  Price = g.products.Price,
+									  Quantity = g.orderItems.Quantity
+								  }).ToList()
 							  }).ToListAsync();
 
 		return entities;
 	}
+
 	private static string First(string s)
 	{
 		return s.Split(',').FirstOrDefault()!;
 	}
 
-	public async Task<Status?> GetStatusByNameAsync(string statusName)
-		=> await appDbContext.Statuses.AsNoTracking().FirstOrDefaultAsync(s => s.Name == statusName);
-
 	public async Task<List<OrderCheckout>> GetOrdersForAccountAsync(Guid id)
 	{
-		var entities = await (from cartItem in appDbContext.CartItems
-							  join cart in appDbContext.Carts on cartItem.CartId equals cart.Id
+		var entities = await (from cartItem in appDbContext.CartItems.AsNoTracking()
+							  join cart in appDbContext.Carts.AsNoTracking() on cartItem.CartId equals cart.Id
 							  where cart.AccountId == id && cartItem.Status == true
 							  select new OrderCheckout
 							  {

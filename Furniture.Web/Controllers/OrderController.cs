@@ -4,7 +4,8 @@ namespace Furniture.Web.Controllers;
 
 public class OrderController(
 	IOrderApi _api,
-	IAccountApi _accountApi) : Controller
+	IAccountApi _accountApi,
+	IStatusApi _statusApi) : Controller
 {
 	[HttpGet]
 	public async Task<ActionResult<List<OrderCheckout>>> Checkout()
@@ -45,7 +46,7 @@ public class OrderController(
 		var result = await _api.CreateOrder(model.CreateOrder);
 		if (result)
 		{
-			return RedirectToAction("ThankYou"); 
+			return RedirectToAction("ThankYou");
 		}
 		else
 		{
@@ -59,8 +60,21 @@ public class OrderController(
 		return View();
 	}
 	[HttpGet]
-	public IActionResult Purchase()
+	public async Task<ActionResult<PurchaseViewModel>> Purchase(Guid? statusId, QueryInfo queryInfo)
 	{
-		return View();
+		var account = await _accountApi.GetUserInfoAsync();
+		if (account?.Content == null)
+			return RedirectToAction("Index", "Home");
+
+		var statuses = await _statusApi.GetStatuses();
+		var orders = await _api.GetPurchases(account.Content.Id, statusId, queryInfo);
+
+		var result = new PurchaseViewModel
+		{
+			Orders = orders,
+			Statuses = statuses,
+			SelectedStatusId = statusId
+		};
+		return View(result);
 	}
 }
