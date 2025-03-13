@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 namespace Furniture.API.Controllers;
 
 [Route("orders")]

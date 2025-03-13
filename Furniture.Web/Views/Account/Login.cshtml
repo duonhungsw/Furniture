@@ -31,11 +31,11 @@
 										<div class="section text-center">
 											<h4 class="mb-4 pb-3">Log In</h4>
 											<form asp-action="Login" method="post">
-												@* <div class="col-2 text-end">
-													<a asp-controller="Home" asp-action="LoginGoogle" class="btn btn-link">
+												<div class="col-2 text-end">
+													<a asp-controller="Account" asp-action="LoginByGoogle" class="btn btn-link">
 														<i class="input-icon uil uil-google" style="font-size: 24px; color: #db4437;"></i> <!-- Thay đổi màu và kích thước nếu cần -->
 													</a>
-												</div> *@
+												</div>
 
 												<div class="form-group">
 													<input type="email" class="form-style" name="email" id="email" value="@Model?.Email" class="form-style"
@@ -59,6 +59,12 @@
 									<div class="center-wrap">
 										<div class="section text-center">
 											<h4 class="mb-3 pb-3">Sign Up</h4>
+											@if (TempData["RegisterErrorMessage"] != null)
+											{
+												<div class="alert alert-success">
+													@TempData["RegisterErrorMessage"]
+												</div>
+											}
 											<form asp-action="SignUp" asp-controller="Account" method="post">
 												<div class="form-group">
 													<input type="text" class="form-style" name="Name" id="username" placeholder="User Name" oninput="validateForm()" required>
