@@ -63,6 +63,17 @@ public class AccountServices(
 			RefreshToken = refreshToken
 		};
 	}
+	public async Task<TokenResponse?> LoginGoogleAsync(Account model)
+	{
+		var accessToken = _tokenService.GenerateAccessToken(model);
+		var refreshToken = _tokenService.GenerateAccessToken(model);
+		_tokenService.SetTokensInsideCookie(accessToken, refreshToken);
+		return new TokenResponse
+		{
+			AccessToken = accessToken,
+			RefreshToken = refreshToken
+		};
+	}
 
 	public async Task<bool> RegisterAsync(SignupDTOs model)
 	{

@@ -1,8 +1,10 @@
-﻿namespace Furniture.API.Controllers;
+﻿using Twilio.AspNet.Core;
+
+namespace Furniture.API.Controllers;
 
 [Route("notifications")]
 
-public class NotificationController(ISmsService _smsService, MailService _mailService) : BaseApiController
+public class NotificationController(ISmsService _smsService, MailService _mailService) : TwilioController
 {
 	[HttpPost("sms")]
 	public async Task<bool> SendSms([FromBody] SmsRequest request)

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -62,7 +64,18 @@ builder.Services.AddSession(options =>
 	options.Cookie.IsEssential = true;
 });
 
-
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Use Google scheme here
+})
+.AddCookie()
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+	options.ClientId = builder.Configuration.GetSection("Authentication:Google:ClientId").Value!;
+	options.ClientSecret = builder.Configuration.GetSection("Authentication:Google:ClientSecret").Value!;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

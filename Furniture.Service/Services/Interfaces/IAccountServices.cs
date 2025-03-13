@@ -5,6 +5,7 @@ namespace Furniture.Service;
 public interface IAccountServices
 {
 	Task<TokenResponse?> LoginAsync(SignInDTOs model);
+	Task<TokenResponse?> LoginGoogleAsync(Account model);
 	Task<bool> RegisterAsync(SignupDTOs Regismodel);
 	Task<AccountDto> GetAccountByIdAsync(Guid Id);
 	Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto);

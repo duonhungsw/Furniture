@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using System.Security.Claims;
 
 namespace Furniture.API.Controllers;
 
 [Route("accounts")]
-public class AccountController(IAccountServices _service, ITokenService _tokenService,
-								MailService sendMail) : BaseApiController
+public class AccountController(
+	IAccountServices _service,
+	ITokenService _tokenService,
+	IMapper _mapper,
+	MailService sendMail) : BaseApiController
 {
 	//var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 	[HttpGet]
@@ -15,16 +18,22 @@ public class AccountController(IAccountServices _service, ITokenService _tokenSe
 		return CreatePagedResult(accounts, queryInfo);
 	}
 	[HttpPost("login")]
-	public async Task<ActionResult<TokenResponse>> Login([FromBody] SignInDTOs model)
+	public async Task<TokenResponse> Login([FromBody] SignInDTOs model)
 	{
 		var result = await _service.LoginAsync(model);
-		return Ok(result);
+		return result!;
+	}
+	[HttpPost("login-google")]
+	public async Task<TokenResponse> LoginGoogle([FromBody] Account model)
+	{
+		var result = await _service.LoginGoogleAsync(model);
+		return result!;
 	}
 	[HttpPost("register")]
-	public async Task<IActionResult> Register([FromBody] SignupDTOs signupDTOs)
+	public async Task<bool> Register([FromBody] SignupDTOs signupDTOs)
 	{
 		var result = await _service.RegisterAsync(signupDTOs);
-		return Ok($"Success: {result}");
+		return result;
 	}
 	[HttpPost("logout")]
 	public IActionResult Logout()
@@ -109,5 +118,12 @@ public class AccountController(IAccountServices _service, ITokenService _tokenSe
 	{
 		request.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 		return await _service.HandleAccountAction(request);
+	}
+	[HttpGet("email")]
+	public async Task<Account> GetByEmail([FromQuery] string email)
+	{
+		var account = await _service.GetAccountByEmailAsync(email);
+		var result = _mapper.Map<Account>(account);
+		return result;
 	}
 }
