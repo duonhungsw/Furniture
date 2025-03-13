@@ -1,12 +1,16 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
 
 namespace Furniture.Web.Controllers;
 
-public class Account(IAccountApi _accountApi) : Controller
+public class AccountController(IAccountApi _accountApi) : Controller
 {
 	public IActionResult Login()
 	{
+		HttpContext?.Response.Cookies.Delete("AccessToken");
+		HttpContext?.Response.Cookies.Delete("RefreshToken");
 		return View();
 	}
 	[HttpPost]
@@ -34,14 +38,100 @@ public class Account(IAccountApi _accountApi) : Controller
 			return RedirectToAction("Login");
 		}
 	}
+
+	[HttpGet]
+	public async Task LoginByGoogle()
+	{
+		await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme,
+			new AuthenticationProperties
+			{
+				RedirectUri = Url.Action("GoogleResponse")
+			});
+	}
+
+	public async Task<IActionResult> GoogleResponse()
+	{
+		var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+		var claims = result.Principal!.Identities.FirstOrDefault()?.Claims;
+		//Picture = claims?.FirstOrDefault(c => c.Type == "urn:google:picture")?.Value
+
+		var model = new SignupDTOs
+		{
+			Name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value!,
+			Email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!,
+			Password = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value!
+		};
+		var checkAccountExist = await _accountApi.GetAccountByEmailAsync(model.Email);
+		if (checkAccountExist!.Content == null)
+		{
+			var register = await _accountApi.RegisterAsync(model);
+
+			var signInModel = new SignInDTOs
+			{
+				Email = model.Email,
+				HashPassword = model.Email
+			};
+
+			var token = await _accountApi.LoginAsync(signInModel);
+			if (token == null || token.AccessToken == null || token.RefreshToken == null) return RedirectToAction("Login");
+
+			var cookieOptions = new CookieOptions
+			{
+				HttpOnly = true,
+				Secure = true,
+				SameSite = SameSiteMode.None,
+				Expires = DateTime.UtcNow.AddDays(7)
+			};
+			HttpContext?.Response.Cookies.Append("AccessToken", token.AccessToken, cookieOptions);
+			HttpContext?.Response.Cookies.Append("RefreshToken", token.RefreshToken, cookieOptions);
+
+			return RedirectToAction("Index", "Home");
+		}
+		try
+		{
+			var accountModel = new Account
+			{
+				Id = checkAccountExist.Content.Id,
+				Name = checkAccountExist.Content.Name,
+				Email = checkAccountExist.Content.Email,
+				HashPassword = string.Empty,
+				CreatedAt = DateTime.UtcNow,
+				LastModified = DateTime.UtcNow,
+				RoleName = checkAccountExist.Content.RoleName
+			};
+			var token = await _accountApi.LoginGoogleAsync(accountModel);
+			if (token == null || token.AccessToken == null || token.RefreshToken == null) return RedirectToAction("Login");
+
+			var cookieOptions = new CookieOptions
+			{
+				HttpOnly = true,
+				Secure = true,
+				SameSite = SameSiteMode.None,
+				Expires = DateTime.UtcNow.AddDays(7)
+			};
+			HttpContext?.Response.Cookies.Append("AccessToken", token.AccessToken, cookieOptions);
+			HttpContext?.Response.Cookies.Append("RefreshToken", token.RefreshToken, cookieOptions);
+
+			return RedirectToAction("Index", "Home");
+		}
+		catch
+		{
+			return RedirectToAction("Login");
+		}
+	}
+
 	[HttpPost]
 	public async Task<IActionResult> SignUp(SignupDTOs model)
 	{
+		var checkAccountExist = await _accountApi.GetAccountByEmailAsync(model.Email);
+		if(checkAccountExist != null)
+		{
+			TempData["RegisterErrorMessage"] = "Email was existed";
+			TempData.Keep();
+			return RedirectToAction("Login");
+		}
 		var result = await _accountApi.RegisterAsync(model);
-		//if (!result!.IsSuccessStatusCode || result.Content == null)
-		//{
-		//	return View();
-		//}
+		
 		return RedirectToAction("Login");
 	}
 	[HttpGet]
