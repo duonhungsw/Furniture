@@ -9,6 +9,8 @@ public interface ICartApi
     Task<bool> UpdateCartItemByQuantity([FromBody] CartUpdateQuantityDto model);
     [Patch("/carts/update/status/{cartItemId}")]
     Task<bool> UpdateCartItemByStatus([FromRoute] Guid cartItemId);
-    [Post("/carts/add")]
-    Task<bool> AddCartItem([FromForm] CartAddDto model);
+
+
+    [Post("/carts/{accountId}/add")]
+    Task<bool> AddCartItem([Body] CartAddDto model, [AliasAs("accountId")] Guid accountId);
 }

@@ -16,6 +16,8 @@ public class CartServices(
         if (cartItem != null)
         {
             cartItemRepository.Delete(cartItem);
+            var product = await _productRepository.GetByIdAsync(cartItem.ProductId);
+            product.QuantityInStock += cartItem.Quantity;
             await cartItemRepository.SaveChangesAsync();
             return true;
         }
@@ -56,44 +58,42 @@ public class CartServices(
         }
         return false;
     }
-    public async Task<bool> AddCartItemAsync(CartAddDto model)
+    public async Task<bool> AddCartItemAsync(CartAddDto model, Guid accountId)
     {
-        //Guid productId = model.ProductId;
-        //int quantity = model.Quantity;
-        //var account = await tokenService.Authenticate();
-        //if (account != null)
-        //{
-        //    //var cartByAccountId = await _cartRepository.GetCartByAccountIdAsync(account.Id);
-        //    var productByProductId = await _productRepository.GetByIdAsync(productId);
-        //    if (await cartItemRepository.CheckCartItemByProductIdAsync(cartByAccountId, productByProductId.Id))
-        //    {
-        //        var cartItem = await cartItemRepository.GetCartItemByCartIdAndProductIdAsync(cartByAccountId.Id, productId);
-        //        await cartItemRepository.AddCartItemIsContainAsync(cartItem, quantity);
-        //    }
-        //    else
-        //    {
-        //        var cartItem = new CartItem();
-        //        cartItem.ProductId = productId;
-        //        //cartItem.CartId = cartByAccountId.Id;
-        //        cartItem.Quantity = quantity;
-        //        cartItem.Status = false;
-        //        cartItem.Price = productByProductId.Price;
-        //        cartItem.TotalMoney = quantity * productByProductId.Price;
-        //        await cartItemRepository.AddCartItemAsync(cartItem);
-        //        return true;
-        //    }
-        //}
+        Guid productId = model.ProductId;
+        int quantity = model.Quantity;
+
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        if (account != null)
+        {
+            var cartByAccountId = await _cartRepository.GetCartByAccountIdAsync(account.Id);
+            var productByProductId = await _productRepository.GetByIdAsync(productId);
+            if (await cartItemRepository.CheckCartItemByProductIdAsync(cartByAccountId, productByProductId.Id))
+            {
+                var cartItem = await cartItemRepository.GetCartItemByCartIdAndProductIdAsync(cartByAccountId.Id, productId);
+                await cartItemRepository.AddCartItemIsContainAsync(cartItem, quantity);
+                productByProductId.QuantityInStock = productByProductId.QuantityInStock - quantity;
+                _productRepository.Update(productByProductId);
+                await _productRepository.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                var cartItem = new CartItem();
+                cartItem.ProductId = productId;
+                cartItem.CartId = cartByAccountId.Id;
+                cartItem.Quantity = quantity;
+                cartItem.Status = false;
+                cartItem.Price = productByProductId.Price;
+                cartItem.TotalMoney = quantity * productByProductId.Price;
+                await cartItemRepository.AddCartItemAsync(cartItem);
+                productByProductId.QuantityInStock = productByProductId.QuantityInStock - quantity;
+                _productRepository.Update(productByProductId);
+                await _productRepository.SaveChangesAsync();
+                return true;
+            }
+        }
         return false;
-    }
-    public async Task<Cart> GetCartByAccountIdAsync()
-    {
-        //var account = await tokenService.Authenticate();
-        //if (account != null)
-        //{
-        //    //var cart = await _cartRepository.GetCartByAccountIdAsync(account.Id);
-        //    return cart;
-        //}
-        return null;
     }
 
 

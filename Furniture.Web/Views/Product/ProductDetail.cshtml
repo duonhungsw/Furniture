@@ -37,55 +37,70 @@
         @* <img src="@Model.PictureUrl.Split(',')[0]" alt="Product Image"> *@
     </div>
     <div class="product-info">
-        <i>@Model.Brand</i> - <i>@Model.Type</i>
         <h1 class="product-title">@Model.Name</h1>
-
         <p class="product-price">@Model.Price $</p>
-        <p class="product-description">
-            @Model.Description
-        </p>
+
         <div class="product-options">
             <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" min="1" max="@Model.QuantityInStock" value="1">
+            <input type="number" id="quantity" name="quantity" min="1" max="@Model.QuantityInStock" value="1" @(Model.QuantityInStock == 0 ? "disabled" : "")>
             <i>In stock: @Model.QuantityInStock</i>
         </div>
-        <button class="add-to-cart-btn">Add to Cart</button>
+
+        <button class="add-to-cart-btn" id="addToCartBtn" data-product-id="@Model.Id" @(Model.QuantityInStock == 0 ? "disabled" : "")>
+            @(Model.QuantityInStock == 0 ? "Out of Stock" : "Add to Cart")
+        </button>
+
+
     </div>
+
+
 </div>
 
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $(".add-to-cart-btn").click(function () {
-                var quantity = $("#quantity").val(); // Lấy số lượng
-                var productData = {
-                    productId: '@Model.Id',
-                    price: '@Model.Price',
-                    quantity: quantity // Số lượng được chọn
-                };
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script>
+    $(document).on("click", "#addToCartBtn", function (e) {
+        e.preventDefault();
 
-                $.ajax({
-                    type: 'POST',
-                    url: "/Cart/AddToCart",
-                    data: JSON.stringify(productData), // Gửi đối tượng JSON chứa productId và quantity
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.success === false) {
-                            alert("Không thể thêm sản phẩm vào giỏ hàng.");
-                        } else {
-                            alert("Thêm vào giỏ hàng thành công!");
-                            console.log("Sản phẩm đã được thêm.");
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Lỗi xảy ra: ", status, error);
-                        alert("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
+        let productId = $(this).data("product-id");
+        let quantity = parseInt($("#quantity").val()) || 1;
+        let stock = parseInt($("i:contains('In stock')").text().replace("In stock: ", ""));
+
+        if (quantity > stock) {
+            alert(`⚠️ Only ${stock} items available in stock!`);
+            $("#quantity").val(stock);  // Reset về giá trị tối đa hợp lệ
+            return;
+        }
+
+        $.ajax({
+            url: "/Cart/AddCartItem",
+            type: "POST",
+            contentType: "application/x-www-form-urlencoded",
+            data: {
+                ProductId: productId,
+                Quantity: quantity
+            },
+            success: function (response) {
+                if (response) {
+                    alert("✅ Added to cart successfully!");
+                    let newStock = stock - quantity;
+                    $("i:contains('In stock')").text(`In stock: ${newStock}`);
+                    if (newStock === 0) {
+                        $("#quantity").val(0).prop("disabled", true);
+                        $("#addToCartBtn").prop("disabled", true).text("Out of Stock");
                     }
-                });
-                return false; // Ngăn form submit lại trang
-            });
+                } else {
+                    alert("⚠️ Failed to add to cart!");
+                }
+            },
+            error: function (xhr) {
+                console.error("Error:", xhr.responseText);
+                alert("⛔ An error occurred!");
+            }
         });
-    </script>
+    });
+
+
+
+</script>
 }

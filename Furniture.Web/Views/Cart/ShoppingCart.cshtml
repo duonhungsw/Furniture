@@ -50,10 +50,18 @@
 											</td>
 											<td class="price" data-price="@items.Price">@items.Price $</td>
 											<td>
-												<input type="number" name="Quantities" value="@items.Quantity" min="1" max="@items.QuantityInStock"
-													class="form-control quantity" data-cartItem-id="@items.Id"
-													style="width: 80px; display: inline-block;"
-													onchange="updateCartItemQuantity('@items.Id')" />
+												<input type="number"
+													   name="Quantities"
+													   value="@items.Quantity"
+													   min="1"
+													   max="@(items.QuantityInStock + items.Quantity)"
+													   class="form-control quantity"
+													   data-cartItem-id="@items.Id"
+													   data-current-quantity="@items.Quantity"
+													   data-stock="@items.QuantityInStock"
+													   style="width: 80px; display: inline-block;"
+													   onchange="updateCartItemQuantity('@items.Id')" />
+
 											</td>
 
 											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney</span></td>
@@ -247,24 +255,33 @@
 		});
 
 
-				document.addEventListener("DOMContentLoaded", function () {
+								document.addEventListener("DOMContentLoaded", function () {
 			let inputs = document.querySelectorAll("input[type='number'].quantity");
 
 			inputs.forEach(input => {
 				input.addEventListener("input", function () {
-					let max = parseInt(input.max);
-					let min = parseInt(input.min);
-					let value = parseInt(input.value);
+					let currentQuantity = parseInt(input.getAttribute("data-current-quantity")) || 0;
+					let stock = parseInt(input.getAttribute("data-stock")) || 0;
+					let min = parseInt(input.min) || 1;
+					let max = currentQuantity + stock;
+
+					console.log("Max calculated:", max); // Debugging line
+
+					// Set correct max value
+					input.max = max;
+
+					let value = parseInt(input.value) || min;
 
 					if (value > max) {
-						input.value = max; // Giới hạn về max
-						alert("Stock quantity of product is" +max);
+						input.value = max;
+						alert(`Stock quantity limit is ${max}`);
 					} else if (value < min) {
-						input.value = min; // Giới hạn về min
+						input.value = min;
 					}
 				});
 			});
 		});
+
 	</script>
 </body>
 
