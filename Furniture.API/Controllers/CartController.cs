@@ -24,11 +24,13 @@ public class CartController(ICartServices cartServices
     {
         return await cartServices.UpdateCartItemByStatusAsync(cartItemId);
     }
-    [HttpPost("add")]
-    public async Task<bool> AddCartItem([FromForm] CartAddDto model)
+
+    [HttpPost("{accountId}/add")]
+    public async Task<bool> AddCartItem([FromBody] CartAddDto model, [FromRoute] Guid accountId)
     {
-        return await cartServices.AddCartItemAsync(model);
+        return await cartServices.AddCartItemAsync(model, accountId);
     }
+
 
 
 }
