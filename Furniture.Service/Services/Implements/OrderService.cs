@@ -4,32 +4,41 @@ public class OrderService(
 	IOrderRepository _repository,
 	IOrderItemRepository _orderItemRepository,
 	IStatusRepository _statusRepository,
-	ITokenService _tokenService,
 	IMapper _mapper) : IOrderService
 {
-	
+
 	public async Task<bool> CreateOrderAsync(CreateOrderDto model)
 	{
-		var order = _mapper.Map<Order>(model);
-		order.Country = "Viet Nam"; 
-		order.AccountId = model.AccountId;
-		order.StatusId = (await _statusRepository.GetStatusByNameAsync(OrderStatus.Pending.ToString()))!.Id;
-		order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.Price);
-		_repository.Create(order);
-		if (await _repository.SaveChangesAsync())
+		try
 		{
-			var orderItems = model.OrderItems.Select(item => new OrderItem
+			var order = _mapper.Map<Order>(model);
+			order.Country = "Viet Nam";
+			order.AccountId = model.AccountId;
+			order.StatusId = (await _statusRepository.GetStatusByNameAsync(OrderStatus.Pending.ToString()))!.Id;
+			order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.Price);
+
+			_repository.Create(order);
+
+			foreach (var item in model.OrderItems)
 			{
-				OrderId = order.Id,
-				ProductId = item.ProductId,
-				Quantity = item.Quantity,
-			}).ToList();
+				var orderItem = new OrderItem
+				{
+					OrderId = order.Id, 
+					ProductId = item.ProductId,
+					Quantity = item.Quantity,
+				};
 
-			await _orderItemRepository.AddRangeAsync(orderItems);
-			return await _orderItemRepository.SaveChangesAsync();
+				_orderItemRepository.Create(orderItem);
+			}
+
+			await _repository.SaveChangesAsync(); 
+
+			return true;
 		}
-
-		return false;
+		catch 
+		{
+			return false;
+		}
 	}
 
 	public async Task<bool> ChangeStatusAsync(Guid orderId, string roleName)
