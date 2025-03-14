@@ -7,10 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace Furniture.Service;
 
 public class AccountServices(
+<<<<<<< HEAD
     IAccountRepository _repository,
     ITokenService _tokenService,
     IFileStorageService _fileStorageService,
     IMapper _mapper) : IAccountServices
+=======
+	IAccountRepository _repository,
+	ITokenService _tokenService,
+	IFileStorageService _fileStorageService,
+	ICartRepository _cartRepository,
+	IMapper _mapper) : IAccountServices
+>>>>>>> 4f09a67695f7b2273ebc1399972cf08836ee3b3a
 {
     private readonly string accountContainer = ContainerName.account.ToString();
     public Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
@@ -97,6 +105,7 @@ public class AccountServices(
         account.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.Password);
         account.RoleName = AppRoles.Customer.ToString();
 
+<<<<<<< HEAD
         _repository.Create(account);
         if (await _repository.SaveChangesAsync())
         {
@@ -104,6 +113,23 @@ public class AccountServices(
         }
         return false;
     }
+=======
+		_repository.Create(account);
+
+		var cartModel = new Cart
+		{
+			AccountId = account.Id,
+			CartTotal = 0
+		};
+		_cartRepository.Create(cartModel);
+
+		if (await _repository.SaveChangesAsync())
+		{
+			return true;
+		}
+		return false;
+	}
+>>>>>>> 4f09a67695f7b2273ebc1399972cf08836ee3b3a
 
     public async Task<bool> ResetPasswordAsync(string Email, ForgotPassDTOs model)
     {

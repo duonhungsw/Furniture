@@ -1,3 +1,4 @@
+using Furniture.Web.Services.VnPay;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using System.Net;
@@ -57,6 +58,7 @@ builder.Services.AddRefitClient<IStatusApi>()
 		c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
 	});
 
+
 builder.Services.AddSession(options =>
 {
 	options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian lưu session
@@ -76,6 +78,9 @@ builder.Services.AddAuthentication(options =>
 	options.ClientId = builder.Configuration.GetSection("Authentication:Google:ClientId").Value!;
 	options.ClientSecret = builder.Configuration.GetSection("Authentication:Google:ClientSecret").Value!;
 });
+
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
