@@ -11,9 +11,16 @@ public class ProductController(IProductApi _productApi) : Controller
 		var product = await _productApi.GetProductByIdAsync(id);
 		return View(product);
 	}
-    public async Task<IActionResult> ProductHome(int pageIndex = 1)
+    public async Task<IActionResult> ProductHome([FromQuery] QueryInfo queryInfo)
     {
-        var result = await _productApi.GetProductsAsync(pageIndex);
+        var result = await _productApi.GetProductsAsync(queryInfo);
 		return View(result);
     }
+
+	public async Task<IActionResult> SearchProducts([FromQuery] QueryInfo queryInfo)
+	{
+		var result = await _productApi.SearchProductsAsync(queryInfo);
+		ViewBag.SearchText = queryInfo.SearchText;
+		return View("ProductHome", result);
+	}
 }

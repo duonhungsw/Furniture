@@ -2,6 +2,8 @@
 
 @model PagedResult<ProductDto>
 
+<link href="~/css/productHome.css" rel="stylesheet">
+
 <div class="hero">
 	<div class="container">
 		<div class="row justify-content-between">
@@ -19,6 +21,23 @@
 
 <div class="untree_co-section product-section before-footer-section">
 	<div class="container">
+		<div class="d-flex justify-content-between">
+			<div class="input-group mb-3 search-input-group">
+				<input id="searchInput" type="text" class="form-control" placeholder="Product's name..." value="@ViewBag.SearchText">
+				<button class="btn btn-outline-success" type="button" id="button-search">Search</button>
+			</div>
+			<div class="sort-collection">
+				<select class="sort-by select2-hidden-accessible"
+						tabIndex="-1"
+						aria-hidden="true"
+				>
+					<option value="">Price</option>
+					<option value="Price-asc">Price: Ascending</option>
+					<option value="Price-desc">Price: Descending</option>
+				</select>
+			</div>
+		</div>
+		
 		<div class="row">
 			@foreach (var item in @Model.Items)
 			{
@@ -44,10 +63,14 @@
 				@for (int i = 1; i <= @Model.TotalPages; i++)
 				{
 					<li class="page-item @(i == Model.PageIndex ? "active" : "")">
-						<a class="page-link" asp-action="ProductHome" asp-route-pageIndex="@i">@i</a>
+						<a class="page-link pagination-link" data-page="@i" href="#">@i</a>
 					</li>
 				}
 			</ul>
 		</nav>
 	</div>
 </div>
+
+@section Scripts {
+	<script src="~/js/productHome.js"></script>
+}
