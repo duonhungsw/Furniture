@@ -44,7 +44,7 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 		appDbContext.CartItems.Add(cartItem);
 		await appDbContext.SaveChangesAsync();
 	}
-	public async Task<Cart?> GetCartByAccountIdAsync(Guid accountId)
+    public async Task<Cart?> GetCartByAccountIdAsync(Guid accountId)
 	{
 		return await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
 	}

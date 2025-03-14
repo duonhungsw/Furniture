@@ -48,6 +48,17 @@ public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controll
         }
         return false;
     }
+    [HttpPost]
+    public async Task<bool> AddCartItem([FromForm] CartAddDto model)
+    {
+        var account = await accountApi.GetUserInfoAsync();
+        if (account != null)
+        {
+            bool result = await cartApi.AddCartItem(model,account!.Content!.Id);
+            return result;
+        }
+        return false;
+    }
 
 
 }
