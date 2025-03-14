@@ -90,6 +90,10 @@ public class AdminController(IProductApi _productApi,
             formData.Add(new StringContent(model.Type ?? ""), "Type");
             formData.Add(new StringContent(model.Brand ?? ""), "Brand");
             formData.Add(new StringContent(model.QuantityInStock.ToString()), "QuantityInStock");
+            if (!string.IsNullOrEmpty(model.PictureUrl))
+            {
+                formData.Add(new StringContent(model.PictureUrl), "PictureUrl");
+            }
             if (model.Images != null && model.Images.Count > 0)
             {
                 foreach (var file in model.Images)

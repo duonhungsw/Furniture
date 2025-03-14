@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+
+﻿using Furniture.Core;
+>>>>>>> 676201f819531f9ef0262eb1997954c9475d276d
 using Microsoft.AspNetCore.Mvc;
 namespace Furniture.Service;
 
@@ -118,6 +123,7 @@ public class AccountServices(
         if (existingAccount == null)
             throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", model.Id));
 
+<<<<<<< HEAD
         var oldAvatar = existingAccount.Avatar;
         var account = _mapper.Map(model, existingAccount);
         if (model.Avatar == null)
@@ -179,6 +185,55 @@ public class AccountServices(
         var existingAccount = await _repository.GetByIdAsync(model.Id);
         if (existingAccount == null) return false;
         existingAccount.RoleName = model.RoleName!;
+=======
+		_repository.Update(account);
+		return await _repository.SaveChangesAsync() ? true : false;
+	}
+	public async Task<bool> UpdatePhoneNumberAsync(Guid accountId, string phoneNumber)
+	{
+		var account = await _repository.GetByIdAsync(accountId);
+		if (account == null)
+			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", accountId));
+		account.Phone = phoneNumber;
+		_repository.Update(account);
+		return await _repository.SaveChangesAsync() ? true : false;
+	}
+	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
+	{
+		var account = await _repository.GetByIdAsync(request.Id);
+		if (account == null)
+			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", request.Id));
+
+		if (request.Action == AccountAction.VerifyByPassword.ToString())
+		{
+			return await _repository.VerifyAccountByPasswordAsync(account.Id, PasswordHasher.HashPasswordPBKDF2(request.Password!));
+		}
+		if (request.Action == AccountAction.ChangeNumber.ToString())
+		{
+			account.Phone = request.NewPhoneNumber;
+			_repository.Update(account);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		if (request.Action == AccountAction.ChangeEmail.ToString())
+		{
+			account.Email = request.NewEmail!;
+			_repository.Update(account);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		if (request.Action == AccountAction.ChangePassword.ToString())
+		{
+			account.HashPassword = PasswordHasher.HashPasswordPBKDF2(request.NewPassword!);
+			_repository.Update(account);
+			return await _repository.SaveChangesAsync() ? true : false;
+		}
+		return false;
+	}
+    public async Task<bool> UpdateRoleAsync(AccountDto model)
+	{
+        var existingAccount = await _repository.GetByIdAsync(model.Id);
+        if (existingAccount == null) return false;
+        existingAccount.RoleName = model.RoleName;
+>>>>>>> 676201f819531f9ef0262eb1997954c9475d276d
         _repository.Update(existingAccount);
         return await _repository.SaveChangesAsync();
     }
