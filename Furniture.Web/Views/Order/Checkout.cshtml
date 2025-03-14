@@ -48,7 +48,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6 mb-5 mb-md-0">
-					<form asp-controller="Order" asp-action="Checkout" method="post" class="needs-validation"
+					<form id="checkoutForm" asp-controller="Order" asp-action="Checkout" method="post" class="needs-validation" novalidate>
 						novalidate>
 						<h2 class="h3 mb-3 text-black">Billing Details</h2>
 						<div class="p-3 p-lg-5 border bg-white">
@@ -139,20 +139,12 @@
 									<label class="form-check-label" for="vnpay">VNPay</label>
 								</div>
 
-								<div class="form-check">
-									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
-										value="QR" id="qrPayment">
-									<label class="form-check-label" for="qrPayment">QR</label>
-								</div>
-
 								<div class="invalid-feedback">Please select a payment method.</div>
 							</div>
 
 							<div class="form-group" style="margin-top:20px">
 								<button class="btn btn-black btn-lg py-3 btn-block" type="submit">Place Order</button>
 							</div>
-
-
 					</form>
 				</div>
 			</div>
@@ -175,7 +167,7 @@
 						</div>
 					</div>
 				</div>
-
+			
 				<div class="row mb-5">
 					<div class="col-md-12">
 						<h2 class="h3 mb-3 text-black">Your Order</h2>
@@ -221,6 +213,22 @@
 				}, false);
 			});
 		})();
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+			const form = document.getElementById("checkoutForm");
+			const paymentMethods = document.querySelectorAll("input[name='CreateOrder.PaymentMethod']");
+
+			paymentMethods.forEach(method => {
+				method.addEventListener("change", function () {
+					if (this.value === "VNPAY") {
+						form.action = "/Order/VnPayCheckout"; 
+					} else {
+						form.action = "/Order/Checkout";
+					}
+				});
+			});
+		});
 	</script>
 </body>
 

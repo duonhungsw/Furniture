@@ -124,7 +124,7 @@ public class AccountController(IAccountApi _accountApi) : Controller
 	public async Task<IActionResult> SignUp(SignupDTOs model)
 	{
 		var checkAccountExist = await _accountApi.GetAccountByEmailAsync(model.Email);
-		if(checkAccountExist != null)
+		if(checkAccountExist!.Content != null)
 		{
 			TempData["RegisterErrorMessage"] = "Email was existed";
 			TempData.Keep();
