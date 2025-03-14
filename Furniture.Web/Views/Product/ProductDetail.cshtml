@@ -1,4 +1,6 @@
-﻿@model ProductDto
+﻿@using System.Globalization
+
+@model ProductDto
 
 <div class="hero">
     <div class="container">
@@ -38,7 +40,7 @@
     </div>
     <div class="product-info">
         <h1 class="product-title">@Model.Name</h1>
-        <p class="product-price">@Model.Price $</p>
+        <p class="product-price">@Model.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN")) </p>
 
         <div class="product-options">
             <label for="quantity">Quantity:</label>

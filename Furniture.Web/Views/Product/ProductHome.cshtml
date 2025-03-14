@@ -1,3 +1,5 @@
+@using System.Globalization
+
 @model PagedResult<ProductDto>
 
 <div class="hero">
@@ -15,8 +17,6 @@
 </div>
 <!-- End Hero Section -->
 
-
-
 <div class="untree_co-section product-section before-footer-section">
 	<div class="container">
 		<div class="row">
@@ -25,11 +25,11 @@
 				<div class="col-12 col-md-4 col-lg-3 mb-5">
 					<div class="product-item" href="#">
 						<a asp-action="ProductDetail" asp-route-id="@item.Id">
-							<img src="@item.PictureUrl.Split(',')[0]" class="img-fluid product-thumbnail">
+							<img src="@item.PictureUrl!.Split(',')[0]" class="img-fluid product-thumbnail">
 						</a>
 
 						<h3 class="product-title">@item.Name</h3>
-						<strong class="product-price">$@item.Price</strong>
+						<strong class="product-price">@item.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</strong>
 
 						<span class="icon-cross">
 							<img src="~/images/cross.svg" class="img-fluid">

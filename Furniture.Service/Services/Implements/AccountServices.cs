@@ -6,6 +6,7 @@ public class AccountServices(
 	IAccountRepository _repository,
 	ITokenService _tokenService,
 	IFileStorageService _fileStorageService,
+	ICartRepository _cartRepository,
 	IMapper _mapper) : IAccountServices
 {
 	private readonly string accountContainer = ContainerName.account.ToString();
@@ -82,6 +83,14 @@ public class AccountServices(
 		account.RoleName = AppRoles.Customer.ToString();
 
 		_repository.Create(account);
+
+		var cartModel = new Cart
+		{
+			AccountId = account.Id,
+			CartTotal = 0
+		};
+		_cartRepository.Create(cartModel);
+
 		if (await _repository.SaveChangesAsync())
 		{
 			return true;
