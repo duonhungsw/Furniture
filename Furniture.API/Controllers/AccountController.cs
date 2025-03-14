@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using System.Security.Claims;
 
 namespace Furniture.API.Controllers;
@@ -42,83 +42,83 @@ public class AccountController(
 		return NoContent();
 	}
 
-	[HttpGet("user_info")]
-	public ActionResult<Account> GetUserInfo()
-	{
-		var account = new Account
-		{
-			Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-			Name = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
-			Email = User.FindFirstValue(ClaimTypes.Name)!,
-			RoleName = User.FindFirstValue(ClaimTypes.Role)!
-		};
-		return Ok(account);
-	}
-	[HttpGet("get-by-id/{id}")]
-	public async Task<ActionResult<AccountDto>> GetCustomerById(Guid id)
-	{
-		var result = await _service.GetAccountByIdAsync(id);
-		return Ok(result);
-	}
+    [HttpGet("user_info")]
+    public ActionResult<Account> GetUserInfo()
+    {
+        var account = new Account
+        {
+            Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            Name = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+            Email = User.FindFirstValue(ClaimTypes.Name)!,
+            RoleName = User.FindFirstValue(ClaimTypes.Role)!
+        };
+        return Ok(account);
+    }
+    [HttpGet("get-by-id/{id}")]
+    public async Task<ActionResult<AccountDto>> GetCustomerById(Guid id)
+    {
+        var result = await _service.GetAccountByIdAsync(id);
+        return Ok(result);
+    }
 
-	[HttpPost("forgot-password/email")]
-	public async Task<ActionResult> ForgotPassword([FromQuery] string email)
-	{
-		var user = await _service.GetAccountByEmailAsync(email);
-		if (user == null) return BadRequest("Email does not exist");
+    [HttpPost("forgot-password/email")]
+    public async Task<ActionResult> ForgotPassword([FromQuery] string email)
+    {
+        var user = await _service.GetAccountByEmailAsync(email);
+        if (user == null) return BadRequest("Email does not exist");
 
-		HttpContext.Session.SetString("UserEmail", email);
+        HttpContext.Session.SetString("UserEmail", email);
 
-		var resetPasswordUrl = "https://localhost:7070/Account/UpdatePassword";
+        var resetPasswordUrl = "https://localhost:7070/Account/UpdatePassword";
 
-		MailContent mail = new MailContent
-		{
-			To = user.Email,
-			Subject = "Reset Password - Furniture Shop",
-			Body = "<h3>Click the link to reset your password:</h3>\n" +
-				   $"<a href='{resetPasswordUrl}'>Reset Password</a>\n" +
-				   $"<p>If you didn't request this, please ignore this email.</p>"
-		};
+        MailContent mail = new MailContent
+        {
+            To = user.Email,
+            Subject = "Reset Password - Furniture Shop",
+            Body = "<h3>Click the link to reset your password:</h3>\n" +
+                   $"<a href='{resetPasswordUrl}'>Reset Password</a>\n" +
+                   $"<p>If you didn't request this, please ignore this email.</p>"
+        };
 
-		bool send = await sendMail.SendMail(mail);
-		if (send)
-		{
-			return Ok("Reset password email has been sent successfully.");
-		}
-		else
-		{
-			return BadRequest("Failed to send email.");
-		}
-	}
+        bool send = await sendMail.SendMail(mail);
+        if (send)
+        {
+            return Ok("Reset password email has been sent successfully.");
+        }
+        else
+        {
+            return BadRequest("Failed to send email.");
+        }
+    }
 
-	[HttpPost("update-password")]
-	public async Task<bool> ResetPassword([FromBody] ForgotPassDTOs forgotPasswordModel)
-	{
-		var email = HttpContext.Session.GetString("UserEmail");
-		if (email == null) return false;
+    [HttpPost("update-password")]
+    public async Task<bool> ResetPassword([FromBody] ForgotPassDTOs forgotPasswordModel)
+    {
+        var email = HttpContext.Session.GetString("UserEmail");
+        if (email == null) return false;
 
-		var result = await _service.ResetPasswordAsync(email, forgotPasswordModel);
-		if (!result)
-			return false;
+        var result = await _service.ResetPasswordAsync(email, forgotPasswordModel);
+        if (!result)
+            return false;
 
-		return true;
-	}
-	[HttpPut("profile")]
-	public async Task<bool> UpdateProfile([FromForm] UpdateAccountDto model)
-	{
-		return await _service.UpdateAsync(model);
-	}
-	[HttpPatch("changePhoneNumber")]
-	public async Task<bool> UpdatePhoneNumber([FromBody] ChangePhoneNumberDto model)
-	{
-		return await _service.UpdatePhoneNumberAsync(model.Id, model.Phone!);
-	}
-	[HttpPost("action")]
-	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
-	{
-		request.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-		return await _service.HandleAccountAction(request);
-	}
+        return true;
+    }
+    [HttpPut("profile")]
+    public async Task<bool> UpdateProfile([FromForm] UpdateAccountDto model)
+    {
+        return await _service.UpdateAsync(model);
+    }
+    [HttpPatch("changePhoneNumber")]
+    public async Task<bool> UpdatePhoneNumber([FromBody] ChangePhoneNumberDto model)
+    {
+        return await _service.UpdatePhoneNumberAsync(model.Id, model.Phone!);
+    }
+    [HttpPost("action")]
+    public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
+    {
+        request.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        return await _service.HandleAccountAction(request);
+    }
 	[HttpGet("email")]
 	public async Task<Account> GetByEmail([FromQuery] string email)
 	{
@@ -126,4 +126,10 @@ public class AccountController(
 		var result = _mapper.Map<Account>(account);
 		return result;
 	}
+    [HttpPatch("role")]
+    public async Task<bool> UpdateRole([FromBody] AccountDto model)
+    {
+        bool result = await _service.UpdateRoleAsync(model);
+        return result;
+	}	
 }
