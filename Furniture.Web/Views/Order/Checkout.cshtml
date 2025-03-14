@@ -1,4 +1,6 @@
-﻿@model CheckoutViewModel
+﻿@using System.Globalization
+
+@model CheckoutViewModel
 
 <!doctype html>
 <html lang="en">
@@ -182,7 +184,7 @@
 									{
 										<tr>
 											<td>@item.ProductName <strong class="mx-2">x</strong> @item.Quantity</td>
-											<td>@item.TotalMoney $</td>
+											<td>@item.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN")) $</td>
 										</tr>
 									}
 								</tbody>

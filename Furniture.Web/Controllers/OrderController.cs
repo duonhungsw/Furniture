@@ -1,3 +1,4 @@
+using Furniture.Core;
 using Furniture.Web.Models;
 using Furniture.Web.Services.VnPay;
 
@@ -18,6 +19,7 @@ public class OrderController(
 		{
 			Orders = orders
 		};
+		HttpContext.Session.SetString("TotalMoney", viewModel.Orders.Sum(x => x.Price).ToString());
 		HttpContext.Session.SetObject("OrderSession", orders);
 
 		return View(viewModel);
@@ -83,10 +85,12 @@ public class OrderController(
 	[HttpPost]
 	public IActionResult VnPayCheckout(CheckoutViewModel model)
 	{
+		var totalMoney = HttpContext.Session.GetString("TotalMoney");
+	
 		var paymentModel = new PaymentInformationModel
 		{
 			Name = "Hung",
-			Amount = 48000,
+			Amount = double.Parse(totalMoney!),
 			OrderDescription = "Furniture Shop payment with VnPay",
 			OrderType = 25000.ToString()
 		};
@@ -95,6 +99,7 @@ public class OrderController(
 		string paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
 
 		HttpContext.Session.SetObject("CheckoutData", model);
+		HttpContext.Session.Remove("TotalMoney");
 
 		return Redirect(paymentUrl);
 	}
