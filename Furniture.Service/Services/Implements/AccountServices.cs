@@ -83,7 +83,6 @@ public class AccountServices(
         account.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.Password);
         account.RoleName = AppRoles.Customer.ToString();
 
-
 		_repository.Create(account);
 
 
@@ -100,7 +99,6 @@ public class AccountServices(
 		}
 		return false;
 	}
-
     public async Task<bool> ResetPasswordAsync(string Email, ForgotPassDTOs model)
     {
         var account = await _repository.GetByEmailAsync(Email);
