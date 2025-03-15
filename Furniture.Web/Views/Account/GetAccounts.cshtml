@@ -1,0 +1,61 @@
+﻿@model List<Furniture.Core.AccountDto>
+@{
+    ViewData["Title"] = "Danh sách tài khoản";
+}
+<h2 class="text-center">Danh sách tài khoản</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a class="btn btn-secondary" asp-controller="Admin" asp-action="Index">
+        <i class="fas fa-arrow-left"></i> Home Admin</a></div>
+<div class="account-list-container mb-4">
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Avatar</th>
+            <th>BirthDay</th>
+            <th>Phone</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var account in Model)
+            {
+                <tr>
+                    <td>@account.Id</td>
+                    <td>@account.Name</td>
+                    <td>@account.Email</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(account.Avatar))
+                        {
+                            <img src="@account.Avatar" alt="Avatar" width="50" height="50" class="rounded-circle" />
+                        }
+                        else
+                        {
+                            <span>NO a picture</span>
+                        }
+                    </td>
+                    <td>@account.BirthDay</td>
+                    <td>@account.Phone</td>
+                    <td>@account.RoleName</td>
+                        <td>
+                            <a asp-action="UpdateRole" asp-route-id="@account.Id" class="btn btn-warning btn-sm">
+                            Update
+                        </a>
+                        </td>
+                </tr>
+                     
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center">No Account!</td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
