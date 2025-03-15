@@ -173,7 +173,7 @@ public class AccountServices(
 		}
 		return false;
 	}
-    public async Task<bool> UpdateRoleAsync(AccountDto model)
+    public async Task<bool> UpdateRoleAsync([FromBody] AccountDto model)
     {
         var existingAccount = await _repository.GetByIdAsync(model.Id);
         if (existingAccount == null) return false;

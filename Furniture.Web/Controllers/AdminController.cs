@@ -7,7 +7,7 @@ public class AdminController(IProductApi _productApi,
     {
         return View();
     }
-    public async Task<IActionResult> ProductList(QueryInfo queryInfo)
+    public async Task<IActionResult> ProductList([FromQuery]QueryInfo queryInfo)
     {
         var result = await _productApi.GetProductsAsync(queryInfo.PageIndex);
         ViewBag.PageIndex = queryInfo.PageIndex;
@@ -22,7 +22,7 @@ public class AdminController(IProductApi _productApi,
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> Create(ProductDto model)
+    public async Task<IActionResult> Create([FromForm]ProductDto model)
     {
         if (model.Images == null || model.Images.Count == 0)
         {
@@ -60,7 +60,7 @@ public class AdminController(IProductApi _productApi,
         return View(product);
     }
     [HttpPost]
-    public async Task<IActionResult> Update(ProductDto model)
+    public async Task<IActionResult> Update([FromForm] ProductDto model)
     {
         var existingProduct = await _productApi.GetProductById(model.Id);
         if (existingProduct == null)
@@ -123,7 +123,7 @@ public class AdminController(IProductApi _productApi,
         return View(product);
     }
     [HttpPost]
-    public async Task<IActionResult> DeleteProduct(Guid id)
+    public async Task<IActionResult> DeleteProduct([FromForm]Guid id)
     {
         bool result = await _productApi.Delete(id);
         if (result)

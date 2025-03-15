@@ -8,7 +8,7 @@ public class ProductController(IProductServices _services) : BaseApiController
     public async Task<ActionResult<ProductDto?>> GetProductById(Guid id)
     {
         var product = await _services.GetProductByIdAsync(id);
-        return Ok(product);
+        return product;
     }
     [HttpGet]
     public async Task<ActionResult<PagedResult<ProductDto>>> GetProductsWithPaging([FromQuery] QueryInfo queryInfo)
