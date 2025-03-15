@@ -126,4 +126,10 @@ public class AccountController(
 		var result = _mapper.Map<Account>(account);
 		return result;
 	}
+    [HttpPatch("role")]
+    public async Task<bool> UpdateRole([FromBody] AccountDto model)
+    {
+        bool result = await _service.UpdateRoleAsync(model);
+        return result;
+    }
 }

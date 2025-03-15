@@ -57,7 +57,7 @@ public class ProductServices(
 				bool fileExists = await _storageService.FileExistsAsync(containerName, fileName);
 				if (fileExists)
 				{
-					throw new Exception($"File '{fileName}' đã tồn tại trong hệ thống.");
+					throw new Exception($"File '{fileName}' existed in system.");
 				}
 				string fileUrl = await _storageService.UploadFileAsync(containerName, file);
 				pictureUrls.Add(fileUrl);
@@ -130,7 +130,7 @@ public class ProductServices(
 					bool isDeleted = await _storageService.DeleteFileAsync(containerName, oldBlobName);
 					if (!isDeleted)
 					{
-						throw new Exception($"Không thể xóa ảnh cũ: {oldBlobName}");
+						throw new Exception($"can't delete old picture: {oldBlobName}");
 					}
 				}
 			}
@@ -143,7 +143,7 @@ public class ProductServices(
 			newPictureUrls = await _storageService.SaveFilesAsync(containerName, model.Images);
 		}
 
-		//Cập nhật danh sách ảnh mới vào `PictureUrl`
+	
 		model.PictureUrl = string.Join(",", newPictureUrls);
 
 		var updatedProduct = _mapper.Map(model, existingProduct);
