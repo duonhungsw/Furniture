@@ -10,50 +10,50 @@ public class AccountServices(
 	ICartRepository _cartRepository,
 	IMapper _mapper) : IAccountServices
 {
-	private readonly string accountContainer = ContainerName.account.ToString();
-	public Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
-	{
-		throw new NotImplementedException();
-	}
-	public async Task<AccountDto> GetAccountByEmailAsync(string Email)
-	{
+    private readonly string accountContainer = ContainerName.account.ToString();
+    public Task<bool> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
+    {
+        throw new NotImplementedException();
+    }
+    public async Task<AccountDto> GetAccountByEmailAsync(string Email)
+    {
 
-		var account = await _repository.GetByEmailAsync(Email);
-		var result = _mapper.Map<AccountDto>(account);
-		return result;
-	}
-	public async Task<AccountDto> GetAccountByIdAsync(Guid Id)
-	{
-		var account = await _repository.GetByIdAsync(Id);
-		if (account == null)
-			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", Id));
+        var account = await _repository.GetByEmailAsync(Email);
+        var result = _mapper.Map<AccountDto>(account);
+        return result;
+    }
+    public async Task<AccountDto> GetAccountByIdAsync(Guid Id)
+    {
+        var account = await _repository.GetByIdAsync(Id);
+        if (account == null)
+            throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Account", Id));
 
 
-		var result = _mapper.Map<AccountDto>(account);
-		return result;
-	}
+        var result = _mapper.Map<AccountDto>(account);
+        return result;
+    }
 
-	public Task<AccountDto> GetAccountByPasswordAsync(Guid id, string password)
-	{
-		throw new NotImplementedException();
-	}
+    public Task<AccountDto> GetAccountByPasswordAsync(Guid id, string password)
+    {
+        throw new NotImplementedException();
+    }
 
-	public async Task<Guid?> GetAccountIdAsync()
-	{
-		var account = await _tokenService.GetTokenAsync();
-		return account?.Id;
-	}
-	public async Task<List<AccountDto>> GetAccountsAsync()
-		=> await _repository.GetAccountsAsync();
+    public async Task<Guid?> GetAccountIdAsync()
+    {
+        var account = await _tokenService.GetTokenAsync();
+        return account?.Id;
+    }
+    public async Task<List<AccountDto>> GetAccountsAsync()
+        => await _repository.GetAccountsAsync();
 
-	public async Task<TokenResponse?> LoginAsync(SignInDTOs model)
-	{
-		model.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.HashPassword!);
-		var account = _mapper.Map<Account>(model);
+    public async Task<TokenResponse?> LoginAsync(SignInDTOs model)
+    {
+        model.HashPassword = PasswordHasher.HashPasswordPBKDF2(model.HashPassword!);
+        var account = _mapper.Map<Account>(model);
 
-		var result = await _repository.LoginAsync(account);
-		if (result == null)
-			throw new NotFoundException(ErrorMessageBase.NotFound);
+        var result = await _repository.LoginAsync(account);
+        if (result == null)
+            throw new NotFoundException(ErrorMessageBase.NotFound);
 
 
 		var accessToken = _tokenService.GenerateAccessToken(result);
