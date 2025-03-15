@@ -1,0 +1,49 @@
+﻿@model Furniture.Core.AccountDto;
+
+@{
+    ViewData["Title"] = "Update RoleName";
+}
+<head>
+    @await Html.PartialAsync("_adminHeadComponent");
+    <title>Manage Account</title>
+</head>
+<body class="sb-nav-fixed">
+    <!-- Admin navbar -->
+    @await Html.PartialAsync("_adminNavBarComponent");
+    <div id="layoutSidenav">
+        <!-- Admin Slidenav -->
+        @await Html.PartialAsync("_adminSlideNavComponent");
+        <div id="layoutSidenav_content">
+<h2 class="text-center">Update RoleName</h2>
+<div class="container mt-4">
+    <form asp-action="UpdateRole" method="post" class="card p-4 shadow">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Name Account</label>
+            <input type="text" class="form-control" asp-for="Name" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">RoleName</label>
+            <select class="form-select" asp-for="RoleName">
+                <option value="Admin">Admin</option>
+                <option value="Customer">Customer</option>
+                <option value="Employee">Employee</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+            <!-- Footer -->
+            @await Html.PartialAsync("_adminFooter");
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
+</body>

@@ -8,7 +8,7 @@ public class ProductController(IProductApi _productApi) : Controller
 	}
 	public async Task<IActionResult> ProductDetail(Guid id)
 	{
-		var product = await _productApi.GetProductByIdAsync(id);
+		var product = await _productApi.GetProductById(id);
 		return View(product);
 	}
     public async Task<IActionResult> ProductHome(int pageIndex = 1)
