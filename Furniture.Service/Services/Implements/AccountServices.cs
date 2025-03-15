@@ -173,4 +173,12 @@ public class AccountServices(
 		}
 		return false;
 	}
+    public async Task<bool> UpdateRoleAsync(AccountDto model)
+    {
+        var existingAccount = await _repository.GetByIdAsync(model.Id);
+        if (existingAccount == null) return false;
+        existingAccount.RoleName = model.RoleName!;
+        _repository.Update(existingAccount);
+        return await _repository.SaveChangesAsync();
+    }
 }
