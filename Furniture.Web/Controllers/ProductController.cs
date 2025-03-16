@@ -13,7 +13,7 @@ public class ProductController(IProductApi _productApi) : Controller
 	}
     public async Task<IActionResult> ProductHome([FromQuery] QueryInfo queryInfo)
     {
-        var result = await _productApi.GetProductsAsync(queryInfo);
+        var result = await _productApi.GetProductsAsync(queryInfo.PageIndex);
 		return View(result);
     }
 
