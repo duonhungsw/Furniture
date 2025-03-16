@@ -6,7 +6,7 @@ public interface IProductApi
     Task<PagedResult<ProductDto>> GetProductsAsync(
         [Query] int? PageIndex);
 
-    [Multipart]
+	[Multipart]
     [Post("/products/create")]
     Task<bool> Create(MultipartFormDataContent formData);
     [Patch("/products/update")]
@@ -17,4 +17,6 @@ public interface IProductApi
 
     [Get("/products/{id}")]
     Task<ProductDto> GetProductById(Guid id);
+	[Get("/products/search")]
+	Task<PagedResult<ProductDto>> SearchProductsAsync(QueryInfo queryInfo);
 }
