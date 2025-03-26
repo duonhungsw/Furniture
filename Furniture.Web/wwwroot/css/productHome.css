@@ -1,0 +1,55 @@
+﻿.page-item.active .page-link {
+    z-index: 3;
+    color: #fff !important;
+    background-color: #3b5d50 !important;
+    border-color: #3b5d50 !important;
+}
+
+.page-link {
+    color: #3b5d50 !important;
+}
+
+.search-input-group {
+    width: 35%;
+}
+
+.search-input-group input {
+    height: 40px;
+}
+
+#button-search {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: #3b5d50;
+    height: 40px;
+    font-size: 14px;
+    padding: 10px 15px;
+}
+
+.sort-collection select {
+    padding: 10px 12px 10px 16px;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.sort-collection select span {
+    margin-right: 20px;
+}
+
+.sort-collection {
+    margin-left: 12px;
+}
+
+.sort-collection select {
+    height: 41px;
+    background: url(https://file.hstatic.net/200000642007/file/vector_267_8abb48f….svg);
+    background-position: center right 16px;
+    background-repeat: no-repeat;
+    outline: none;
+    box-shadow: none;
+}
