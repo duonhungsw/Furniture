@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @model CheckoutViewModel
 
@@ -38,7 +39,9 @@
 		</div>
 	</div>
 	<!-- End Hero Section -->
-
+	@{
+		var accountInfo = HttpContextAccessor.HttpContext!.Session.GetObject<Account>("AccountInfo");
+	}
 	<div class="untree_co-section">
 		<div class="container">
 			<div class="row mb-5">
@@ -87,34 +90,37 @@
 								<div class="invalid-feedback">Please select a ward.</div>
 							</div>
 
+							<!-- Address -->
+							<div class="form-group">
+								<label for="c_address" class="text-black">
+									Address <span class="text-danger">*</span>
+								</label>
+								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address"
+									   placeholder="Detail address" required>
+								<div class="invalid-feedback">Please enter your address.</div>
+							</div>
+
 							<!-- Name -->
 							<div class="form-group">
 								<label for="c_fname" class="text-black">Name <span class="text-danger">*</span></label>
-								<input type="text" class="form-control" id="c_fname" disabled required>
+								<input type="text" class="form-control" id="c_fname" value="@accountInfo!.Name" disabled required>
 								<div class="invalid-feedback">Name is required.</div>
 							</div>
 
-							<!-- Address -->
-							<div class="form-group">
-								<label for="c_address" class="text-black">Address <span
-										class="text-danger">*</span></label>
-								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address"
-									placeholder="Detail address" required>
-								<div class="invalid-feedback">Please enter your address.</div>
-							</div>
+							
 
 							<!-- Email -->
 							<div class="form-group">
 								<label for="c_email_address" class="text-black">Email Address <span
 										class="text-danger">*</span></label>
-								<input type="email" class="form-control" id="c_email_address" required>
+								<input type="email" class="form-control" id="c_email_address" value="@accountInfo!.Email" disabled required>
 								<div class="invalid-feedback">Please enter a valid email address.</div>
 							</div>
 
 							<!-- Phone -->
 							<div class="form-group">
 								<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone"
+								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone" value="@accountInfo!.Phone" 
 									placeholder="Phone Number" pattern="[0-9]{10,11}" required>
 								<div class="invalid-feedback">Please enter a valid phone number (10-11 digits).</div>
 							</div>
@@ -184,7 +190,7 @@
 									{
 										<tr>
 											<td>@item.ProductName <strong class="mx-2">x</strong> @item.Quantity</td>
-											<td>@item.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN")) $</td>
+											<td>@item.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN")) </td>
 										</tr>
 									}
 								</tbody>
