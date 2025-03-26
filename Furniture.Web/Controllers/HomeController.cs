@@ -11,6 +11,13 @@ public class HomeController(IAccountApi accountService) : Controller
 			return View();
 		}
 
+		if(response.Content.RoleName == AppRoles.Admin.ToString())
+		{
+			return RedirectToAction("Index", "Admin");
+		}
+
+		HttpContext.Session.SetObject("AccountInfo", response.Content);
+
 		return View(response.Content);
 	}
 }
