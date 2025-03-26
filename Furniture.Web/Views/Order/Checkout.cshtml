@@ -90,6 +90,16 @@
 								<div class="invalid-feedback">Please select a ward.</div>
 							</div>
 
+							<!-- Address -->
+							<div class="form-group">
+								<label for="c_address" class="text-black">
+									Address <span class="text-danger">*</span>
+								</label>
+								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address"
+									   placeholder="Detail address" required>
+								<div class="invalid-feedback">Please enter your address.</div>
+							</div>
+
 							<!-- Name -->
 							<div class="form-group">
 								<label for="c_fname" class="text-black">Name <span class="text-danger">*</span></label>
@@ -97,14 +107,7 @@
 								<div class="invalid-feedback">Name is required.</div>
 							</div>
 
-							<!-- Address -->
-							<div class="form-group">
-								<label for="c_address" class="text-black">Address <span
-										class="text-danger">*</span></label>
-								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address"
-									placeholder="Detail address" required>
-								<div class="invalid-feedback">Please enter your address.</div>
-							</div>
+							
 
 							<!-- Email -->
 							<div class="form-group">
@@ -117,7 +120,7 @@
 							<!-- Phone -->
 							<div class="form-group">
 								<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone" value="@accountInfo!.Phone" disabled
+								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone" value="@accountInfo!.Phone" 
 									placeholder="Phone Number" pattern="[0-9]{10,11}" required>
 								<div class="invalid-feedback">Please enter a valid phone number (10-11 digits).</div>
 							</div>
