@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Furniture.Common;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Furniture.API.Controllers;
 [Route("products")]
@@ -40,5 +42,29 @@ public class ProductController(IProductServices _services) : BaseApiController
     {
         var result = await _services.CreateAsync(model);
         return result;
+    }
+	[HttpGet("brand")]
+	public async Task<ActionResult<List<string>>> GetProductsBrand()
+	{
+		var result = await _services.GetBrandAsync();
+		return result;
+	}
+	[HttpGet("type")]
+	public async Task<ActionResult<List<string>>> GetProductsType()
+	{
+		var result = await _services.GetTypeAsync();
+		return result;
+	}
+    [HttpPost("filter")]
+    public async Task<ActionResult<PagedResult<ProductDto>>> FilterProducts(FilterProductInfo filterInfo)
+    {
+        var result = await _services.FilterProductsAsync(filterInfo);
+        QueryInfo queryInfo = new QueryInfo()
+        {
+            PageIndex = filterInfo.PageIndex,
+            PageSize = filterInfo.PageSize,
+            SearchText = filterInfo.SearchText,
+        };
+        return CreatePagedResult(result, queryInfo);
     }
 }

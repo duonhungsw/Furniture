@@ -153,4 +153,22 @@ public class ProductServices(
 
 		return true;
 	}
+
+	public async Task<List<string>> GetBrandAsync()
+	{
+		var brands = await _repository.GetBrandAsync();
+		return brands;
+	}
+
+	public async Task<List<string>> GetTypeAsync()
+	{
+		var types = await _repository.GetTypeAsync();
+		return types;
+	}
+
+    public async Task<List<ProductDto>> FilterProductsAsync(FilterProductInfo filterInfo)
+    {
+        var products = await _repository.FilterProductsAsync(filterInfo);
+        return _mapper.Map<List<ProductDto>>(products);
+    }
 }

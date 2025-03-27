@@ -39,6 +39,7 @@
         @* <img src="@Model.PictureUrl.Split(',')[0]" alt="Product Image"> *@
     </div>
     <div class="product-info">
+        <i>@Model.Brand</i> - <i>@Model.Type</i>
         <h1 class="product-title">@Model.Name</h1>
         <p class="product-price">@Model.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN")) </p>
 
