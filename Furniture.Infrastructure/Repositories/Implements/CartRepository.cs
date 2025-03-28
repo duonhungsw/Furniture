@@ -30,9 +30,11 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 										  Price = cartItem.Price,
 										  UrlImage = product.PictureUrl,
 										  Status = cartItem.Status,
-										  TotalMoney = cartItem.TotalMoney,
+										  TotalMoney = cartItem.Quantity * cartItem.Price,
 										  CartId = product.Id,
-										  QuantityInStock = product.QuantityInStock
+										  QuantityInStock = product.QuantityInStock,
+										  CreatedAt = cartItem.CreatedAt
+										  
 									  }).ToListAsync();
 
 			return cartProducts;

@@ -5,7 +5,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <body>
 	<div class="untree_co-section before-footer-section">
 		<div class="container">
@@ -40,7 +39,8 @@
 										<tr id="cart-item-@items.Id">
 											<td>
 												<input type="checkbox" class="cart-item-checkbox" data-cartitem-id="@items.Id"
-													@(items.Status ? "checked" : "") />
+													@(items.Status ? "checked" : "")
+													onchange="updateCartItemStatus('@items.Id')" />
 											</td>
 
 
@@ -50,23 +50,21 @@
 											<td class="product-name">
 												<h2 class="h5 text-black">@items.ProductName</h2>
 											</td>
-											<td class="price" data-price="@items.Price">@items.Price $</td>
+											<td class="price" data-price="@items.Price">@items.Price.ToString("0.00") $</td>
+
+
 											<td>
-												<input type="number"
-													   name="Quantities"
-													   value="@items.Quantity"
-													   min="1"
-													   max="@(items.QuantityInStock + items.Quantity)"
-													   class="form-control quantity"
-													   data-cartItem-id="@items.Id"
-													   data-current-quantity="@items.Quantity"
-													   data-stock="@items.QuantityInStock"
-													   style="width: 80px; display: inline-block;"
-													   onchange="updateCartItemQuantity('@items.Id')" />
+												<input type="number" name="Quantities" value="@items.Quantity" min="1"
+													max="@(items.QuantityInStock + items.Quantity)"
+													class="form-control quantity" data-cartItem-id="@items.Id"
+													data-current-quantity="@items.Quantity" data-stock="@items.QuantityInStock"
+													style="width: 80px; display: inline-block;"
+													onchange="updateCartItemQuantity('@items.Id')" />
 
 											</td>
 
-											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</span></td>
+											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney.ToString("0.00")</span>
+											</td>
 
 
 
@@ -119,22 +117,33 @@
 									<h3 class="text-black h4 text-uppercase">Cart Totals</h3>
 								</div>
 							</div>
-							<div class="row mb-3">
+							<div id="selected-items">
+								@foreach (var items in Model)
+								{
+									if (items.Status == true)
+									{
+										<div class="row mb-3">
+											<div class="col-md-6">
+												<span class="text-black">@items.ProductName (x@items.Quantity)</span>
+											</div>
+											<div class="col-md-6 text-right">
+												<strong class="text-black">$@((items.Price *
+																								items.Quantity).ToString("0.00"))</strong>
+									</div>
+								</div>
+																}
+								}
+							</div>
+
+							<div class="row">
 								<div class="col-md-6">
-									<span class="text-black">Subtotal</span>
+									<span class="text-black font-weight-bold">Total</span>
 								</div>
 								<div class="col-md-6 text-right">
-									<strong class="text-black">$230.00</strong>
+									<strong class="text-black" id="cart-total-price">$0.00</strong>
 								</div>
 							</div>
-							<div class="row mb-5">
-								<div class="col-md-6">
-									<span class="text-black">Total</span>
-								</div>
-								<div class="col-md-6 text-right">
-									<strong class="text-black">$230.00</strong>
-								</div>
-							</div>
+
 
 							<div class="row">
 								<form action="/order/checkout" method="get">
@@ -215,22 +224,61 @@
 			updateCartItemStatus(cartItemId, isChecked);
 		});
 
-		function updateCartItemStatus(cartItemId, isChecked) {
-			$.ajax({
-				url: `/Cart/UpdateCartItemByStatus/${cartItemId}`,
-				type: "PATCH",
-				contentType: "application/json",
-				data: JSON.stringify({ status: isChecked }), // Gửi trạng thái checked
-				success: function (response) {
-					console.log("Response:", response);
+		// function updateCartItemStatus(cartItemId, isChecked) {
+		// 	$.ajax({
+		// 		url: `/Cart/UpdateCartItemByStatus/${cartItemId}`,
+		// 		type: "PATCH",
+		// 		contentType: "application/json",
+		// 		data: JSON.stringify({ status: isChecked }), Gửi trạng thái checked
+		// 		success: function (response) {
+		// 			console.log("Response:", response);
 
-				},
-				error: function (xhr, status, error) {
-					console.error("Lỗi:", xhr.responseText);
-					alert("Đã xảy ra lỗi, vui lòng thử lại!");
+		// 		},
+		// 		error: function (xhr, status, error) {
+		// 			console.error("Lỗi:", xhr.responseText);
+		// 			alert("Đã xảy ra lỗi, vui lòng thử lại!");
+		// 		}
+		// 	});
+		// }
+		function updateCartItemStatus(cartItemId) {
+			let checkbox = $(`.cart-item-checkbox[data-cartitem-id="${cartItemId}"]`);
+			let isChecked = checkbox.is(":checked");
+
+			// Cập nhật thuộc tính data-status trong DOM
+			checkbox.attr("data-status", isChecked);
+
+			// Cập nhật lại danh sách sản phẩm được chọn
+			updateSelectedItemsUI();
+		}
+
+		function updateSelectedItemsUI() {
+			let selectedItemsContainer = $("#selected-items"); // Khu vực hiển thị sản phẩm đã chọn
+			selectedItemsContainer.empty(); // Xóa danh sách cũ
+
+			$(".cart-item-checkbox").each(function () {
+				let isChecked = $(this).is(":checked");
+				if (isChecked) {
+					let cartItemId = $(this).data("cartitem-id");
+					let productName = $(`#cart-item-${cartItemId} .product-name h2`).text();
+					let price = parseFloat($(`#cart-item-${cartItemId} .price`).data("price"));
+
+					// Thêm sản phẩm vào danh sách đã chọn
+					selectedItemsContainer.append(`
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<span class="text-black">${productName}</span>
+							</div>
+							<div class="col-md-6 text-right">
+								<strong class="text-black">$${price.toFixed(2)}</strong>
+							</div>
+						</div>
+					`);
 				}
 			});
 		}
+
+
+
 
 		function deleteCartItem(cartItemId) {
 			$.ajax({
@@ -257,7 +305,7 @@
 		});
 
 
-								document.addEventListener("DOMContentLoaded", function () {
+		document.addEventListener("DOMContentLoaded", function () {
 			let inputs = document.querySelectorAll("input[type='number'].quantity");
 
 			inputs.forEach(input => {
@@ -265,7 +313,7 @@
 					let currentQuantity = parseInt(input.getAttribute("data-current-quantity")) || 0;
 					let stock = parseInt(input.getAttribute("data-stock")) || 0;
 					let min = parseInt(input.min) || 1;
-					let max = currentQuantity + stock;
+					let max = stock;
 
 					console.log("Max calculated:", max); // Debugging line
 
@@ -282,6 +330,46 @@
 					}
 				});
 			});
+		});
+		function updateCartTotals() {
+			let totalPrice = 0;
+			let selectedItemsContainer = $("#selected-items"); // Vùng hiển thị Cart Totals
+			selectedItemsContainer.empty(); // Xóa danh sách cũ
+
+			$(".cart-item-checkbox:checked").each(function () {
+				let cartItemId = $(this).data("cartitem-id");
+				let productName = $(`#cart-item-${cartItemId} .product-name h2`).text();
+				let price = parseFloat($(`#cart-item-${cartItemId} .price`).data("price"));
+				let quantity = parseInt($(`#cart-item-${cartItemId} input[type='number']`).val());
+				let total = price * quantity;
+
+				totalPrice += total; // Cộng dồn tổng giá trị
+
+				// Hiển thị sản phẩm trong Cart Totals
+				selectedItemsContainer.append(`
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<span class="text-black">${productName} (x${quantity})</span>
+						</div>
+						<div class="col-md-6 text-right">
+							<strong class="text-black">$${total.toFixed(2)}</strong>
+						</div>
+					</div>
+				`);
+			});
+
+			// Cập nhật tổng giá trị
+			$("#cart-total-price").text(`$${totalPrice.toFixed(2)}`);
+		}
+
+		// Gọi hàm này khi checkbox thay đổi hoặc số lượng sản phẩm thay đổi
+		$(".cart-item-checkbox, .quantity").on("change", function () {
+			updateCartTotals();
+		});
+
+		// Gọi ngay khi trang tải xong để cập nhật giá trị ban đầu
+		$(document).ready(function () {
+			updateCartTotals();
 		});
 
 	</script>
