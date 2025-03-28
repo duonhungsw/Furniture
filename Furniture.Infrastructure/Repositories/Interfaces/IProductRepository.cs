@@ -8,4 +8,6 @@ public interface IProductRepository : IGenericRepository<Product>
 	Task<List<string>> GetTypeAsync();
     Task<List<Product>> FilterProductsAsync(FilterProductInfo filterInfo);
     //Task<Product?> FindByIdAsync(Guid id);
+    //Task<Product?> FindByIdAsync(Guid id);
+    Task<bool> IsImageUsedByOtherProductsAsync(string imageUrl, Guid productId);
 }

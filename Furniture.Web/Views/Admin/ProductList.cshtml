@@ -34,44 +34,48 @@
         <i class="fas fa-plus"></i> Add New Product
     </a>
 </div>
-<table class="table table-hover shadow-sm rounded text-center">
+<table id="productTable" class="table table-hover shadow-sm rounded text-center">
     <thead class="bg-dark text-white">
         <tr>
-            <th>ID</th>
+            <th>STT</th>
             <th>Product Name</th>
+            <th>Type</th>
+            <th>Brand</th>
             <th>Price</th>
             <th>Picture</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>@product.Id</td>
-                <td class="font-weight-bold">@product.Name</td>
-                <td class="text-success">@product.Price.ToString("C")</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(product.PictureUrl))
+                    @for (int i = 0; i < Model.Count; i++)
                     {
-                        <img src="@product.PictureUrl.Split(',')[0]" class="rounded shadow" width="80" height="80" />
-                    }
-                    else
-                    {
-                        <span class="text-muted">no photo</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Update" asp-controller="Admin" asp-route-id="@product.Id" class="btn btn-warning btn-sm">
-                        <i class="fas fa-edit"></i> Update
-                    </a>
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td class="font-weight-bold">@Model[i].Name</td>
+                            <td class="font-weight-bold">@Model[i].Type</td>
+                            <td class="font-weight-bold">@Model[i].Brand</td>
+                            <td class="text-success">@Model[i].Price.ToString("C")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(Model[i].PictureUrl))
+                                {
+                                    <img src="@Model[i].PictureUrl.Split(',')[0]" class="rounded shadow" width="80" height="80" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">no photo</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Update" asp-controller="Admin" asp-route-id="@Model[i].Id" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Update
+                                </a>
 
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@product.Id" data-name="@product.Name">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                </td>
-            </tr>
-        }
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@Model[i].Id" data-name="@Model[i].Name">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
     </tbody>
 </table>
 
@@ -152,10 +156,12 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
     <script src="js/datatables-simple-demo.js"></script>
 </body>
-<<script>
+<script>
      $(document).ready(function () {
          setTimeout(function () {
              $("#success-alert").fadeOut("slow");
          }, 3000);
      });
+</script>
+
 

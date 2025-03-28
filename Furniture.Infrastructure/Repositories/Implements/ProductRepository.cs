@@ -79,15 +79,20 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
 					.Where(p => EF.Functions.Collate(p.Name, "Latin1_General_CI_AI").Contains(keyword)
 						&& p.QuantityInStock > 0).ToListAsync();
 	}
-	//public async Task<Product?> FindByIdAsync(Guid id)
-	//{
+    //public async Task<Product?> FindByIdAsync(Guid id)
+    //{
 
-	//    var product =  await appDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
-	//    if (product == null)
-	//    {
-	//        return null;
-	//    }
-	//    return product;
-	//}
+    //    var product =  await appDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+    //    if (product == null)
+    //    {
+    //        return null;
+    //    }
+    //    return product;
+    //}
+    public async Task<bool> IsImageUsedByOtherProductsAsync(string imageUrl, Guid productId)
+    {
+        return await appDbContext.Products
+            .AnyAsync(p => p.Id != productId && p.PictureUrl.Contains(imageUrl));
+    }
 
 }

@@ -1,92 +1,78 @@
-@model Furniture.Core.ProductDto;
-
+﻿@model Furniture.Core.ProductDto;
 @{
-    ViewData["Title"] = "Create Product";
+    Layout = null;
 }
-
 <head>
     @await Html.PartialAsync("_adminHeadComponent");
-    <title>Manage Account</title>
+    <title>Manage Product</title>
+    <style>
+        .form-container {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body class="sb-nav-fixed">
-    <!-- Admin navbar -->
     @await Html.PartialAsync("_adminNavBarComponent");
     <div id="layoutSidenav">
-        <!-- Admin Slidenav -->
         @await Html.PartialAsync("_adminSlideNavComponent");
         <div id="layoutSidenav_content">
-<h1>Create Product</h1>
-<hr/>
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="form-container">
+                            <h2 class="text-center">Create Product</h2>
+                            <form id ="addProductForm" asp-action="Create" asp-controller="Admin" method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="Name">Product Name</label>
+                                    <input type="text" asp-for="Name" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Description">Description</label>
+                                    <textarea asp-for="Description" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Type">Type</label>
+                                    <select asp-for="Type" class="form-control" required>
+                                        <option value="" disabled selected>-- Select Type --</option>
+                                        <option value="Sofa">Sofa</option>
+                                        <option value="Table">Table</option>
+                                        <option value="Chair">Chair</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Brand">Brand</label>
+                                    <select asp-for="Brand" class="form-control" required>
+                                        <option value="" disabled selected>-- Select Brand --</option>
+                                        <option value="IKEA">IKEA</option>
+                                        <option value="Ashley">Ashley</option>
+                                        <option value="La-Z-Boy">La-Z-Boy</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Price">Price</label>
+                                    <input type="number" asp-for="Price" class="form-control" min="1" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Stock">Quantity</label>
+                                    <input type="number" asp-for="QuantityInStock" class="form-control" min="1" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Images">Choose Picture</label>
+                                    <input type="file" asp-for="Images" class="form-control" multiple required />
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                    <a asp-action="ProductList" asp-controller="Admin" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Images" class="control-label"></label>
-                <input asp-for="Images" type="file" multiple class="form-control" />
-                <span asp-validation-for="Images" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <select asp-for="Type" class="form-control">
-                    <option value="">-- Choose Type Product --</option>
-                    <option value="Sofa">Sofa</option>
-                    <option value="Table">Table</option>
-                    <option value="Desks">Desks</option>
-                    <option value="Bean Bags">Bean Bags</option>
-                    <option value="Stools">Stools</option>
-                </select>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Brand" class="control-label"></label>
-                <select asp-for="Brand" class="form-control">
-                    <option value="">-- Choose Brand Product --</option>
-                    <option value="IKEA">IKEA</option>
-                    <option value="Ashley">Ashley</option>
-                    <option value="Herman Miller">Herman Miller</option>
-                </select>
-                <span asp-validation-for="Brand" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="QuantityInStock" class="control-label"></label>
-                <input asp-for="QuantityInStock" class="form-control" />
-                <span asp-validation-for="QuantityInStock" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
-            <!-- Footer -->
             @await Html.PartialAsync("_adminFooter");
         </div>
     </div>
@@ -96,4 +82,3 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
     <script src="js/datatables-simple-demo.js"></script>
 </body>
-
