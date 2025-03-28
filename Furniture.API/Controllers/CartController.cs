@@ -30,7 +30,4 @@ public class CartController(ICartServices cartServices
     {
         return await cartServices.AddCartItemAsync(model, accountId);
     }
-
-
-
 }

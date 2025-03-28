@@ -13,4 +13,5 @@ public class CartItemDto
     public bool Status { get; set; }
     public decimal TotalMoney { get; set; }
     public int QuantityInStock { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }
