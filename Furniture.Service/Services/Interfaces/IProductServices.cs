@@ -8,5 +8,8 @@ public interface IProductServices
 	Task<bool> CreateAsync(ProductDto model);
 	Task<ProductDto?> GetProductByIdAsync(Guid Id);
 	Task<List<ProductDto>> GetProductsAsync();
+	Task<List<string>> GetBrandAsync();
+	Task<List<string>> GetTypeAsync();
 	Task<List<ProductDto>> SearchProductsAsync(string keyword);
+    Task<List<ProductDto>> FilterProductsAsync(FilterProductInfo filterInfo);
 }

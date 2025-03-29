@@ -2,39 +2,119 @@
 <link href="~/css/productHome.css" rel="stylesheet">
 @model PagedResult<ProductDto>
 
-<div class="hero">
-	<div class="container">
-		<div class="row justify-content-between">
-			<div class="col-lg-5">
-				<div class="intro-excerpt">
-					<h1>Shop</h1>
-				</div>
-			</div>
-			<div class="col-lg-7">
-			</div>
-		</div>
-	</div>
-</div>
+@* <div class="hero"> *@
+@* 	<div class="container"> *@
+@* 		<div class="row justify-content-between"> *@
+@* 			<div class="col-lg-5"> *@
+@* 				<div class="intro-excerpt"> *@
+@* 					<h1>Shop</h1> *@
+@* 				</div> *@
+@* 			</div> *@
+@* 			<div class="col-lg-7"> *@
+@* 			</div> *@
+@* 		</div> *@
+@* 	</div> *@
+@* </div> *@
 <!-- End Hero Section -->
 
 <div class="untree_co-section product-section before-footer-section">
 	<div class="container">
-		<div class="d-flex justify-content-between">
+		<div class="d-flex justify-content-between mb-5">
 			<div class="input-group mb-3 search-input-group">
 				<input id="searchInput" type="text" class="form-control" placeholder="Product's name..." value="@ViewBag.SearchText">
 				<button class="btn btn-outline-success" type="button" id="button-search">Search</button>
 			</div>
-			<div class="sort-collection">
-				<select class="sort-by select2-hidden-accessible"
-						tabIndex="-1"
-						aria-hidden="true">
-					<option value="">Price</option>
-					<option value="Price-asc">Price: Ascending</option>
-					<option value="Price-desc">Price: Descending</option>
-				</select>
+			<div class="option-filter-collection">
+				<label id="reset-filter" style="color: black; margin-right: 20px; cursor: pointer">
+					Reset filter
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 6.77223 3.79669 5.23053 5.04274 4.22222" stroke="black" stroke-linecap="square"></path><path d="M3 3.9165H5.44444V6.36095" stroke="black" stroke-linecap="square"></path></svg>
+				</label>
+				<div class="filter-collection" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+					<span>Filter</span>
+					<svg xmlns="http://www.w3.org/2000/svg"
+						 width="16"
+						 height="12"
+						 viewBox="0 0 16 12"
+						 fill="none">
+						<path d="M1.33325 2.66699H8.83325" stroke="black" strokeLinecap="square"></path>
+						<path d="M12.1665 2.66699L14.6665 2.66699"
+							  stroke="black"
+							  strokeLinecap="square"></path>
+						<path d="M7.1665 9.33301L14.6665 9.33301"
+							  stroke="black"
+							  strokeLinecap="square"></path>
+						<path d="M1.33325 9.33301H3.83325" stroke="black" strokeLinecap="square"></path>
+						<ellipse cx="5.49992"
+								 cy="9.33366"
+								 rx="1.66667"
+								 ry="1.66667"
+								 stroke="black"></ellipse>
+						<ellipse cx="10.4999"
+								 cy="2.66667"
+								 rx="1.66667"
+								 ry="1.66667"
+								 stroke="black"></ellipse>
+					</svg>
+				</div>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasRightLabel">Filter</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <form action="product" method="post" id="filterForm">
+							<div class="brand filter-option">
+								<h6>Brand</h6>
+								<p><hr class="dropdown-divider"></p>
+
+								@if (ViewBag.Brands != null)
+								{
+									@foreach (var brand in ViewBag.Brands as List<string>)
+									{
+										<div class="form-check">
+											<input class="form-check-input brand-checkbox" type="checkbox" name="brands" value="@brand" id="brand_@brand">
+											<label class="form-check-label" for="brand_@brand">
+												@brand
+											</label>
+										</div>
+									}
+								}
+							</div>
+
+							<div class="type filter-option mt-3">
+								<h6>Type</h6>
+								<p><hr class="dropdown-divider"></p>
+
+								@if (ViewBag.Types != null)
+								{
+									@foreach (var type in ViewBag.Types as List<string>)
+									{
+										<div class="form-check">
+											<input class="form-check-input type-checkbox" type="checkbox" name="types" value="@type" id="type_@type">
+											<label class="form-check-label" for="type_@type">
+												@type
+											</label>
+										</div>
+									}
+								}
+							</div>
+
+
+                        </form>
+                    </div>
+                </div>
+				<div class="sort-collection">
+					<select class="sort-by select2-hidden-accessible"
+							tabIndex="-1"
+							aria-hidden="true">
+						<option value="">Price</option>
+						<option value="Price:Asc">Price: Ascending</option>
+						<option value="Price:Desc">Price: Descending</option>
+					</select>
+				</div>
 			</div>
 		</div>
-		<div class="row">
+		<div id="productList" class="row">
 			@foreach (var item in @Model.Items)
 			{
 				<div class="col-12 col-md-4 col-lg-3 mb-5">

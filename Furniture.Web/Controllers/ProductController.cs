@@ -29,7 +29,18 @@ public class ProductController(IProductApi _productApi) : Controller
 	public async Task<IActionResult> SearchProducts([FromQuery] QueryInfo queryInfo)
 	{
 		var result = await _productApi.SearchProductsAsync(queryInfo);
+		var brands = await _productApi.GetProductsBrand();
+		var types = await _productApi.GetProductsType();
+
+		ViewBag.Brands = brands;
+		ViewBag.Types = types;
 		ViewBag.SearchText = queryInfo.SearchText;
 		return View("ProductHome", result);
 	}
+
+    public async Task<IActionResult> FilterProducts([FromBody] FilterProductInfo filterInfo)
+    {
+        var result = await _productApi.FilterProductsAsync(filterInfo);
+        return Json(result);
+    }
 }

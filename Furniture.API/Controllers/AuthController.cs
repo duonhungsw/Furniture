@@ -2,8 +2,7 @@
 
 [Route("sign")]
 public class AuthController(
-	IAuthService _service,
-	ITokenService _tokenService) : BaseApiController
+	IAuthService _service) : BaseApiController
 {
 	[HttpGet("google")]
 	public async Task<TokenResponse> SignInGoogle([FromQuery] string idToken)

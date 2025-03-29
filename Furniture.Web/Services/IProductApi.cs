@@ -18,4 +18,10 @@ public interface IProductApi
     Task<ProductDto> GetProductById(Guid id);
 	[Get("/products/search")]
 	Task<PagedResult<ProductDto>> SearchProductsAsync(QueryInfo queryInfo);
+	[Get("/products/brand")]
+	Task<List<string>> GetProductsBrand();
+	[Get("/products/type")]
+	Task<List<string>> GetProductsType();
+    [Post("/products/filter")]
+    Task<PagedResult<ProductDto>> FilterProductsAsync(FilterProductInfo filterInfo);
 }

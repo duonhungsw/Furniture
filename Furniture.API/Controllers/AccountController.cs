@@ -48,8 +48,8 @@ public class AccountController(
 		var account = new Account
 		{
 			Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-			Name = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
-			Email = User.FindFirstValue(ClaimTypes.Name)!,
+			Name = User.FindFirstValue(ClaimTypes.Name)!,
+			Email = User.FindFirstValue(ClaimTypes.Email)!,
 			RoleName = User.FindFirstValue(ClaimTypes.Role)!
 		};
 		return Ok(account);

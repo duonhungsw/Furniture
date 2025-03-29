@@ -93,10 +93,13 @@
                                         </div>
                                     <a asp-controller="Account" asp-action="ChangePhoneNumber" class="btn btn-outline-primary ms-2">Change</a>
                                 </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Day of Birthday</label>
-                                        <input type="text" class="form-control" name="BirthDay" value="@Model.BirthDay">
-                                    </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Day of Birthday</label>
+                                    <input type="date" class="form-control" asp-for="BirthDay">
+                                </div>
+
+
+
                                     <div class="avatar-container">
                                         <img id="avatarPreview" src="@Model.Avatar" alt="Avatar" class="avatar">
                                         <div class="avatar-upload">

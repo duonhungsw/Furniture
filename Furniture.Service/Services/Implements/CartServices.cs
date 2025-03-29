@@ -4,12 +4,14 @@ public class CartServices(
     ICartRepository _cartRepository,
     IAccountRepository _accountRepository,
     IProductRepository _productRepository,
-    ITokenService tokenService,
-    IMapper _mapper,
     ICartItemRepository cartItemRepository) : ICartServices
 {
     public async Task<List<CartItemDto>?> GetCartsAsync(Guid accountId)
-        => await _cartRepository.GetCartProductsAsync(accountId);
+    {
+        var list = await _cartRepository.GetCartProductsAsync(accountId);
+        return list?.OrderByDescending(x => x.CreatedAt).ToList() ?? new List<CartItemDto>();
+    }
+         
     public async Task<bool> DeleteCartItemAsync(Guid cartItemID)
     {
         var cartItem = await cartItemRepository.GetByIdAsync(cartItemID);
@@ -68,28 +70,25 @@ public class CartServices(
         {
             var cartByAccountId = await _cartRepository.GetCartByAccountIdAsync(account.Id);
             var productByProductId = await _productRepository.GetByIdAsync(productId);
-            if (await cartItemRepository.CheckCartItemByProductIdAsync(cartByAccountId, productByProductId.Id))
+            if (await cartItemRepository.CheckCartItemByProductIdAsync(cartByAccountId!, productByProductId!.Id))
             {
-                var cartItem = await cartItemRepository.GetCartItemByCartIdAndProductIdAsync(cartByAccountId.Id, productId);
-                await cartItemRepository.AddCartItemIsContainAsync(cartItem, quantity);
-                productByProductId.QuantityInStock = productByProductId.QuantityInStock - quantity;
-                _productRepository.Update(productByProductId);
-                await _productRepository.SaveChangesAsync();
+                var cartItem = await cartItemRepository.GetCartItemByCartIdAndProductIdAsync(cartByAccountId!.Id, productId);
+                await cartItemRepository.AddCartItemIsContainAsync(cartItem!, quantity);
+                cartItem!.TotalMoney = cartItem.Price * cartItem.Quantity;
+                cartItemRepository.Update(cartItem);
+                await cartItemRepository.SaveChangesAsync();
                 return true;
             }
             else
             {
                 var cartItem = new CartItem();
                 cartItem.ProductId = productId;
-                cartItem.CartId = cartByAccountId.Id;
+                cartItem.CartId = cartByAccountId!.Id;
                 cartItem.Quantity = quantity;
                 cartItem.Status = false;
                 cartItem.Price = productByProductId.Price;
                 cartItem.TotalMoney = quantity * productByProductId.Price;
                 await cartItemRepository.AddCartItemAsync(cartItem);
-                productByProductId.QuantityInStock = productByProductId.QuantityInStock - quantity;
-                _productRepository.Update(productByProductId);
-                await _productRepository.SaveChangesAsync();
                 return true;
             }
         }

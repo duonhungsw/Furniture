@@ -26,6 +26,7 @@
     padding: 10px 15px;
 }
 
+.filter-collection,
 .sort-collection select {
     padding: 10px 12px 10px 16px;
     border: 1px solid #e8e8e8;
@@ -45,6 +46,7 @@
     margin-left: 12px;
 }
 
+.filter-collection,
 .sort-collection select {
     height: 41px;
     background: url(https://file.hstatic.net/200000642007/file/vector_267_8abb48f….svg);
@@ -52,4 +54,11 @@
     background-repeat: no-repeat;
     outline: none;
     box-shadow: none;
+    background-color: white;
+}
+
+.option-filter-collection {
+    display: flex;
+    align-items: center;
+    justify-content: end;
 }
