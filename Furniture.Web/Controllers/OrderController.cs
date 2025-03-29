@@ -1,4 +1,5 @@
 using Furniture.Core;
+using Furniture.Core.Dtos.Order;
 using Furniture.Web.Models;
 using Furniture.Web.Services.VnPay;
 
@@ -140,4 +141,60 @@ public class OrderController(
 			return View(model);
 		}
 	}
+    public async Task<IActionResult> MonthlyRevenue(int? selectedYear)
+    {
+        int year = selectedYear ?? DateTime.Now.Year;
+
+        var monthlyRevenue = await _api.GetMonthlyRevenue();
+
+        var allMonths = new string[12] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+        var revenues = new double[12];
+
+        if (monthlyRevenue != null && monthlyRevenue.MonthlyRevenue.Any())
+        {
+            var filteredData = monthlyRevenue.MonthlyRevenue
+                .Where(x => x.Year == year)
+                .ToList();
+
+            if (filteredData.Any())
+            {
+                foreach (var item in filteredData)
+                {
+                    var monthIndex = item.Month - 1;
+                    revenues[monthIndex] = (double)item.TotalRevenue;
+                }
+            }
+        }
+
+        var chartData = new MonthlyRevenueViewModel
+        {
+            MonthlyRevenue = monthlyRevenue?.MonthlyRevenue ?? new List<MonthlyRevenueDto>(),
+            Labels = new List<string>(allMonths),
+            Revenues = new List<double>(revenues),
+            SelectedYear = year
+        };
+        return View(chartData);
+    }
+    [HttpGet]
+    public async Task<IActionResult> GetOrders(int pageIndex = 1, int pageSize = 5)
+    {
+        var queryInfo = new QueryInfo
+        {
+            PageIndex = pageIndex,
+            PageSize = pageSize,
+
+        };
+        var response = await _api.GetAllOrdersAsync(queryInfo);
+        return View(response);
+    }
+    [HttpPost]
+    public async Task<IActionResult> UpdateStatus(Guid orderId, Guid statusId)
+    {
+        var response = await _api.UpdateOrderStatus(orderId, statusId);
+        if (response == null)
+            return RedirectToAction("GetOrders");
+
+        ModelState.AddModelError("", "Failed to update order status.");
+        return RedirectToAction("GetOrders");
+    }
 }

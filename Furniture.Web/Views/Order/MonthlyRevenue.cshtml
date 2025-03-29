@@ -1,0 +1,114 @@
+﻿@model Furniture.Core.Dtos.Order.MonthlyRevenueViewModel;
+@{
+    Layout = null;
+}
+@{
+    ViewData["Title"] = "Monthly Revenue";
+}
+
+<head>
+    @await Html.PartialAsync("_adminHeadComponent");
+</head>
+
+<body class="sb-nav-fixed">
+    <!-- Admin navbar -->
+    @await Html.PartialAsync("_adminNavBarComponent");
+
+    <div id="layoutSidenav">
+        <!-- Admin Slidenav -->
+        @await Html.PartialAsync("_adminSlideNavComponent");
+
+        <!-- Main content section with spacing and border -->
+        <div class="container-fluid mt-4" style="padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; margin-top: 40px; margin-left: 250px; margin-bottom: 100px;margin-right: 50px;">
+            <!-- Adjust margin-left to avoid the sidebar, and margin-bottom for spacing at the bottom -->
+            <h2>Statiscal Revenue</h2>
+
+            <!-- Form for selecting year -->
+            <form method="get" action="@Url.Action("MonthlyRevenue")">
+                <select name="selectedYear" onchange="this.form.submit()" id="yearSelect">
+                    <option value="">Selected Year</option>
+                    @for (int i = 2020; i <= DateTime.Now.Year; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </form>
+
+            <!-- Table showing the revenue -->
+            <table class="table mt-4">
+                <thead>
+                    <!-- <tr>
+                        <th>Year</th>
+                        <th>Month</th>
+                        <th>Total Revenue</th>
+                    </tr>-->
+                </thead>
+
+                <tbody>
+                    <!--
+                    @if (Model != null && Model.MonthlyRevenue != null && Model.MonthlyRevenue.Any())
+                    {
+                        foreach (var item in Model.MonthlyRevenue)
+                        {
+                                    <tr>
+
+                                        <td>@item.Year</td>
+                                        <td>@item.Month</td>
+                                        <td>@String.Format("{0:C}", item.TotalRevenue)</td>
+                                    </tr>
+
+                        }
+                    }}-->
+                    <!--
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center">No data available</td>
+                        </tr>
+                                }-->
+                </tbody>
+            </table>
+
+            <!-- Chart.js integration -->
+            <canvas id="revenueChart" width="400" height="150"></canvas>
+        </div> <!-- End of container-fluid -->
+
+    </div> <!-- End of layoutSidenav -->
+    @await Html.PartialAsync("_adminFooter");
+
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Set the selected value using JavaScript
+        document.getElementById("yearSelect").value = '@Model.SelectedYear';
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var labels = @Html.Raw(Json.Serialize(Model?.Labels?.ToArray() ?? new string[0]));
+            var revenues = @Html.Raw(Json.Serialize(Model?.Revenues?.ToArray() ?? new double[0]));
+
+            var ctx = document.getElementById('revenueChart').getContext('2d');
+            var revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: revenues,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>

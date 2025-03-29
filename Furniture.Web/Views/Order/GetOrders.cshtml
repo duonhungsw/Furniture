@@ -1,0 +1,187 @@
+﻿@model Furniture.Common.PagedResult<Furniture.Core.OrderDto>
+@{
+    Layout = null;
+}
+<head>
+    @await Html.PartialAsync("_adminHeadComponent");
+    <title>Manage Orders</title>
+    <style>
+        .form-container {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="sb-nav-fixed">
+    @await Html.PartialAsync("_adminNavBarComponent");
+
+    <div id="layoutSidenav">
+        @await Html.PartialAsync("_adminSlideNavComponent");
+
+        <div id="layoutSidenav_content">
+            <div class="table-container">
+                <h2>Order List</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Products</th>
+                            <th>Total Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 1;
+                        }
+                        @if (Model != null && Model.Items != null && Model.Items.Any())
+                        {
+                            @foreach (var order in Model.Items)
+                            {
+                                <tr>
+                                    <td>@(index++)</td>
+                                    <td>@order.Account?.Name</td>
+                                    <td>@order.Address</td>
+                                    <td>@order.Status?.Name</td>
+                                    <td>
+                                        <ul>
+                                            @if (order.OrderItems != null && order.OrderItems.Any())
+                                            {
+                                                @foreach (var item in order.OrderItems)
+                                                {
+                                                    <li>
+                                                        @(item.Product?.Name ?? "No product") -
+                                                        Qty: @item.Quantity -
+                                                        Price: @(item.Product?.Price.ToString("C") ?? "N/A")
+                                                    </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li class="text-danger">⚠ No products available</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>@order.TotalMoney.ToString("C")</td>
+                                    <td>
+                                        @{
+                                            var statusList = new List<SelectListItem>
+                                {
+                                new SelectListItem { Value = "78448BDA-4688-4927-A593-3143CACC889E", Text = "Pending" },
+                                new SelectListItem { Value = "52DD2B75-1B00-48AD-86FB-B54FF6F6687F", Text = "Shipping" },
+                                new SelectListItem { Value = "AC9CB565-E033-4576-B0A7-BBAD3BB0D4EC", Text = "Cancelled" },
+                                new SelectListItem { Value = "1EED694D-0887-4193-AEED-C412179C28F9", Text = "Completed" }
+                                };
+                                            var selectedStatus = order.Status?.Id.ToString();
+                                        }
+
+                                        <form asp-action="UpdateStatus" method="post" class="status-form">
+                                            <input type="hidden" name="orderId" value="@order.Id" />
+                                            <select name="statusId" class="form-control status-dropdown">
+                                                @foreach (var status in statusList)
+                                                {
+                                                    <option value="@status.Value" selected="@(status.Value == selectedStatus)">
+                                                        @status.Text
+                                                    </option>
+                                                }
+                                            </select>
+                                            <button type="submit" class="btn btn-primary btn-update">Update</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="7">No orders found.</td></tr>
+                        }
+                    </tbody>
+                </table>
+                @if (Model != null && Model.TotalPages > 1)
+                {
+                    <div class="pagination">
+                        @if (Model.PageIndex > 1)
+                        {
+                            <a href="/order/getorders?pageIndex=@(Model.PageIndex - 1)&pageSize=@Model.PageSize">Previous</a>
+                        }
+
+                        <span>Page @Model.PageIndex of @Model.TotalPages</span>
+
+                        @if (Model.PageIndex < Model.TotalPages)
+                        {
+                            <a href="/order/getorders?pageIndex=@(Model.PageIndex + 1)&pageSize=@Model.PageSize">Next</a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+    .table-container {
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 5px 10px 10px 10px;
+        margin-right: 50px;
+        width: calc(100% - 60px);
+        overflow-x: hidden;
+    }
+
+    #layoutSidenav_content {
+        overflow-x: hidden;
+    }
+
+    .table {
+        width: 100%;
+        table-layout: fixed;
+    }
+        .table td, .table th {
+            word-wrap: break-word;
+        }
+
+    .status-form {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    .status-dropdown {
+        width: 120px;
+        font-size: 14px;
+        padding: 3px;
+    }
+
+    .btn-update {
+        font-size: 14px;
+        padding: 4px 8px;
+    }
+
+    /* Pagination styles */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+        .pagination a, .pagination span {
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+            .pagination a:hover {
+                background-color: #f0f0f0;
+            }
+</style>
