@@ -1,6 +1,8 @@
+using Furniture.Web.Services;
+
 namespace Furniture.Web.Controllers;
 
-public class HomeController(IAccountApi accountService) : Controller
+public class HomeController(IAccountApi accountService, IProductApi _productApi) : Controller
 {
 	public async Task<IActionResult> Index()
 	{
@@ -17,6 +19,14 @@ public class HomeController(IAccountApi accountService) : Controller
 		}
 
 		HttpContext.Session.SetObject("AccountInfo", response.Content);
+
+		QueryInfo queryInfo = new QueryInfo()
+		{
+			PageIndex = 1,
+			PageSize = 3
+		};
+		var result = await _productApi.GetProductsAsync(queryInfo);
+		ViewBag.products = result.Items;
 
 		return View(response.Content);
 	}

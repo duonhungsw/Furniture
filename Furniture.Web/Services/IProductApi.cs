@@ -3,8 +3,7 @@
 public interface IProductApi
 {
     [Get("/products")]
-    Task<PagedResult<ProductDto>> GetProductsAsync(
-        [Query] int? PageIndex);
+    Task<PagedResult<ProductDto>> GetProductsAsync(QueryInfo queryInfo);
 
 	[Multipart]
     [Post("/products/create")]
