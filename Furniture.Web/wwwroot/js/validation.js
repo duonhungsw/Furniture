@@ -17,6 +17,9 @@
     const confirmPasswordError = document.getElementById("confirmPasswordError");
     const signUpBtn = document.getElementById("signUpBtn");
 
+    // Lấy form quên mật khẩu
+    const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     function validateSignInForm() {
@@ -90,5 +93,18 @@
         emailSignUpInput.addEventListener("input", validateSignUpForm);
         passwordInput.addEventListener("input", validateSignUpForm);
         confirmPasswordInput.addEventListener("input", validateSignUpForm);
+    }
+
+    // Ẩn form Forgot Password khi có thông báo
+    const successMessage = "@(TempData["Success"] ?? "")";
+    const errorMessage = "@(TempData["Error"] ?? "")";
+
+    if ((successMessage && successMessage !== "") || (errorMessage && errorMessage !== "")) {
+        if (forgotPasswordForm) {
+            forgotPasswordForm.style.display = "none"; // Ẩn form
+            setTimeout(function () {
+                forgotPasswordForm.style.display = "block"; // Hiện lại form sau 3 giây
+            }, 3000);
+        }
     }
 });

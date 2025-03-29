@@ -165,6 +165,98 @@
         color: #888;
         margin-top: 50px;
         }
+
+        .order-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .shop-name {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status-success {
+            color: green;
+            background: #eaffea;
+        }
+
+        .status-pending {
+            color: orange;
+            background: #fff4e5;
+        }
+
+        .order-products {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .product-card {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: bold;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .rate-btn, .refund-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .rate-btn {
+            background: #ffcc00;
+            color: white;
+        }
+
+        .refund-btn {
+            background: #ff4d4d;
+            color: white;
+        }
+
     </style>
 </head>
 
@@ -202,31 +294,35 @@
                         }
                         else
                         {
+
+
                             @foreach (var order in Model.Orders)
                             {
                                 <div class="order-item">
                                     <div class="order-header">
-                                        <span class="shop-name">Furniture Shop</span>
-                                        <span class="order-status">
+                                        <span class="shop-name">🛒 Furniture Shop</span>
+                                        <span class="order-status @(order.Status?.Name == "Completed" ? "status-success" : "status-pending")">
                                             @(order.Status != null ? order.Status.Name : "Unknown")
                                         </span>
                                     </div>
-                                    <div class="product">
+
+                                    <div class="order-products">
                                         @foreach (var product in order.OrderItems)
                                         {
-                                            <img src="@product.Product!.PictureUrl!.Split(',')[0]" alt="Product" class="product-image">
-                                            <div class="product-info">
-                                                <p class="product-name">@product.Product.Name</p>
-                                                <p class="product-variation">Payment: @order.PaymentMethod</p>
-                                                <p class="product-quantity">Quantity: @product.Quantity</p>
-                                                <p class="product-price">$@product.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</p>
+                                            <div class="product-card">
+                                                <img src="@product.Product!.PictureUrl!.Split(',')[0]" alt="Product" class="product-image">
+                                                <div class="product-info">
+                                                    <p class="product-name">@product.Product.Name</p>
+                                                    <p class="product-variation">💳 Payment: @order.PaymentMethod</p>
+                                                    <p class="product-quantity">📦 Quantity: @product.Quantity</p>
+                                                    <p class="product-price">💲 @product.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</p>
+                                                </div>
                                             </div>
                                         }
                                     </div>
+
                                     <div class="order-footer">
-                                        <p class="order-total">Order Total: <strong>$@order.TotalMoney</strong></p>
-                                        @* <button class="rate-btn">Rate</button>
-                                         <button class="refund-btn">Request Refund</button> *@
+                                        <p class="order-total">💰 Order Total: <strong>$@order.TotalMoney</strong></p>
                                     </div>
                                 </div>
                             }
