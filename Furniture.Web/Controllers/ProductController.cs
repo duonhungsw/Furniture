@@ -13,7 +13,17 @@ public class ProductController(IProductApi _productApi) : Controller
 	}
     public async Task<IActionResult> ProductHome(int pageIndex = 1)
     {
-        var result = await _productApi.GetProductsAsync(pageIndex);
+		QueryInfo queryInfo = new QueryInfo()
+		{
+			PageIndex = pageIndex
+		};
+        var result = await _productApi.GetProductsAsync(queryInfo);
+		var brands = await _productApi.GetProductsBrand();
+		var types = await _productApi.GetProductsType();
+
+		ViewBag.Brands = brands;
+		ViewBag.Types = types;
+
 		return View(result);
     }
 	public async Task<IActionResult> SearchProducts([FromQuery] QueryInfo queryInfo)

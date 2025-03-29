@@ -9,7 +9,7 @@ public class AdminController(IProductApi _productApi,
     }
     public async Task<IActionResult> ProductList([FromQuery]QueryInfo queryInfo)
     {
-        var result = await _productApi.GetProductsAsync(queryInfo.PageIndex);
+        var result = await _productApi.GetProductsAsync(queryInfo);
         ViewBag.PageIndex = queryInfo.PageIndex;
         ViewBag.PageSize = queryInfo.PageSize;
         ViewBag.SearchText = queryInfo.SearchText;
