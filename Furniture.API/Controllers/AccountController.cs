@@ -6,6 +6,7 @@ namespace Furniture.API.Controllers;
 [Route("accounts")]
 public class AccountController(
 	IAccountServices _service,
+	ICartServices _cartServices,
 	ITokenService _tokenService,
 	IMapper _mapper,
 	MailService sendMail) : BaseApiController
@@ -21,6 +22,7 @@ public class AccountController(
 	public async Task<TokenResponse> Login([FromBody] SignInDTOs model)
 	{
 		var result = await _service.LoginAsync(model);
+		
 		return result!;
 	}
 	[HttpPost("login-google")]

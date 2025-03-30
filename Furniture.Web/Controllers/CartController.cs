@@ -1,4 +1,6 @@
-﻿namespace Furniture.Web.Controllers;
+﻿using Furniture.Web.Services;
+
+namespace Furniture.Web.Controllers;
 
 public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controller
 {
@@ -6,7 +8,7 @@ public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controll
     public async Task<IActionResult> ShoppingCart()
     {
         var account = await accountApi.GetUserInfoAsync();
-        var response = await cartApi.GetCarts(account!.Content!.Id);
+            var response = await cartApi.GetCarts(account!.Content!.Id);
 
         if (!response.IsSuccessStatusCode || response.Content == null)
         {
@@ -44,6 +46,8 @@ public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controll
         if (account != null)
         {
             bool result = await cartApi.DeleteCartItem(model.Id);
+            int itemsNumber = HttpContext.Session.GetInt32("itemsNumber") ?? 0;
+            HttpContext.Session.SetInt32("itemsNumber", itemsNumber - 1);
             return result;
         }
         return false;
@@ -55,6 +59,8 @@ public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controll
         if (account != null)
         {
             bool result = await cartApi.AddCartItem(model,account!.Content!.Id);
+            int itemsNumber = HttpContext.Session.GetInt32("itemsNumber") ?? 0;
+            HttpContext.Session.SetInt32("itemsNumber", itemsNumber + 1); // Lưu Session
             return result;
         }
         return false;

@@ -74,9 +74,8 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
-    $(document).on("click", "#addToCartBtn", function (e) {
+           $(document).on("click", "#addToCartBtn", function (e) {
         e.preventDefault();
 
         let productId = $(this).data("product-id");
@@ -103,6 +102,15 @@
             success: function (response) {
                 if (response) {
                     showCartNotification(productImage, productName, productPrice);
+
+                    // Cập nhật số lượng trên giỏ hàng
+                    let badge = $(".badge.bg-danger");
+                    let currentItems = parseInt(badge.text()) || 0;
+                    let newItemsNumber = currentItems + quantity;
+
+                    badge.text(newItemsNumber); // Cập nhật số lượng mới
+
+                    // Cập nhật stock sau khi thêm vào giỏ hàng
                     let newStock = stock - quantity;
                     $("i:contains('In stock')").text(`In stock: ${newStock}`);
                     if (newStock === 0) {
@@ -120,23 +128,48 @@
         });
     });
 
+
+    // Hiển thị thông báo sản phẩm đã thêm vào giỏ hàng
     function showCartNotification(image, name, price) {
+        // Xóa thông báo cũ nếu có
+        $("#cartNotification").remove();
+
         let notification = `
-            <div id="cartNotification" style="
+    <div id="cartNotification" style="
                 position: fixed; right: 20px; top: 20px; background: white; padding: 15px;
                 border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 300px;
-                display: flex; align-items: center; gap: 10px; z-index: 1000;">
-                <img src="${image}" alt="${name}" style="width: 50px; height: 50px; border-radius: 5px;">
-                <div>
-                    <strong>Added to cart successfully!"</strong><br>
-                    <span>${name}</span><br>
-                    <span style="color: red; font-weight: bold;">${price}</span>
-                </div>
-                <button onclick="$('#cartNotification').remove()" style="
-                    background: transparent; border: none; font-size: 16px; cursor: pointer;">✖</button>
-            </div>`;
+                display: flex; align-items: center; gap: 10px; z-index: 1000; opacity: 0;
+                transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease;">
+        <img src="${image}" alt="${name}" style="width: 50px; height: 50px; border-radius: 5px;">
+        <div>
+            <strong>Added to cart successfully!</strong><br>
+            <span>${name}</span><br>
+            <span style="color: red; font-weight: bold;">${price}</span>
+        </div>
+        <button id="closeNotification" style="
+                    background: transparent; border: none; font-size: 16px; cursor: pointer;">
+            ✖
+        </button>
+    </div>`;
 
         $("body").append(notification);
-        setTimeout(() => { $("#cartNotification").fadeOut(500, function () { $(this).remove(); }); }, 3000);
+
+        // Hiển thị hiệu ứng mượt
+        setTimeout(() => {
+            $("#cartNotification").css({ opacity: 1, transform: "translateY(0)" });
+        }, 10);
+
+        // Xóa thông báo sau 3 giây
+        setTimeout(() => {
+            $("#cartNotification").fadeOut(500, function () { $(this).remove(); });
+        }, 3000);
+
+        // Cho phép đóng thông báo ngay lập tức
+        $(document).on("click", "#closeNotification", function () {
+            $("#cartNotification").remove();
+        });
     }
+
 </script>
+
+

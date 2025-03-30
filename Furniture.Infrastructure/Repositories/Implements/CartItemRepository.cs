@@ -1,4 +1,6 @@
-﻿namespace Furniture.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Furniture.Infrastructure;
 
 public class CartItemRepository : GenericRepository<CartItem>, ICartItemRepository
 {
@@ -59,4 +61,17 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
 		}
 		return null;
 	}
+    public async Task<List<CartItem>?> GetCartItemByUserIdAsync(Guid userId)
+	{
+		var cart = await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == userId);
+        return await appDbContext.CartItems.Where(c => c.CartId == cart.Id).ToListAsync();
+    }
+    public async Task<bool> IsCartItemExistsAsync(Guid productId, Guid accountId)
+    {
+        var cart = await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
+        var cartItem = await appDbContext.CartItems
+            .FirstOrDefaultAsync(ci => ci.ProductId == productId && ci.CartId == cart.Id);
+
+        return cartItem != null;
+    }
 }

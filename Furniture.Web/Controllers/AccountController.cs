@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace Furniture.Web.Controllers;
 
 
-public class Account(IAccountApi _accountApi) : Controller
+public class Account(IAccountApi _accountApi,ICartApi _cartApi) : Controller
 {
     public IActionResult Login()
     {
@@ -29,7 +30,9 @@ public class Account(IAccountApi _accountApi) : Controller
             };
             HttpContext?.Response.Cookies.Append("AccessToken", token.AccessToken, cookieOptions);
             HttpContext?.Response.Cookies.Append("RefreshToken", token.RefreshToken, cookieOptions);
-
+            var user = await _accountApi.GetAccountByEmailAsync(model.Email);
+            var itemNumber = await _cartApi.GetCartItemsNumber(user.Content.Id);
+            HttpContext.Session.SetInt32("itemsNumber", itemNumber);
             return RedirectToAction("Index", "Home");
         }
         catch (ApiException ex)
