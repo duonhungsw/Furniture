@@ -16,19 +16,21 @@ public class ProductServices(
 			var imageUrls = product.PictureUrl.Split(',');
 			foreach (var imageUrl in imageUrls)
 			{
-				var uri = new Uri(imageUrl);
-				string blobName = Path.GetFileName(uri.LocalPath);
+                if (Uri.TryCreate(imageUrl, UriKind.Absolute, out Uri uri))
+                {
+                    string blobName = Path.GetFileName(uri.LocalPath);
+                    bool isImageShared = await _repository.IsImageUsedByOtherProductsAsync(imageUrl, id);
+                    if (!isImageShared)
+                    {
+                        bool fileExists = await _storageService.FileExistsAsync(containerName, blobName);
+                        if (fileExists)
+                        {
+                            await _storageService.DeleteFileAsync(containerName, blobName);
 
-				bool fileExists = await _storageService.FileExistsAsync(containerName, blobName);
-				if (fileExists)
-				{
-					bool isDeleted = await _storageService.DeleteFileAsync(containerName, blobName);
-					if (!isDeleted)
-					{
-						throw new BadRequestException(string.Format(ErrorMessageBase.BadRequest, "Invalid data format"));
-					}
-				}
-			}
+                        }
+                    }
+                }
+            }
 		}
 		_repository.Delete(product);
 		return await _repository.SaveChangesAsync();
@@ -54,13 +56,17 @@ public class ProductServices(
 			foreach (var file in model.Images!)
 			{
 				string fileName = file.FileName;
-				bool fileExists = await _storageService.FileExistsAsync(containerName, fileName);
-				if (fileExists)
-				{
-					throw new Exception($"File '{fileName}' existed in system.");
-				}
-				string fileUrl = await _storageService.UploadFileAsync(containerName, file);
-				pictureUrls.Add(fileUrl);
+                string fileUrl;
+                bool fileExists = await _storageService.FileExistsAsync(containerName, fileName);
+                if (fileExists)
+                {
+                    fileUrl = await _storageService.GetFileAsync(containerName, fileName);
+                }
+                else
+                {
+                    fileUrl = await _storageService.UploadFileAsync(containerName, file);
+                }
+                pictureUrls.Add(fileUrl);
 			}
 		}
 
@@ -71,13 +77,16 @@ public class ProductServices(
 
 		_repository.Create(product);
 		await _repository.SaveChangesAsync();
-		return true;
+        product.CreatedAt = DateTime.Now;
+        _repository.Update(product);
+        return true;
 	}
 
 	public async Task<List<ProductDto>> GetProductsAsync()
 	{
 		var products = await _repository.GetAllAsync();
-		return _mapper.Map<List<ProductDto>>(products);
+        var sortedProducts = products.OrderByDescending(p => p.CreatedAt).ToList();
+        return _mapper.Map<List<ProductDto>>(products);
 	}
 
 	public async Task<List<ProductDto>> SearchProductsAsync(string keyword)
@@ -87,74 +96,78 @@ public class ProductServices(
 	}
 	protected string? picture;
 
-	public async Task<bool> UpdateAsync(ProductDto model)
-	{
-		string containerName = ContainerName.product.ToString();
+    public async Task<bool> UpdateAsync(ProductDto model)
+    {
+        string containerName = ContainerName.product.ToString();
 
-		var existingProduct = await _repository.GetByIdAsync(model.Id);
-		if (existingProduct == null)
-			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", model.Id));
+        var existingProduct = await _repository.GetByIdAsync(model.Id);
+        if (existingProduct == null)
+            throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", model.Id));
 
-		if (model.Images is not null && model.Images.Count > 0)
-		{
-			var newImageNames = model.Images.Select(file => file.FileName).ToList();
-			var oldImageNames = existingProduct.PictureUrl.Split(',')
-														  .Select(url => Path.GetFileName(new Uri(url).LocalPath))
-														  .ToList();
+        List<string> newPictureUrls = new List<string>();
 
-			bool isSameImages = newImageNames.SequenceEqual(oldImageNames);
+        if (model.Images is not null && model.Images.Count > 0)
+        {
+            var newImageNames = model.Images.Select(file => file.FileName).ToList();
+            var oldImageNames = existingProduct.PictureUrl?
+                .Split(',')
+                .Select(url => Uri.TryCreate(url, UriKind.Absolute, out var uri) ? Path.GetFileName(uri.LocalPath) : url)
+                .ToList() ?? new List<string>();
 
-			if (isSameImages)
-			{
-				var updated = _mapper.Map(model, existingProduct);
-				updated.PictureUrl = existingProduct.PictureUrl;
-				_repository.Update(updated);
-				await _repository.SaveChangesAsync();
-				return true;
-			}
-		}
+            bool isSameImages = newImageNames.SequenceEqual(oldImageNames);
+
+            if (isSameImages)
+            {
+                var updated = _mapper.Map(model, existingProduct);
+                updated.PictureUrl = existingProduct.PictureUrl;
+                _repository.Update(updated);
+                await _repository.SaveChangesAsync();
+                return true;
+            }
 
 
-		if (!string.IsNullOrEmpty(existingProduct.PictureUrl))
-		{
-			var oldImageUrls = existingProduct.PictureUrl.Split(',');
+            if (!string.IsNullOrEmpty(existingProduct.PictureUrl))
+            {
+                var oldImageUrls = existingProduct.PictureUrl.Split(',');
 
-			foreach (var imageUrl in oldImageUrls)
-			{
-				var uri = new Uri(imageUrl);
-				string oldBlobName = Path.GetFileName(uri.LocalPath);
+                foreach (var imageUrl in oldImageUrls)
+                {
+                    if (Uri.TryCreate(imageUrl, UriKind.Absolute, out var uri))
+                    {
+                        string oldBlobName = Path.GetFileName(uri.LocalPath);
 
-				bool fileExists = await _storageService.FileExistsAsync(containerName, oldBlobName);
-				if (fileExists)
-				{
-					bool isDeleted = await _storageService.DeleteFileAsync(containerName, oldBlobName);
-					if (!isDeleted)
-					{
-						throw new Exception($"can't delete old picture: {oldBlobName}");
-					}
-				}
-			}
-		}
+                        bool fileExists = await _storageService.FileExistsAsync(containerName, oldBlobName);
+                        if (fileExists)
+                        {
+                            bool isDeleted = await _storageService.DeleteFileAsync(containerName, oldBlobName);
+                            if (!isDeleted)
+                            {
+                                throw new Exception($"Can't delete old picture: {oldBlobName}");
+                            }
+                        }
+                    }
+                }
+            }
 
-		List<string> newPictureUrls = new List<string>();
+            newPictureUrls = await _storageService.SaveFilesAsync(containerName, model.Images);
+        }
+        else
+        {
+            newPictureUrls = existingProduct.PictureUrl?.Split(',').ToList() ?? new List<string>();
+        }
 
-		if (model.Images != null && model.Images.Count > 0)
-		{
-			newPictureUrls = await _storageService.SaveFilesAsync(containerName, model.Images);
-		}
 
-	
-		model.PictureUrl = string.Join(",", newPictureUrls);
+        model.PictureUrl = string.Join(",", newPictureUrls);
 
-		var updatedProduct = _mapper.Map(model, existingProduct);
-		updatedProduct.PictureUrl = model.PictureUrl ?? existingProduct.PictureUrl;
-		_repository.Update(updatedProduct);
-		await _repository.SaveChangesAsync();
+        var updatedProduct = _mapper.Map(model, existingProduct);
+        updatedProduct.PictureUrl = model.PictureUrl;
+        _repository.Update(updatedProduct);
+        await _repository.SaveChangesAsync();
 
-		return true;
-	}
+        return true;
+    }
 
-	public async Task<List<string>> GetBrandAsync()
+    public async Task<List<string>> GetBrandAsync()
 	{
 		var brands = await _repository.GetBrandAsync();
 		return brands;
