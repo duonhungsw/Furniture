@@ -1,4 +1,6 @@
-﻿namespace Furniture.Service;
+﻿using Furniture.Core.Dtos.Order;
+
+namespace Furniture.Service;
 
 public class OrderService(
 	IOrderRepository _repository,
@@ -68,4 +70,65 @@ public class OrderService(
 
 	public async Task<List<OrderDto>> GetOrdersAsync(Guid accountId, QueryInfo queryInfo, Guid statusId)
 		=> await _repository.GetOrdersAsync(accountId, queryInfo, statusId);
+    public async Task<MonthlyRevenueViewModel> GetMonthlyRevenue()
+    {
+        var revenueList = await _repository.GetMonthlyRevenue();
+
+        return new MonthlyRevenueViewModel
+        {
+            MonthlyRevenue = revenueList,
+            Labels = revenueList.Select(x => $"{x.Month}/{x.Year}").ToList(),
+            Revenues = revenueList.Select(x => (double)x.TotalRevenue).ToList()
+        };
+    }
+    public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
+    {
+        var orders = await _repository.GetAllOrdersAsync();
+
+        return orders.Select(order => new OrderDto
+        {
+            Id = order.Id,
+            AccountId = order.AccountId,
+            Account = order.Account != null
+                ? new AccountDto
+                {
+                    Id = order.Account.Id,
+                    Name = order.Account.Name,
+                    Email = order.Account.Email
+                }
+                : null,
+            Address = order.Address,
+            CreateAt = order.CreateAt ?? "",
+
+            Phone = order.Phone,
+            Note = order.Note,
+            TotalMoney = order.TotalMoney,
+            PaymentMethod = order.PaymentMethod,
+            StatusId = order.StatusId,
+            Status = order.Status != null
+                ? new StatusDto
+                {
+                    Id = order.Status.Id,
+                    Name = order.Status.Name
+                }
+                : null,
+            OrderItems = order.OrderItems.Select(item => new CreateOrderItemDto
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                Price = item.Price,
+                Product = item.Product != null
+                    ? new ProductDto
+                    {
+                        Id = item.Product.Id,
+                        Name = item.Product.Name
+                    }
+                    : null
+            }).ToList()
+        }).ToList();
+    }
+    public async Task<bool> UpdateOrderStatusAsync(Guid orderId, Guid statusId)
+    {
+        return await _repository.UpdateOrderStatusAsync(orderId, statusId);
+    }
 }

@@ -1,4 +1,6 @@
-﻿namespace Furniture.Infrastructure;
+﻿using Furniture.Core.Dtos.Order;
+
+namespace Furniture.Infrastructure;
 
 public class OrderRepository : GenericRepository<Order>, IOrderRepository
 {
@@ -66,4 +68,66 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 							  }).ToListAsync();
 		return entities;
 	}
+    public async Task<List<MonthlyRevenueDto>> GetMonthlyRevenue()
+    {
+        return await appDbContext.Orders
+            .Where(o => o.CreatedAt.HasValue)
+            .GroupBy(o => new { Year = o.CreatedAt.Value.Year, Month = o.CreatedAt.Value.Month })
+            .Select(g => new MonthlyRevenueDto
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                TotalRevenue = g.Sum(o => o.TotalMoney)
+            })
+            .ToListAsync();
+    }
+    public async Task<bool> UpdateOrderStatusAsync(Guid orderId, Guid statusId)
+    {
+        var order = await appDbContext.Orders.FindAsync(orderId);
+        if (order == null) return false;
+
+        order.StatusId = statusId;
+        await appDbContext.SaveChangesAsync();
+        return true;
+    }
+    public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
+    {
+        var orders = await (from o in appDbContext.Orders
+                            join a in appDbContext.Accounts on o.AccountId equals a.Id
+                            select new OrderDto
+                            {
+                                Id = o.Id,
+                                AccountId = o.AccountId,
+                                Account = new AccountDto { Name = a.Name },
+                                Address = $"{o.Detail}, {o.Town}, {o.District}, {o.City}, {o.Country}",
+                                CreateAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : null,
+                                Phone = o.Phone,
+                                Note = o.Note,
+                                TotalMoney = o.TotalMoney,
+                                PaymentMethod = o.PaymentMethod,
+                                StatusId = o.StatusId,
+                                Status = new StatusDto
+                                {
+                                    Id = o.Status.Id,
+                                    Name = o.Status.Name
+                                },
+                                OrderItems = o.OrderItems.Select(oi => new CreateOrderItemDto
+                                {
+                                    OrderId = oi.OrderId,
+                                    ProductId = oi.ProductId,
+                                    Product = oi.Product != null ? new ProductDto
+                                    {
+                                        Id = oi.Product.Id,
+                                        Name = oi.Product.Name,
+                                        Price = oi.Product.Price
+                                    } : null,
+                                    Quantity = oi.Quantity,
+                                    Price = oi.Product.Price
+                                }).ToList()
+                            })
+                            .AsNoTracking()
+                            .ToListAsync();
+
+        return orders;
+    }
 }

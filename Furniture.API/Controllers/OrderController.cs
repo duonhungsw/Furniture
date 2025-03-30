@@ -30,4 +30,22 @@ public class OrderController(
 		var results = await _service.GetOrdersForAccountAsync(id);
 		return results;
 	}
+    [HttpGet("revenue")]
+    public async Task<ActionResult> GetMonthlyRevenue()
+    {
+        var chartData = await _service.GetMonthlyRevenue();
+        return Ok(chartData);
+    }
+    [HttpPut("/status/{statusId}")]
+    public async Task<ActionResult<bool>> UpdateOrderStatus(Guid orderId, Guid statusId)
+    {
+        bool result = await _service.UpdateOrderStatusAsync(orderId, statusId);
+        return result;
+    }
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<OrderDto>>> GetAllOrders([FromQuery] QueryInfo queryInfo)
+    {
+        var pagedOrders = await _service.GetAllOrdersAsync();
+        return CreatePagedResult(pagedOrders, queryInfo);
+    }
 }

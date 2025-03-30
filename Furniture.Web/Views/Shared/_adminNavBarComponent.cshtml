@@ -9,9 +9,16 @@
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="AdminInfoController">Settings</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="LogoutController">Logout</a></li>
+                @if (Context.Request.Cookies["AccessToken"] != null)
+                {
+                    <li><a class="dropdown-item" asp-controller="Account" asp-action="ViewProfile">My Account</a></li>
+                    <li><a class="dropdown-item" asp-controller="Order" asp-action="Purchase"> My Purchase</a></li>
+                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                }
+                else
+                {
+                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a></li>
+                }
             </ul>
         </li>
     </ul>
