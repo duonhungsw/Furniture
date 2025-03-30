@@ -237,15 +237,23 @@
 				type: "DELETE",
 				success: function (response) {
 					console.log("Xóa thành công!");
+
+					// Ẩn và xóa mục đã chọn
 					$("#cart-item-" + cartItemId).fadeOut(500, function () {
 						$(this).remove();
+
+						// Sau khi xóa xong, cập nhật số lượng trên giỏ hàng
+						let badge = $(".badge.bg-danger");
+						let currentItems = parseInt(badge.text()) || 0;
+						let newItemsNumber = Math.max(0, currentItems - 1); // Đảm bảo không bị âm
+
+						badge.text(newItemsNumber);
 					});
 				},
 				error: function (xhr, status, error) {
 					console.error("Lỗi xóa sản phẩm:", xhr.responseText);
 				}
 			});
-
 		}
 
 		// Bắt sự kiện khi bấm nút xóa
@@ -254,6 +262,7 @@
 			let cartItemId = $(this).data("cartitem-id");
 			deleteCartItem(cartItemId);
 		});
+
 
 
 								document.addEventListener("DOMContentLoaded", function () {

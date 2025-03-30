@@ -11,6 +11,12 @@ public class CartServices(
         var list = await _cartRepository.GetCartProductsAsync(accountId);
         return list?.OrderByDescending(x => x.CreatedAt).ToList() ?? new List<CartItemDto>();
     }
+    public async Task<List<CartItem>?> GetCartItemsByAccountIdAsync(Guid accountId)
+    {
+        var list = await cartItemRepository.GetCartItemByUserIdAsync(accountId);
+        return list;
+
+    }
          
     public async Task<bool> DeleteCartItemAsync(Guid cartItemID)
     {
@@ -94,6 +100,9 @@ public class CartServices(
         }
         return false;
     }
-
+    public async Task<bool> IsCartItemExistsAsync(Guid productId, Guid accountId)
+    {
+        return await cartItemRepository.IsCartItemExistsAsync(productId, accountId);
+    }
 
 }
