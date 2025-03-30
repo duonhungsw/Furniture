@@ -6,7 +6,7 @@ public class OrderItemRepository : GenericRepository<OrderItem>, IOrderItemRepos
 	{
 
 	}
-	public async Task AddRangeAsync(List<OrderItem> domain)
+	public async Task AddRangeAsync(IEnumerable<OrderItem> domain)
 	{
 		 await appDbContext.OrderItems.AddRangeAsync(domain);
 	}

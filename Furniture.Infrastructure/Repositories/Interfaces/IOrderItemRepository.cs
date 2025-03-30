@@ -2,5 +2,5 @@
 
 public interface IOrderItemRepository : IGenericRepository<OrderItem>
 {
-	Task AddRangeAsync(List<OrderItem> domain);
+	Task AddRangeAsync(IEnumerable<OrderItem> domain);
 }

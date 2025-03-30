@@ -47,6 +47,12 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
 		}
 		return false;
 	}
+
+	public void DeleteRangeAsync(List<CartItem> cartItems)
+	{
+		appDbContext.CartItems.RemoveRange(cartItems);
+	}
+
 	public async Task<CartItem?> GetCartItemByCartIdAndProductIdAsync(Guid cartId, Guid productId)
 	{
 		var cartItem = new CartItem();
@@ -61,17 +67,22 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
 		}
 		return null;
 	}
-    public async Task<List<CartItem>?> GetCartItemByUserIdAsync(Guid userId)
+	public async Task<List<CartItem>?> GetCartItemByUserIdAsync(Guid userId)
 	{
 		var cart = await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == userId);
-        return await appDbContext.CartItems.Where(c => c.CartId == cart.Id).ToListAsync();
-    }
-    public async Task<bool> IsCartItemExistsAsync(Guid productId, Guid accountId)
-    {
-        var cart = await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
-        var cartItem = await appDbContext.CartItems
-            .FirstOrDefaultAsync(ci => ci.ProductId == productId && ci.CartId == cart.Id);
+		return await appDbContext.CartItems.Where(c => c.CartId == cart.Id).ToListAsync();
+	}
+	public async Task<bool> IsCartItemExistsAsync(Guid productId, Guid accountId)
+	{
+		var cart = await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
+		var cartItem = await appDbContext.CartItems
+			.FirstOrDefaultAsync(ci => ci.ProductId == productId && ci.CartId == cart.Id);
 
-        return cartItem != null;
-    }
+		return cartItem != null;
+	}
+
+	public async Task<List<CartItem>?> GetCartsItemByCartIdAndProductIdAsync(Guid cartId, Guid productId)
+	{
+		return await appDbContext.CartItems.Where(x => x.CartId == cartId && x.ProductId == productId).ToListAsync();
+	}
 }
