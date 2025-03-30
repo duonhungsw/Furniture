@@ -16,7 +16,7 @@ public class AdminController(IProductApi _productApi,
         ViewBag.TotalPages = (int)Math.Ceiling((double)result.TotalCount / queryInfo.PageSize);
 
         return View(result.Items);
-    }
+    }  
     public IActionResult Create()
     {
         return View();
@@ -53,7 +53,7 @@ public class AdminController(IProductApi _productApi,
         }
         ModelState.AddModelError("", "An error occurred while creating the product.");
         return View(model);
-    }
+    }  
     public async Task<IActionResult> Update(Guid id)
     {
         var product = await _productApi.GetProductById(id);
@@ -116,7 +116,7 @@ public class AdminController(IProductApi _productApi,
         }
 
         return View(model);
-    }
+    }  
     public async Task<IActionResult> ConfirmDelete(Guid id)
     {
         var product = await _productApi.GetProductById(id);
@@ -136,11 +136,12 @@ public class AdminController(IProductApi _productApi,
     public async Task<IActionResult> ManageAccount(QueryInfo queryInfo)
     {
         var result = await _accountApi.GetAccounts(queryInfo);
+        var filteredAccounts = result.Items.Where(a => a.RoleName != "Admin").ToList();
         ViewBag.PageIndex = queryInfo.PageIndex;
         ViewBag.PageSize = queryInfo.PageSize;
         ViewBag.SearchText = queryInfo.SearchText;
-        ViewBag.TotalPages = (int)Math.Ceiling((double)result.TotalCount / queryInfo.PageSize);
-        return View(result.Items);
+        ViewBag.TotalPages = (int)Math.Ceiling((double)filteredAccounts.Count / queryInfo.PageSize);
+        return View(filteredAccounts);
     }
     [HttpGet]
     public async Task<IActionResult> UpdateRole(Guid id)
