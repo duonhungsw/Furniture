@@ -19,8 +19,9 @@ public class AccountRepository : GenericRepository<Account>, IAccountRepository
 				Email = account.Email,
 				Avatar = account.Avatar,
 				BirthDay = account.BirthDay,
-				Phone = account.Phone
-			})
+				Phone = account.Phone,
+                RoleName = account.RoleName
+            })
 			.ToListAsync();
 	}
 
