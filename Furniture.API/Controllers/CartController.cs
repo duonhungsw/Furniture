@@ -30,4 +30,10 @@ public class CartController(ICartServices cartServices
     {
         return await cartServices.AddCartItemAsync(model, accountId);
     }
+    [HttpGet("{accountId}/items-number")]
+    public async Task<int> GetCartItemsNumber([FromRoute] Guid accountId)
+    {
+        var list = await cartServices.GetCartItemsByAccountIdAsync(accountId);
+        return list.Count; 
+    }
 }

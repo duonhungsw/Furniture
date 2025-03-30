@@ -39,8 +39,24 @@
 						}
 					</ul>
 				</li>
+				@if (Context.Request.Cookies["AccessToken"] != null)
+						{
+					<li class="nav-item position-relative">
+						<a class="nav-link" asp-controller="Cart" asp-action="ShoppingCart">
+							<img src="~/images/cart.svg" width="30" height="30" alt="Cart">
+							<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+								@{
+									var itemsNumber = Context.Session.GetInt32("itemsNumber") ?? 0;
+								}
+								@itemsNumber
+								<span class="visually-hidden">items in cart</span>
+							</span>
+						</a>
+					</li>
 
-				<li><a class="nav-link" asp-controller="Cart" asp-action="ShoppingCart"><img src="~/images/cart.svg"></a></li>
+						}
+				
+
 			</ul>
 		</div>
 	</div>

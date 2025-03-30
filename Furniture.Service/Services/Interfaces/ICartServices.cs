@@ -7,5 +7,6 @@ public interface ICartServices
     Task<bool> UpdateCartItemByQuantityAsync(Guid cartItemId, int quantity);
     Task<bool> UpdateCartItemByStatusAsync(Guid cartItemId);
     Task<bool> AddCartItemAsync(CartAddDto model, Guid accountId);
-
+    Task<List<CartItem>?> GetCartItemsByAccountIdAsync(Guid accountId);
+    Task<bool> IsCartItemExistsAsync(Guid productId, Guid accountId);
 }

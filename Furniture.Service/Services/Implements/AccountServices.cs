@@ -4,6 +4,8 @@ namespace Furniture.Service;
 
 public class AccountServices(
 	IAccountRepository _repository,
+	ICartItemRepository cartItemRepository,
+	ICartRepository cartRepository,
 	ITokenService _tokenService,
 	IFileStorageService _fileStorageService,
 	ICartRepository _cartRepository,
@@ -58,7 +60,7 @@ public class AccountServices(
 		var accessToken = _tokenService.GenerateAccessToken(result);
 		var refreshToken = _tokenService.GenerateAccessToken(result);
 		_tokenService.SetTokensInsideCookie(accessToken, refreshToken);
-		return new TokenResponse
+        return new TokenResponse
 		{
 			AccessToken = accessToken,
 			RefreshToken = refreshToken

@@ -94,17 +94,4 @@
         passwordInput.addEventListener("input", validateSignUpForm);
         confirmPasswordInput.addEventListener("input", validateSignUpForm);
     }
-
-    // Ẩn form Forgot Password khi có thông báo
-    const successMessage = "@(TempData["Success"] ?? "")";
-    const errorMessage = "@(TempData["Error"] ?? "")";
-
-    if ((successMessage && successMessage !== "") || (errorMessage && errorMessage !== "")) {
-        if (forgotPasswordForm) {
-            forgotPasswordForm.style.display = "none"; // Ẩn form
-            setTimeout(function () {
-                forgotPasswordForm.style.display = "block"; // Hiện lại form sau 3 giây
-            }, 3000);
-        }
-    }
 });
