@@ -52,7 +52,8 @@ public class AccountController(
 			Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
 			Name = User.FindFirstValue(ClaimTypes.Name)!,
 			Email = User.FindFirstValue(ClaimTypes.Email)!,
-			RoleName = User.FindFirstValue(ClaimTypes.Role)!
+			RoleName = User.FindFirstValue(ClaimTypes.Role)!,
+			Phone = User.FindFirstValue(ClaimTypes.MobilePhone)!,
 		};
 		return Ok(account);
 	}

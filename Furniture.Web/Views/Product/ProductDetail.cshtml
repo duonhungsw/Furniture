@@ -47,7 +47,7 @@
                 <hr>
                 <div class="mb-3">
                     <h5 class="text-muted">Price:</h5>
-                    <p class="fs-4 fw-bold text-success">@Model.Price $</p>
+                    <p class="fs-4 fw-bold text-success">@Model.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</p>
                 </div>
                 <div>
                     <h5 class="text-muted">Description:</h5>

@@ -30,20 +30,20 @@ public class OrderService(
 			_repository.Create(order);
 			//await _repository.SaveChangesAsync();
 
-			var orderItems = model.OrderItems.Select(item => new OrderItem
-			{
-				OrderId = order.Id,
-				ProductId = item.ProductId,
-				Quantity = item.Quantity
-			}).ToList();
+			//var orderItems = model.OrderItems.Select(item => new OrderItem
+			//{
+			//	OrderId = order.Id,
+			//	ProductId = item.ProductId,
+			//	Quantity = item.Quantity
+			//}).ToList();
 
-			await _orderItemRepository.AddRangeAsync(orderItems); 
+			//await _orderItemRepository.AddRangeAsync(orderItems); 
 			await _repository.SaveChangesAsync();
 
-			foreach (var items in orderItems)
-			{
-				_orderItemRepository.Delete(items);
-			}
+			//foreach (var items in orderItems)
+			//{
+			//	_orderItemRepository.Delete(items);
+			//}
 
 			// Delete cart items was bought
 			var cartOfAccount = await _cartRepository.GetCartByAccountIdAsync(model.AccountId);
