@@ -25,7 +25,6 @@ public class CartServices(
         {
             _cartItemRepository.Delete(cartItem);
             var product = await _productRepository.GetByIdAsync(cartItem.ProductId);
-            product!.QuantityInStock += cartItem.Quantity;
             await _cartItemRepository.SaveChangesAsync();
             return true;
         }

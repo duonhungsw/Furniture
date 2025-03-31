@@ -40,7 +40,7 @@
 										<tr id="cart-item-@items.Id">
 											<td>
 												<input type="checkbox" class="cart-item-checkbox" data-cartitem-id="@items.Id"
-												@(items.Status ? "checked" : "") />
+													@(items.Status ? "checked" : "") />
 											</td>
 
 
@@ -50,40 +50,33 @@
 											<td class="product-name">
 												<h2 class="h5 text-black">@items.ProductName</h2>
 											</td>
-											<td class="price" data-price="@items.Price">@items.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</td>
-											<td>
-												<input type="number"
-													   name="Quantities"
-													   value="@items.Quantity"
-													   min="1"
-													   max="@(items.QuantityInStock + items.Quantity)"
-													   class="form-control quantity"
-													   data-cartItem-id="@items.Id"
-													   data-current-quantity="@items.Quantity"
-													   data-stock="@items.QuantityInStock"
-													   style="width: 80px; display: inline-block;"
-													   onchange="updateCartItemQuantity('@items.Id')" />
+											<td class="price" data-price="@items.Price">@items.Price.ToString("C",
+																						CultureInfo.GetCultureInfo("vi-VN"))</td>
+									<td>
+										<input type="number" name="Quantities" value="@items.Quantity" min="1"
+											max="@items.QuantityInStock" class="form-control quantity"
+											data-cartItem-id="@items.Id" data-current-quantity="@items.Quantity"
+											data-stock="@items.QuantityInStock"
+											style="width: 80px; display: inline-block;"
+											onchange="updateCartItemQuantity('@items.Id')"
+											oninput="validateQuantity(this)" />
+									</td>
 
-											</td>
-
-											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</span></td>
+											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney.ToString("C",
+																						CultureInfo.GetCultureInfo("vi-VN"))</span></td>
 
 
 
 
-											<td>
-												<a href="#" data-cartItem-id="@items.Id"
-												   onclick="deleteCartItem('@items.Id', event)"
-												   class="btn btn-black btn-sm">X</a>
-											</td>
-
-
-
-										</tr>
-									}
+									<td>
+										<a href="#" data-cartItem-id="@items.Id"
+											onclick="deleteCartItem('@items.Id', event)"
+											class="btn btn-black btn-sm">X</a>
+									</td>
+								</tr>
+																}
 								}
 							</tbody>
-
 						</table>
 					</div>
 				</form>
@@ -97,7 +90,7 @@
 						</div>
 						<div class="col-md-6">
 							<button class="btn btn-outline-black btn-sm btn-block" asp-controller="Product"
-									asp-action="ProductIndex">
+								asp-action="ProductIndex">
 								Continue Shopping
 							</button>
 						</div>
@@ -265,33 +258,33 @@
 
 
 
-								document.addEventListener("DOMContentLoaded", function () {
-			let inputs = document.querySelectorAll("input[type='number'].quantity");
+		// document.addEventListener("DOMContentLoaded", function () {
+		// let inputs = document.querySelectorAll("input[type='number'].quantity");
 
-			inputs.forEach(input => {
-				input.addEventListener("input", function () {
-					let currentQuantity = parseInt(input.getAttribute("data-current-quantity")) || 0;
-					let stock = parseInt(input.getAttribute("data-stock")) || 0;
-					let min = parseInt(input.min) || 1;
-					let max = currentQuantity + stock;
+		// inputs.forEach(input => {
+		// 		input.addEventListener("input", function () {
+		// 			let currentQuantity = parseInt(input.getAttribute("data-current-quantity")) || 0;
+		// 			let stock = parseInt(input.getAttribute("data-stock")) || 0;
+		// 			let min = parseInt(input.min) || 1;
+		// 			let max = currentQuantity + stock;
 
-					console.log("Max calculated:", max); // Debugging line
+		// 			console.log("Max calculated:", max); Debugging line
 
-					// Set correct max value
-					input.max = max;
+		// 			Set correct max value
+		// 			input.max = max;
 
-					let value = parseInt(input.value) || min;
+		// 			let value = parseInt(input.value) || min;
 
-					if (value > max) {
-						input.value = max;
-						alert(`Stock quantity limit is ${max}`);
-					} else if (value < min) {
-						input.value = min;
-					}
-				});
-			});
-		});
-				function updateCartTotal() {
+		// 			if (value > max) {
+		// 				input.value = max;
+		// 				alert(`Stock quantity limit is ${max}`);
+		// 			} else if (value < min) {
+		// 				input.value = min;
+		// 			}
+		// 		});
+		// 	});
+		// });
+		function updateCartTotal() {
 			let total = 0;
 
 			$(".cart-item-checkbox:checked").each(function () {
@@ -313,7 +306,22 @@
 		$(document).ready(function () {
 			updateCartTotal();
 		});
+		// check gia tri nhap vao
+		document.addEventListener("DOMContentLoaded", function () {
+			document.querySelectorAll(".quantity").forEach(function (input) {
+				input.addEventListener("blur", function () {
+					let max = parseInt(this.getAttribute("max"));
+					let min = parseInt(this.getAttribute("min"));
+					let value = parseInt(this.value);
 
+					if (value > max) {
+						this.value = max;
+					} else if (value < min) {
+						this.value = min;
+					}
+				});
+			});
+		});
 	</script>
 </body>
 
