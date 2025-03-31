@@ -9,4 +9,5 @@ public interface ICartServices
     Task<bool> AddCartItemAsync(CartAddDto model, Guid accountId);
     Task<List<CartItem>?> GetCartItemsByAccountIdAsync(Guid accountId);
     Task<bool> IsCartItemExistsAsync(Guid productId, Guid accountId);
+    Task<bool> IsContainProduct(Guid cartId, Guid productId);
 }

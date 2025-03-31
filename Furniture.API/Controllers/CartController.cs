@@ -4,7 +4,7 @@ public class CartController(ICartServices cartServices
                             ) : BaseApiController
 {
     [HttpGet("{accountId}/ShoppingCart")]
-    public async Task<List<CartItemDto>?> GetCarts([FromRoute] Guid accountId )
+    public async Task<List<CartItemDto>?> GetCarts([FromRoute] Guid accountId)
     {
         return await cartServices.GetCartsAsync(accountId);
     }
@@ -17,7 +17,7 @@ public class CartController(ICartServices cartServices
     public async Task<bool> UpdateCartItemByQuantity([FromBody] CartUpdateQuantityDto model)
     {
         return await cartServices.UpdateCartItemByQuantityAsync(model.CartItemId, model.Quantity);
-       
+
     }
     [HttpPatch("update/status/{cartItemId}")]
     public async Task<bool> UpdateCartItemByStatus([FromRoute] Guid cartItemId)
@@ -34,6 +34,12 @@ public class CartController(ICartServices cartServices
     public async Task<int> GetCartItemsNumber([FromRoute] Guid accountId)
     {
         var list = await cartServices.GetCartItemsByAccountIdAsync(accountId);
-        return list.Count; 
+        return list.Count;
     }
+    [HttpGet("{accountId}/CheckProduct")]
+    public async Task<bool> CheckProduct([FromRoute] Guid accountId, [FromQuery] Guid productId)
+    {
+        return await cartServices.IsContainProduct(accountId, productId);
+    }
+
 }

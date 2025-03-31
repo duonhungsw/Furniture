@@ -9,7 +9,13 @@ public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controll
     {
         var account = await accountApi.GetUserInfoAsync();
             var response = await cartApi.GetCarts(account!.Content!.Id);
-
+        var item = 0;
+        int itemsNumber = HttpContext.Session.GetInt32("itemsNumber") ?? 0;
+        foreach(var items in response.Content)
+        {
+            item = item + 1;
+        }
+        HttpContext.Session.SetInt32("itemsNumber", item);
         if (!response.IsSuccessStatusCode || response.Content == null)
         {
             return View(new List<CartItemDto>()); // Nếu lỗi, trả về danh sách rỗng
@@ -57,13 +63,21 @@ public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controll
     {
         var account = await accountApi.GetUserInfoAsync();
         if (account != null)
-        {
-            bool result = await cartApi.AddCartItem(model,account!.Content!.Id);
-            int itemsNumber = HttpContext.Session.GetInt32("itemsNumber") ?? 0;
-            HttpContext.Session.SetInt32("itemsNumber", itemsNumber + 1); // Lưu Session
+        {          
+            bool result = await cartApi.AddCartItem(model, account!.Content!.Id);
             return result;
         }
         return false;
+    }
+    [HttpGet]
+    public async Task<bool> CheckProduct( [FromQuery] Guid productId)
+    {
+        var account = await accountApi.GetUserInfoAsync();
+        if (await cartApi.CheckProduct(account.Content.Id, productId))
+        {
+            return true;
+        }
+        return false ;
     }
 
 

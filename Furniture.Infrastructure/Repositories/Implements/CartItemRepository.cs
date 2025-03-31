@@ -22,7 +22,7 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
 			return false; // Không tìm thấy sản phẩm trong giỏ hàng
 		}
 
-		existingCartItem.Quantity += quantity; // Tăng số lượng lên 1
+		existingCartItem.Quantity += quantity; 
 
 		await appDbContext.SaveChangesAsync(); // EF Core tự động theo dõi thay đổi
 		return true; // Trả về true nếu cập nhật thành công
@@ -74,4 +74,5 @@ public class CartItemRepository : GenericRepository<CartItem>, ICartItemReposito
 
         return cartItem != null;
     }
+
 }
