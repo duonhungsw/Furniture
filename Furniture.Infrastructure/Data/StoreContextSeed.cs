@@ -10,18 +10,18 @@ public class StoreContextSeed
 
         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        if (!dbContext.Products.Any())
-        {
-            //E:\Project H\FurnitureShop\FurnitureShop\FurnitureShopServer\Furniture.Infrastructure\Data\SeedData
-            var productData = await File
-                .ReadAllTextAsync("../Furniture.Infrastructure/Data/SeedData/products.json");
+        //if (!dbContext.Products.Any())
+        //{
+        //    //E:\Project H\FurnitureShop\FurnitureShop\FurnitureShopServer\Furniture.Infrastructure\Data\SeedData
+        //    var productData = await File
+        //        .ReadAllTextAsync("../Furniture.Infrastructure/Data/SeedData/products.json");
 
-            var product = JsonSerializer.Deserialize<List<Product>>(productData);
+        //    var product = JsonSerializer.Deserialize<List<Product>>(productData);
 
-            if (product == null) return;
-            dbContext.Products.AddRange(product);
-            await dbContext.SaveChangesAsync();
-        }
+        //    if (product == null) return;
+        //    dbContext.Products.AddRange(product);
+        //    await dbContext.SaveChangesAsync();
+        //}
         if (!dbContext.Accounts.Any())
         {
             dbContext.Accounts.AddRange(ListAccount);

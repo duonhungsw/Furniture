@@ -315,14 +315,14 @@
                                                     <p class="product-name">@product.Product.Name</p>
                                                     <p class="product-variation">💳 Payment: @order.PaymentMethod</p>
                                                     <p class="product-quantity">📦 Quantity: @product.Quantity</p>
-                                                    <p class="product-price">💲 @product.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</p>
+                                                    <p class="product-price"> @product.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</p>
                                                 </div>
                                             </div>
                                         }
                                     </div>
 
                                     <div class="order-footer">
-                                        <p class="order-total">💰 Order Total: <strong>$@order.TotalMoney</strong></p>
+                                        <p class="order-total">💰 Order Total: <strong>$@order.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</strong></p>
                                     </div>
                                 </div>
                             }
