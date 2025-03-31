@@ -11,4 +11,5 @@ public interface IOrderRepository : IGenericRepository<Order>
     Task<bool> UpdateOrderStatusAsync(Guid orderId, Guid statusId); 
     Task<IEnumerable<OrderDto>> GetAllOrdersAsync();
     Task<IDbContextTransaction> BeginTransactionAsync();
+    Task<bool> IsProductUsedInOrdersAsync(Guid productId);
 }

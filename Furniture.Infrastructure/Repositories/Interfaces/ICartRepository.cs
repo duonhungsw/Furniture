@@ -6,5 +6,5 @@ public interface ICartRepository : IGenericRepository<Cart>
 	Task<List<CartItemDto>> GetCartProductsAsync(Guid accountId);
 	Task AddCartItemAsync(CartItem cartItem);
     Task<Cart?> GetCartByAccountIdAsync(Guid accountId);
-
+    Task<bool> IsProductUsedInCartAsync(Guid productId);
 }

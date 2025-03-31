@@ -2,20 +2,28 @@
 public class ProductServices(
 	IProductRepository _repository,
 	IFileStorageService _storageService,
-	IMapper _mapper) : IProductServices
+    IOrderRepository _orderRepository,
+    ICartRepository _cartRepository,
+    IMapper _mapper) : IProductServices
 {
 	public async Task<bool> DeleteAsync(Guid id)
 	{
 		var product = await _repository.GetByIdAsync(id);
 		if (product == null)
 			throw new NotFoundException(ErrorMessageBase.Format(ErrorMessageBase.NotFound, "Product", id));
+        bool isUsedInOrders = await _orderRepository.IsProductUsedInOrdersAsync(id);
+        bool isUsedInCart = await _cartRepository.IsProductUsedInCartAsync(id);
+        if (isUsedInOrders || isUsedInCart)
+        {
+            throw new InvalidOperationException("Existing this product in order or cart.");
+        }
 
-		string containerName = ContainerName.product.ToString();
-		if (!string.IsNullOrEmpty(product.PictureUrl))
-		{
-			var imageUrls = product.PictureUrl.Split(',');
-			foreach (var imageUrl in imageUrls)
-			{
+        string containerName = ContainerName.product.ToString();
+        if (!string.IsNullOrEmpty(product.PictureUrl))
+        {
+            var imageUrls = product.PictureUrl.Split(',');
+            foreach (var imageUrl in imageUrls)
+            {
                 if (Uri.TryCreate(imageUrl, UriKind.Absolute, out Uri uri))
                 {
                     string blobName = Path.GetFileName(uri.LocalPath);
@@ -31,11 +39,11 @@ public class ProductServices(
                     }
                 }
             }
-		}
-		_repository.Delete(product);
-		return await _repository.SaveChangesAsync();
-	}
-	public async Task<ProductDto?> GetProductByIdAsync(Guid id)
+        }
+        _repository.Delete(product);
+        return await _repository.SaveChangesAsync();
+    }
+    public async Task<ProductDto?> GetProductByIdAsync(Guid id)
 	{
 		var product = await _repository.GetByIdAsync(id);
 		if (product == null)
