@@ -31,8 +31,13 @@ public class Account(IAccountApi _accountApi,ICartApi _cartApi) : Controller
             HttpContext?.Response.Cookies.Append("AccessToken", token.AccessToken, cookieOptions);
             HttpContext?.Response.Cookies.Append("RefreshToken", token.RefreshToken, cookieOptions);
             var user = await _accountApi.GetAccountByEmailAsync(model.Email);
-            var itemNumber = await _cartApi.GetCartItemsNumber(user.Content.Id);
-            HttpContext.Session.SetInt32("itemsNumber", itemNumber);
+            var cartItemList = await _cartApi.GetCarts(user.Content.Id);
+            var item = 0;
+            foreach (var items in cartItemList.Content)
+            {
+                item = item + 1;
+            }
+            HttpContext.Session.SetInt32("itemsNumber", item);
             return RedirectToAction("Index", "Home");
         }
         catch (ApiException ex)
