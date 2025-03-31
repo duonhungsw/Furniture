@@ -52,15 +52,16 @@
 											</td>
 											<td class="price" data-price="@items.Price">@items.Price.ToString("C",
 																						CultureInfo.GetCultureInfo("vi-VN"))</td>
-									<td>
-										<input type="number" name="Quantities" value="@items.Quantity" min="1"
-											max="@items.QuantityInStock" class="form-control quantity"
-											data-cartItem-id="@items.Id" data-current-quantity="@items.Quantity"
-											data-stock="@items.QuantityInStock"
-											style="width: 80px; display: inline-block;"
-											onchange="updateCartItemQuantity('@items.Id')"
-											oninput="validateQuantity(this)" />
-									</td>
+											<td>
+												<input type="number" name="Quantities" value="@items.Quantity" min="1"
+													   max="@items.QuantityInStock" class="form-control quantity"
+													   data-cartItem-id="@items.Id" data-current-quantity="@items.Quantity"
+													   data-stock="@items.QuantityInStock"
+													   style="width: 80px; display: inline-block;"
+													   onchange="updateCartItemQuantity('@items.Id')"
+													   oninput="validateQuantity(this)" />
+											</td>
+
 
 											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney.ToString("C",
 																						CultureInfo.GetCultureInfo("vi-VN"))</span></td>
@@ -116,15 +117,15 @@
 									<h3 class="text-black h4 text-uppercase">Cart Totals</h3>
 								</div>
 							</div>
-							<div class="row mb-5">
-								<div class="col-md-6">
-									<span class="text-black">Total</span>
-								</div>
-								<div class="col-md-6 text-right">
-									<strong class="text-black cart-total">$0.00</strong>
-								</div>
+<div class="row mb-5">
+    <div class="col-md-6">
+        <span class="text-black">Total</span>
+    </div>
+    <div class="col-md-6 text-right">
+        <strong class="text-black cart-total">0 đ</strong>
+    </div>
+</div>
 
-							</div>
 
 							<div class="row">
 								<form action="/order/checkout" method="get">
@@ -149,6 +150,17 @@
 	<script src="~/js/custom.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script>
+			function validateQuantity(input) {
+			let maxStock = parseInt(input.getAttribute("max")) || 1; // Lấy giá trị tối đa từ thuộc tính max
+			let value = parseInt(input.value) || 1; // Lấy giá trị nhập vào
+
+			if (value > maxStock) {
+				alert(`⚠️ Only ${maxStock} items available in stock!`);
+				input.value = maxStock; // Giới hạn số lượng tối đa
+			} else if (value < 1) {
+				input.value = 1; // Đảm bảo giá trị nhỏ nhất là 1
+			}
+		}
 
 		function updateCartItemQuantity(cartItemId, quantity) {
 			$.ajax({
@@ -184,17 +196,27 @@
 			// Cập nhật tổng tiền cho đúng sản phẩm
 			document.getElementById(`productTotalPrice-${cartItemId}`).innerText = totalPrice.toLocaleString("vi-VN");
 		}
-		$(document).on("change", ".quantity", function () {
+				$(document).on("change", ".quantity", function () {
 			let cartItemId = $(this).data("cartitem-id");
 			let quantity = parseInt($(this).val()) || 0;
-			let price = parseFloat($(this).closest("tr").find(".price").data("price"));
+			let price = parseFloat($(this).closest("tr").find(".price").data("price")) || 0;
+
+			// Đảm bảo số lượng hợp lệ (ít nhất là 1)
+			if (quantity < 1) {
+				quantity = 1;
+				$(this).val(1);
+			}
 
 			// Tính tổng tiền
 			let totalPrice = quantity * price;
 
+			// Định dạng số tiền theo VND
+			let formattedPrice = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
 			// Cập nhật UI
-			$(`#productTotalPrice-${cartItemId}`).text(totalPrice.toLocaleString("vi-VN") + " đ");
+			$(`#productTotalPrice-${cartItemId}`).text(formattedPrice);
 		});
+
 
 		$(document).on("change", ".cart-item-checkbox", function () {
 			event.preventDefault();
@@ -289,12 +311,15 @@
 
 			$(".cart-item-checkbox:checked").each(function () {
 				let cartItemId = $(this).data("cartitem-id");
-				let productTotal = parseFloat($(`#productTotalPrice-${cartItemId}`).text().replace(/[^\d.-]/g, '') || 0);
+				let productTotal = parseFloat($(`#productTotalPrice-${cartItemId}`).text().replace(/[^\d]/g, '')) || 0;
 				total += productTotal;
 			});
 
+			// Định dạng tổng tiền theo VND
+			let formattedTotal = total.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
 			// Cập nhật tổng tiền trong UI
-			$(".cart-total").text("$" + total.toFixed(2));
+			$(".cart-total").text(formattedTotal);
 		}
 
 		// Bắt sự kiện khi thay đổi checkbox hoặc số lượng
@@ -322,6 +347,7 @@
 				});
 			});
 		});
+
 	</script>
 </body>
 
