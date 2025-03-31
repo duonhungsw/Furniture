@@ -109,7 +109,7 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 								StatusId = o.StatusId,
 								Status = new StatusDto
 								{
-									Id = o.Status.Id,
+									Id = o.Status!.Id,
 									Name = o.Status.Name
 								},
 								OrderItems = o.OrderItems.Select(oi => new CreateOrderItemDto
@@ -135,4 +135,8 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 	{
 		return await appDbContext.Database.BeginTransactionAsync();
 	}
+    public async Task<bool> IsProductUsedInOrdersAsync(Guid productId)
+    {
+        return await appDbContext.OrderItems.AnyAsync(oi => oi.ProductId == productId);
+    }
 }
