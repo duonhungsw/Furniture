@@ -50,5 +50,8 @@ public class CartRepository : GenericRepository<Cart>, ICartRepository
 	{
 		return await appDbContext.Carts.FirstOrDefaultAsync(c => c.AccountId == accountId);
 	}
-
+    public async Task<bool> IsProductUsedInCartAsync(Guid productId)
+    {
+        return await appDbContext.CartItems.AnyAsync(ci => ci.ProductId == productId);
+    }
 }

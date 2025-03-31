@@ -3,7 +3,7 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div class="sb-sidenav-menu-heading">Core</div>
-                <a class="nav-link ${requestScope.destPage eq "dashboard" ? "active" : ""}" href="AdminHomeController">
+                <a class="nav-link ${requestScope.destPage eq " dashboard" ? "active" : "" }" href="/Order/MonthlyRevenue">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Dashboard
                 </a>
@@ -18,20 +18,6 @@
                 <a class="nav-link ${requestScope.destPage eq "managePlant" ? "active" : ""}" href="/Admin/ProductList">
                     <i class="bi bi-tree sb-nav-link-icon"></i>
                     Manage Product
-                </a>
-                <a class="nav-link ${requestScope.destPage eq " manageCategory" ? "active" : "" }" href="/Order/MonthlyRevenue">
-                    <i class="bi bi-tags sb-nav-link-icon"></i>
-                    Statiscal Revenue
-                </a>
-                <div class="sb-sidenav-menu-heading">Addons</div>
-                <a class="nav-link" href="#!">
-                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                    Charts
-                </a>
-                <div class="sb-sidenav-menu-heading">Utils</div>
-                <a class="nav-link ${requestScope.destPage eq "sendMail" ? "active" : ""}" href="SendEmailController?action=pageDirect">
-                    <div class="sb-nav-link-icon"><i class="bi bi-envelope"></i></div>
-                    Send mail
                 </a>
             </div>
         </div>

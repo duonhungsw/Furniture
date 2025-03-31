@@ -123,15 +123,28 @@ public class AdminController(IProductApi _productApi,
         return View(product);
     }
     [HttpPost]
-    public async Task<IActionResult> DeleteProduct([FromForm]Guid id)
+    public async Task<IActionResult> DeleteProduct([FromForm] Guid id)
     {
-        bool result = await _productApi.Delete(id);
-        if (result)
+        try
         {
-            TempData["SuccessMessage"] = "Product deleted successfully!";
+            bool result = await _productApi.Delete(id);
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Product deleted successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to delete product. Please try again!";
+            }
+        }    
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Exist this product in Order or Cart.";
         }
+
         return RedirectToAction("ProductList");
     }
+
     [HttpGet]
     public async Task<IActionResult> ManageAccount(QueryInfo queryInfo)
     {

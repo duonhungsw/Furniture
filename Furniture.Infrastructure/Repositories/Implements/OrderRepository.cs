@@ -135,4 +135,8 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
 	{
 		return await appDbContext.Database.BeginTransactionAsync();
 	}
+    public async Task<bool> IsProductUsedInOrdersAsync(Guid productId)
+    {
+        return await appDbContext.OrderItems.AnyAsync(oi => oi.ProductId == productId);
+    }
 }

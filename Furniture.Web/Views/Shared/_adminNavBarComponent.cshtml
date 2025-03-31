@@ -12,7 +12,6 @@
                 @if (Context.Request.Cookies["AccessToken"] != null)
                 {
                     <li><a class="dropdown-item" asp-controller="Account" asp-action="ViewProfile">My Account</a></li>
-                    <li><a class="dropdown-item" asp-controller="Order" asp-action="Purchase"> My Purchase</a></li>
                     <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
                 }
                 else
