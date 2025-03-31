@@ -353,7 +353,8 @@ public class Account(IAccountApi _accountApi,ICartApi _cartApi) : Controller
     public async Task<IActionResult> ChangePassword([FromForm] AccountActionDto request)
     {
         request.Action = AccountAction.ChangePassword.ToString();
-        var response = await _accountApi.HandleAccountAction(request);
+        request.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+		var response = await _accountApi.HandleAccountAction(request);
         if (!response)
         {
             TempData["ErrorMessage"] = "Password change failed. Please try again.";

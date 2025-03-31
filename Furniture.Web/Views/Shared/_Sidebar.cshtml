@@ -8,8 +8,8 @@
                asp-controller="Account" asp-action="VerifyByPassword">Change Password</a>
             <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Purchase" ? "active" : "")"
                asp-controller="Order" asp-action="Purchase">My Purchase</a>
-            <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Address" ? "active" : "")"
-               asp-controller="Account" asp-action="Address">Address</a>
+@*             <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Address" ? "active" : "")"
+               asp-controller="Account" asp-action="Address">Address</a> *@
         </nav>
     </div>
 </div>

@@ -169,7 +169,7 @@ public class AccountServices(
 		}
 		if (request.Action == AccountAction.ChangePassword.ToString())
 		{
-			account.HashPassword = PasswordHasher.HashPasswordPBKDF2(request.NewPassword!);
+			account.HashPassword = PasswordHasher.HashPasswordPBKDF2(request.Password!);
 			_repository.Update(account);
 			return await _repository.SaveChangesAsync() ? true : false;
 		}
