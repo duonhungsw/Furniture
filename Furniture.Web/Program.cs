@@ -65,6 +65,20 @@ builder.Services.AddSession(options =>
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 });
+//builder.Services.AddAuthentication("CookieAuth")
+//	.AddCookie("CookieAuth", config =>
+//	{
+//		config.LoginPath = "/Account/Login";
+//		config.AccessDeniedPath = "/Account/Login";
+//	});
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        //options.LoginPath = "/Home/Login";
+//        options.AccessDeniedPath = "/Account/Login";
+//        options.Cookie.HttpOnly = false;
+//        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+//    });
 
 builder.Services.AddAuthentication(options =>
 {
@@ -72,7 +86,13 @@ builder.Services.AddAuthentication(options =>
 	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 	options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Use Google scheme here
 })
-.AddCookie()
+.AddCookie(options =>
+{
+    //options.LoginPath = "/Home/Login";
+    options.AccessDeniedPath = "/Account/Login";
+    options.Cookie.HttpOnly = false;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+})
 .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
 {
 	options.ClientId = builder.Configuration.GetSection("Authentication:Google:ClientId").Value!;
@@ -96,7 +116,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

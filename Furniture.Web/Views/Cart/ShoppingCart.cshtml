@@ -1,4 +1,4 @@
-﻿﻿@using System.Globalization
+﻿﻿﻿@using System.Globalization
 
 @model List<CartItemDto>
 
@@ -283,35 +283,6 @@
             let cartItemId = $(this).data("cartitem-id");
             deleteCartItem(cartItemId);
         });
-
-
-
-        // document.addEventListener("DOMContentLoaded", function () {
-        // let inputs = document.querySelectorAll("input[type='number'].quantity");
-
-        // inputs.forEach(input => {
-        // 		input.addEventListener("input", function () {
-        // 			let currentQuantity = parseInt(input.getAttribute("data-current-quantity")) || 0;
-        // 			let stock = parseInt(input.getAttribute("data-stock")) || 0;
-        // 			let min = parseInt(input.min) || 1;
-        // 			let max = currentQuantity + stock;
-
-        // 			console.log("Max calculated:", max); Debugging line
-
-        // 			Set correct max value
-        // 			input.max = max;
-
-        // 			let value = parseInt(input.value) || min;
-
-        // 			if (value > max) {
-        // 				input.value = max;
-        // 				alert(`Stock quantity limit is ${max}`);
-        // 			} else if (value < min) {
-        // 				input.value = min;
-        // 			}
-        // 		});
-        // 	});
-        // });
         function updateCartTotal() {
             let total = 0;
 
