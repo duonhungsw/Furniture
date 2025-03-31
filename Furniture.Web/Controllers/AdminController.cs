@@ -1,5 +1,10 @@
-﻿namespace Furniture.Web.Controllers;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
+namespace Furniture.Web.Controllers;
+
+//[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = "CookieAuth", Roles = "Admin")]
+[Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
 public class AdminController(IProductApi _productApi,
     IAccountApi _accountApi) : Controller
 {

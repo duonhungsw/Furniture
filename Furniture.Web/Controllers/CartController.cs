@@ -1,7 +1,8 @@
-﻿using Furniture.Web.Services;
-
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 namespace Furniture.Web.Controllers;
-
+//[Microsoft.AspNetCore.Authorization.Authorize(AuthenticationSchemes = "CookieAuth", Roles = "Customer")]
+[Microsoft.AspNetCore.Authorization.Authorize(Roles = "Customer")]
 public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controller
 {
     [HttpGet]
@@ -67,18 +68,30 @@ public class CartController(ICartApi cartApi, IAccountApi accountApi) : Controll
             bool result = await cartApi.AddCartItem(model, account!.Content!.Id);
             return result;
         }
+        else
+        {
+            RedirectToAction("Account", "Login");
+        }
         return false;
     }
     [HttpGet]
-    public async Task<bool> CheckProduct( [FromQuery] Guid productId)
+    public async Task<IActionResult> CheckProduct([FromQuery] Guid productId)
     {
-        var account = await accountApi.GetUserInfoAsync();
-        if (await cartApi.CheckProduct(account.Content.Id, productId))
+        try
         {
-            return true;
+            var account = await accountApi.GetUserInfoAsync();
+            if (account?.Content == null)
+            {
+                return BadRequest("User account not found.");
+            }
+
+            bool productExists = await cartApi.CheckProduct(account.Content.Id, productId);
+            return Ok(productExists);
         }
-        return false ;
+        catch (Exception ex)
+        {
+            // Log the exception if necessary
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
-
-
 }

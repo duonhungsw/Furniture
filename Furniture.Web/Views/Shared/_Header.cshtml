@@ -9,7 +9,8 @@
 	<div class="container">
 		<a class="navbar-brand" asp-controller="Home" asp-action="Index">Furni<span>.</span></a>
 
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+			aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
@@ -18,7 +19,8 @@
 				<li class="nav-item @(currentController == "Home" && currentAction == "Index" ? "active" : "")">
 					<a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
 				</li>
-				<li class="nav-item @(currentController == "Product" && currentAction == "ProductHome" ? "active" : "")">
+				<li
+					class="nav-item @(currentController == "Product" && currentAction == "ProductHome" ? "active" : "")">
 					<a class="nav-link" asp-controller="Product" asp-action="ProductHome">Shop</a>
 				</li>
 				<li class="nav-item">
@@ -38,13 +40,15 @@
 			<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
 
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+						data-bs-toggle="dropdown" aria-expanded="false">
 						<img src="~/images/user.svg">
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 						@if (Context.Request.Cookies["AccessToken"] != null)
 						{
-							<li><a class="dropdown-item" asp-controller="Account" asp-action="ViewProfile">My Account</a></li>
+							<li><a class="dropdown-item" asp-controller="Account" asp-action="ViewProfile">My Account</a>
+							</li>
 							<li><a class="dropdown-item" asp-controller="Order" asp-action="Purchase"> My Purchase</a></li>
 							<li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
 						}
@@ -55,7 +59,7 @@
 					</ul>
 				</li>
 				@if (Context.Request.Cookies["AccessToken"] != null)
-						{
+				{
 					<li class="nav-item position-relative">
 						<a class="nav-link" asp-controller="Cart" asp-action="ShoppingCart">
 							<img src="~/images/cart.svg" width="30" height="30" alt="Cart">
@@ -69,8 +73,8 @@
 						</a>
 					</li>
 
-						}
-				
+				}
+
 
 			</ul>
 		</div>

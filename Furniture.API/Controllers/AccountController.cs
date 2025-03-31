@@ -44,20 +44,34 @@ public class AccountController(
 		return NoContent();
 	}
 
-	[HttpGet("user_info")]
-	public ActionResult<Account> GetUserInfo()
-	{
-		var account = new Account
-		{
-			Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-			Name = User.FindFirstValue(ClaimTypes.Name)!,
-			Email = User.FindFirstValue(ClaimTypes.Email)!,
-			RoleName = User.FindFirstValue(ClaimTypes.Role)!,
-			Phone = User.FindFirstValue(ClaimTypes.MobilePhone)!,
-		};
-		return Ok(account);
-	}
-	[HttpGet("get-by-id/{id}")]
+    [HttpGet("user_info")]
+    public ActionResult<Account> GetUserInfo()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var nameClaim = User.FindFirstValue(ClaimTypes.Name);
+        var emailClaim = User.FindFirstValue(ClaimTypes.Email);
+        var roleClaim = User.FindFirstValue(ClaimTypes.Role);
+
+        // Nếu không có thông tin, trả về Ok nhưng không có dữ liệu
+        if (string.IsNullOrEmpty(userIdClaim) ||
+            string.IsNullOrEmpty(nameClaim) ||
+            string.IsNullOrEmpty(emailClaim) ||
+            string.IsNullOrEmpty(roleClaim))
+        {
+            return Ok();
+        }
+
+        var account = new Account
+        {
+            Id = Guid.Parse(userIdClaim),
+            Name = nameClaim,
+            Email = emailClaim,
+            RoleName = roleClaim
+        };
+
+        return Ok(account);
+    }
+    [HttpGet("get-by-id/{id}")]
 	public async Task<ActionResult<AccountDto>> GetCustomerById(Guid id)
 	{
 		var result = await _service.GetAccountByIdAsync(id);

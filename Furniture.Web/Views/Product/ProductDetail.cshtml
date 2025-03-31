@@ -99,23 +99,38 @@
             }
         });
     });
-    $(document).on("click", "#addToCartBtn", function (e) {
+       $(document).on("click", "#addToCartBtn", function (e) {
         e.preventDefault();
 
         let productId = $(this).data("product-id");
         let accountId = $(this).data("account-id");
+
+        // ✅ Kiểm tra nếu accountId null, chuyển hướng đến trang đăng nhập
+        if (!accountId) {
+            window.location.href = "/Account/Login";
+            return;
+        }
+
         let productName = $("#productName").text();
         let productPrice = $("#productPrice").text();
         let productImage = $("#productImage").attr("src");
         let quantity = parseInt($("#quantity").val()) || 1;
-        let stock = parseInt($("i:contains('In stock')").text().replace("In stock: ", ""));
 
-        if (quantity > stock) {
-           showQuantityNotification(stock);
+        // ✅ Kiểm tra và đảm bảo stock luôn hợp lệ
+        let stockText = $("i:contains('In stock')").text().replace("In stock: ", "").trim();
+        let stock = parseInt(stockText);
+
+        if (isNaN(stock)) {
+            alert("Không thể xác định số lượng tồn kho.");
             return;
         }
 
-        // ✅ Kiểm tra sản phẩm có trong giỏ hàng không trước khi thêm
+        if (quantity > stock) {
+            showQuantityNotification(stock);
+            return;
+        }
+
+        // ✅ Kiểm tra sản phẩm có trong giỏ hàng trước khi thêm
         $.ajax({
             url: `/Cart/CheckProduct?accountId=${accountId}&productId=${productId}`,
             type: "GET",
@@ -126,19 +141,19 @@
                 if (exists) {
                     // 🔹 Nếu sản phẩm đã có trong giỏ hàng, không thay đổi số lượng hiển thị
                     badge.text(currentItems);
-                    addToCart(productId, quantity, productImage, productName, productPrice, stock);
                 } else {
                     let newItemsNumber = currentItems + 1; // ✅ Cập nhật chính xác số lượng trong badge
                     badge.text(newItemsNumber);
-                    addToCart(productId, quantity, productImage, productName, productPrice, stock);
                 }
+
+                addToCart(productId, quantity, productImage, productName, productPrice, stock);
             },
-            error: function (xhr) {
-                console.error("Error:", xhr.responseText);
-                alert("⛔ Error checking cart item!");
+            error: function () {
+                alert("Đã xảy ra lỗi khi kiểm tra giỏ hàng. Vui lòng thử lại sau!");
             }
         });
     });
+
 
     // ✅ Hàm thêm sản phẩm vào giỏ hàng
     function addToCart(productId, quantity, productImage, productName, productPrice, stock) {
@@ -163,10 +178,7 @@
                     alert("⚠️ Failed to add to cart!");
                 }
             },
-            error: function (xhr) {
-                console.error("Error:", xhr.responseText);
-                alert("⛔ An error occurred!");
-            }
+            
         });
     }
 
