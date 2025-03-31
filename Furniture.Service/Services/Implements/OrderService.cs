@@ -6,42 +6,80 @@ public class OrderService(
 	IOrderRepository _repository,
 	IOrderItemRepository _orderItemRepository,
 	IStatusRepository _statusRepository,
+	ICartItemRepository _cartItemRepository,
+	ICartRepository _cartRepository,
+	IProductRepository _productRepository,
 	IMapper _mapper) : IOrderService
 {
 
 	public async Task<bool> CreateOrderAsync(CreateOrderDto model)
 	{
+		using var transaction = await _repository.BeginTransactionAsync(); 
+
 		try
 		{
+			var status = await _statusRepository.GetStatusByNameAsync(OrderStatus.Pending.ToString());
+			if (status == null) return false; 
+
 			var order = _mapper.Map<Order>(model);
 			order.Country = "Viet Nam";
 			order.AccountId = model.AccountId;
-			order.StatusId = (await _statusRepository.GetStatusByNameAsync(OrderStatus.Pending.ToString()))!.Id;
+			order.StatusId = status.Id;
 			order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.Price);
 
 			_repository.Create(order);
+			//await _repository.SaveChangesAsync();
 
-			foreach (var item in model.OrderItems)
+			var orderItems = model.OrderItems.Select(item => new OrderItem
 			{
-				var orderItem = new OrderItem
-				{
-					OrderId = order.Id, 
-					ProductId = item.ProductId,
-					Quantity = item.Quantity,
-				};
+				OrderId = order.Id,
+				ProductId = item.ProductId,
+				Quantity = item.Quantity
+			}).ToList();
 
-				_orderItemRepository.Create(orderItem);
+			await _orderItemRepository.AddRangeAsync(orderItems); 
+			await _repository.SaveChangesAsync();
+
+			foreach (var items in orderItems)
+			{
+				_orderItemRepository.Delete(items);
 			}
 
-			await _repository.SaveChangesAsync(); 
+			// Delete cart items was bought
+			var cartOfAccount = await _cartRepository.GetCartByAccountIdAsync(model.AccountId);
 
+			var cartItemsToDelete = new List<CartItem>();
+
+			foreach (var product in model.OrderItems)
+			{
+				var cartItem = await _cartItemRepository.GetCartsItemByCartIdAndProductIdAsync(cartOfAccount!.Id, product.ProductId);
+				foreach (var item in cartItem!)
+				{
+					// update quantityOfStock product
+					var productCartItem = await _productRepository.GetByIdAsync(item.ProductId);
+					productCartItem!.QuantityInStock -= item.Quantity;
+					_productRepository.Update(productCartItem);
+
+					 _cartItemRepository.Delete(item);
+				}
+			}
+
+			//if (cartItemsToDelete.Any())
+			//{
+			//	_cartItemRepository.DeleteRangeAsync(cartItemsToDelete);
+			//	await _repository.SaveChangesAsync();
+			//}
+			await _repository.SaveChangesAsync();
+			await transaction.CommitAsync(); 
 			return true;
 		}
-		catch 
+		catch
 		{
+			await transaction.RollbackAsync();
 			return false;
 		}
 	}
+
 
 	public async Task<bool> ChangeStatusAsync(Guid orderId, string roleName)
 	{
