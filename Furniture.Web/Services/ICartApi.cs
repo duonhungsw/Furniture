@@ -13,4 +13,6 @@ public interface ICartApi
     Task<bool> AddCartItem([Body] CartAddDto model, [AliasAs("accountId")] Guid accountId);
     [Get("/carts/{accountId}/items-number")]
     Task<int> GetCartItemsNumber([FromRoute] Guid accountId);
+    [Get("/carts/{accountId}/CheckProduct")]
+    Task<bool> CheckProduct(Guid accountId, [FromQuery] Guid productId);
 }

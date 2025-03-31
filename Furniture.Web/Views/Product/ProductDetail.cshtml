@@ -75,13 +75,14 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-           $(document).on("click", "#addToCartBtn", function (e) {
+    $(document).on("click", "#addToCartBtn", function (e) {
         e.preventDefault();
 
         let productId = $(this).data("product-id");
-        let productName = $("#productName").text(); // Lấy tên sản phẩm
-        let productPrice = $("#productPrice").text(); // Lấy giá sản phẩm
-        let productImage = $("#productImage").attr("src"); // Lấy ảnh sản phẩm
+        let accountId = $(this).data("account-id");
+        let productName = $("#productName").text();
+        let productPrice = $("#productPrice").text();
+        let productImage = $("#productImage").attr("src");
         let quantity = parseInt($("#quantity").val()) || 1;
         let stock = parseInt($("i:contains('In stock')").text().replace("In stock: ", ""));
 
@@ -91,6 +92,33 @@
             return;
         }
 
+        // ✅ Kiểm tra sản phẩm có trong giỏ hàng không trước khi thêm
+        $.ajax({
+            url: `/Cart/CheckProduct?accountId=${accountId}&productId=${productId}`,
+            type: "GET",
+            success: function (exists) {
+                let badge = $(".badge.bg-danger");
+                let currentItems = parseInt(badge.text()) || 0;
+
+                if (exists) {
+                    // 🔹 Nếu sản phẩm đã có trong giỏ hàng, không thay đổi số lượng hiển thị
+                    badge.text(currentItems);
+                    addToCart(productId, quantity, productImage, productName, productPrice, stock);
+                } else {
+                    let newItemsNumber = currentItems + 1; // ✅ Cập nhật chính xác số lượng trong badge
+                    badge.text(newItemsNumber);
+                    addToCart(productId, quantity, productImage, productName, productPrice, stock);
+                }
+            },
+            error: function (xhr) {
+                console.error("Error:", xhr.responseText);
+                alert("⛔ Error checking cart item!");
+            }
+        });
+    });
+
+    // ✅ Hàm thêm sản phẩm vào giỏ hàng
+    function addToCart(productId, quantity, productImage, productName, productPrice, stock) {
         $.ajax({
             url: "/Cart/AddCartItem",
             type: "POST",
@@ -102,15 +130,6 @@
             success: function (response) {
                 if (response) {
                     showCartNotification(productImage, productName, productPrice);
-
-                    // Cập nhật số lượng trên giỏ hàng
-                    let badge = $(".badge.bg-danger");
-                    let currentItems = parseInt(badge.text()) || 0;
-                    let newItemsNumber = currentItems + quantity;
-
-                    badge.text(newItemsNumber); // Cập nhật số lượng mới
-
-                    // Cập nhật stock sau khi thêm vào giỏ hàng
                     let newStock = stock - quantity;
                     $("i:contains('In stock')").text(`In stock: ${newStock}`);
                     if (newStock === 0) {
@@ -126,7 +145,9 @@
                 alert("⛔ An error occurred!");
             }
         });
-    });
+    }
+
+
 
 
     // Hiển thị thông báo sản phẩm đã thêm vào giỏ hàng

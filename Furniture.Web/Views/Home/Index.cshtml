@@ -103,10 +103,11 @@
 
 								<h3 class="product-title">@item.Name</h3>
 								<strong class="product-price">@item.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</strong>
-
+								<a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@item.Id">
 								<span class="icon-cross">
 									<img src="~/images/cross.svg" class="img-fluid">
 								</span>
+								</a>
 							</div>
 						</div>
 					}
