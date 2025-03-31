@@ -75,6 +75,30 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+        $(document).ready(function () {
+        $("#quantity").on("input", function () {
+            let maxStock = parseInt($(this).attr("max")) || 1; // Lấy số lượng tối đa
+            let value = parseInt($(this).val()) || 1;
+
+            if (value > maxStock) {
+                $(this).val(maxStock); // Giới hạn số lượng tối đa
+                alert(`⚠️ Only ${maxStock} items available in stock!`);
+            } else if (value < 1) {
+                $(this).val(1); // Đảm bảo giá trị nhỏ nhất là 1
+            }
+        });
+
+        $("#addToCartBtn").click(function (e) {
+            let quantity = parseInt($("#quantity").val());
+            let stock = parseInt($("#quantity").attr("max"));
+
+            if (quantity > stock) {
+                alert(`⚠️ Only ${stock} items available in stock!`);
+                $("#quantity").val(stock);
+                return;
+            }
+        });
+    });
     $(document).on("click", "#addToCartBtn", function (e) {
         e.preventDefault();
 
@@ -87,8 +111,7 @@
         let stock = parseInt($("i:contains('In stock')").text().replace("In stock: ", ""));
 
         if (quantity > stock) {
-            alert(`⚠️ Only ${stock} items available in stock!`);
-            $("#quantity").val(stock);
+           showQuantityNotification(stock);
             return;
         }
 
@@ -148,7 +171,43 @@
     }
 
 
+        function showQuantityNotification(stock) {
+        // Xóa thông báo cũ nếu có
+        $("#cartNotification").remove();
 
+        let notification = `
+    <div id="cartNotification" style="
+                position: fixed; right: 20px; top: 20px; background: white; padding: 15px;
+                border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 300px;
+                display: flex; align-items: center; gap: 10px; z-index: 1000; opacity: 0;
+                transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease;">
+        <div>
+            <strong>⚠️ Only ${stock} items available in stock!</strong><br>
+            <span style="color: red; font-weight: bold;">${price}</span>
+        </div>
+        <button id="closeNotification" style="
+                    background: transparent; border: none; font-size: 16px; cursor: pointer;">
+            ✖
+        </button>
+    </div>`;
+
+        $("body").append(notification);
+
+        // Hiển thị hiệu ứng mượt
+        setTimeout(() => {
+            $("#cartNotification").css({ opacity: 1, transform: "translateY(0)" });
+        }, 10);
+
+        // Xóa thông báo sau 3 giây
+        setTimeout(() => {
+            $("#cartNotification").fadeOut(500, function () { $(this).remove(); });
+        }, 3000);
+
+        // Cho phép đóng thông báo ngay lập tức
+        $(document).on("click", "#closeNotification", function () {
+            $("#cartNotification").remove();
+        });
+    }
 
     // Hiển thị thông báo sản phẩm đã thêm vào giỏ hàng
     function showCartNotification(image, name, price) {
