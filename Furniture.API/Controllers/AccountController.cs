@@ -133,7 +133,6 @@ public class AccountController(
 	[HttpPost("action")]
 	public async Task<bool> HandleAccountAction([FromBody] AccountActionDto request)
 	{
-		request.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 		return await _service.HandleAccountAction(request);
 	}
 	[HttpGet("email")]

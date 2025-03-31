@@ -105,11 +105,11 @@
         let productId = $(this).data("product-id");
         let accountId = $(this).data("account-id");
 
-        // ✅ Kiểm tra nếu accountId null, chuyển hướng đến trang đăng nhập
-        if (!accountId) {
-            window.location.href = "/Account/Login";
-            return;
-        }
+        // // ✅ Kiểm tra nếu accountId null, chuyển hướng đến trang đăng nhập
+        // if (!accountId) {
+        //     window.location.href = "/Account/Login";
+        //     return;
+        // }
 
         let productName = $("#productName").text();
         let productPrice = $("#productPrice").text();
@@ -120,10 +120,10 @@
         let stockText = $("i:contains('In stock')").text().replace("In stock: ", "").trim();
         let stock = parseInt(stockText);
 
-        if (isNaN(stock)) {
-            alert("Không thể xác định số lượng tồn kho.");
-            return;
-        }
+        // if (isNaN(stock)) {
+        //     alert("Không thể xác định số lượng tồn kho.");
+        //     return;
+        // }
 
         if (quantity > stock) {
             showQuantityNotification(stock);
@@ -149,7 +149,7 @@
                 addToCart(productId, quantity, productImage, productName, productPrice, stock);
             },
             error: function () {
-                alert("Đã xảy ra lỗi khi kiểm tra giỏ hàng. Vui lòng thử lại sau!");
+                alert("Don't login to website. Please login!");
             }
         });
     });
