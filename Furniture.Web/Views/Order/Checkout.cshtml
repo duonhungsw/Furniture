@@ -3,207 +3,176 @@
 
 @model CheckoutViewModel
 
-<!doctype html>
-<html lang="en">
+@{
+	var accountInfo = HttpContextAccessor.HttpContext!.Session.GetObject<Account>("AccountInfo");
+}
 
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="author" content="Untree.co">
-	<link rel="shortcut icon" href="favicon.png">
-
-	<meta name="description" content="" />
-	<meta name="keywords" content="bootstrap, bootstrap4" />
-
-	<!-- Bootstrap CSS -->
-	<link href="~/css/bootstrap.min.css" rel="stylesheet">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-	<link href="~/css/tiny-slider.css" rel="stylesheet">
-	<link href="~/css/style.css" rel="stylesheet">
-	<title>Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co </title>
-</head>
-
-<body>
-	<!-- Start Hero Section -->
-	@* <div class="hero"> *@
-	@* 	<div class="container"> *@
-	@* 		<div class="row justify-content-between"> *@
-	@* 			<div class="col-lg-5"> *@
-	@* 				<div class="intro-excerpt"> *@
-	@* 					<h1>Checkout</h1> *@
-	@* 				</div> *@
-	@* 			</div> *@
-	@* 			<div class="col-lg-7"> *@
-	@* 			</div> *@
-	@* 		</div> *@
-	@* 	</div> *@
-	@* </div> *@
-	<!-- End Hero Section -->
-	@{
-		var accountInfo = HttpContextAccessor.HttpContext!.Session.GetObject<Account>("AccountInfo");
-	}
-	<div class="untree_co-section">
-		<div class="container">
-			@* <div class="row mb-5"> *@
-			@* 	<div class="col-md-12"> *@
-			@* 		<div class="border p-4 rounded" role="alert"> *@
-			@* 			Returning customer? <a href="#">Click here</a> to login *@
-			@* 		</div> *@
-			@* 	</div> *@
-			@* </div> *@
-			<div class="row">
-				<div class="col-md-6 mb-5 mb-md-0">
-					<form id="checkoutForm" asp-controller="Order" asp-action="Checkout" method="post" class="needs-validation" novalidate>
-						<h2 class="h3 mb-3 text-black">Billing Details</h2>
-						<div class="p-3 p-lg-5 border bg-white">
-							<!-- Province -->
-							<div class="form-group">
-								<label for="provinceDropdown" class="text-black">Province <span
-										class="text-danger">*</span></label>
-								<select id="provinceDropdown" class="form-control" required>
-									<option value="">Select a province...</option>
-								</select>
-								<input asp-for="CreateOrder.City" type="hidden" id="provinceName" />
-								<div class="invalid-feedback">Please select a province.</div>
-							</div>
-
-							<!-- District -->
-							<div class="form-group">
-								<label for="districtDropdown" class="text-black">District <span
-										class="text-danger">*</span></label>
-								<select id="districtDropdown" class="form-control" required>
-									<option value="">Select a district...</option>
-								</select>
-								<input asp-for="CreateOrder.District" type="hidden" id="districtName" />
-								<div class="invalid-feedback">Please select a district.</div>
-							</div>
-
-							<!-- Ward -->
-							<div class="form-group">
-								<label for="wardDropdown" class="text-black">Ward <span
-										class="text-danger">*</span></label>
-								<select id="wardDropdown" class="form-control" required>
-									<option value="">Select a ward...</option>
-								</select>
-								<input asp-for="CreateOrder.Town" type="hidden" id="wardName" />
-								<div class="invalid-feedback">Please select a ward.</div>
-							</div>
-
-							<!-- Address -->
-							<div class="form-group">
-								<label for="c_address" class="text-black">
-									Address <span class="text-danger">*</span>
-								</label>
-								<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address"
-									   placeholder="Detail address" required>
-								<div class="invalid-feedback">Please enter your address.</div>
-							</div>
-
-							<!-- Name -->
-							<div class="form-group">
-								<label for="c_fname" class="text-black">Name <span class="text-danger">*</span></label>
-								<input type="text" class="form-control" id="c_fname" value="@accountInfo!.Name" disabled required>
-								<div class="invalid-feedback">Name is required.</div>
-							</div>
-
-							
-
-							<!-- Email -->
-							<div class="form-group">
-								<label for="c_email_address" class="text-black">Email Address <span
-										class="text-danger">*</span></label>
-								<input type="email" class="form-control" id="c_email_address" value="@accountInfo!.Email" disabled required>
-								<div class="invalid-feedback">Please enter a valid email address.</div>
-							</div>
-
-							<!-- Phone -->
-							<div class="form-group">
-								<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-								<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone" value="@accountInfo!.Phone" 
-									placeholder="Phone Number" pattern="[0-9]{10,11}" required>
-								<div class="invalid-feedback">Please enter a valid phone number (10-11 digits).</div>
-							</div>
-
-							<!-- Order Notes -->
-							<div class="form-group">
-								<label for="c_order_notes" class="text-black">Order Notes</label>
-								<textarea asp-for="CreateOrder.Note" id="c_order_notes" cols="30" rows="5"
-									class="form-control" placeholder="Write your notes here..."></textarea>
-							</div>
-
-							<div class="form-group">
-								<label class="text-black">Payment Method</label>
-
-								<div class="form-check">
-									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
-										value="CashOnDelivery" id="cashOnDelivery" required>
-									<label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
-								</div>
-
-								<div class="form-check">
-									<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
-										value="VNPAY" id="vnpay">
-									<label class="form-check-label" for="vnpay">VNPay</label>
-								</div>
-
-								<div class="invalid-feedback">Please select a payment method.</div>
-							</div>
-
-							<div class="form-group" style="margin-top:20px">
-								<button class="btn btn-black btn-lg py-3 btn-block" type="submit">Place Order</button>
-							</div>
-					</form>
-				</div>
-			</div>
-			<div class="col-md-6">
-
-				<div class="row mb-5">
-					<div class="col-md-12">
-						<h2 class="h3 mb-3 text-black">Coupon Code</h2>
-						<div class="p-3 p-lg-5 border bg-white">
-
-							<label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
-							<div class="input-group w-75 couponcode-wrap">
-								<input type="text" class="form-control me-2" id="c_code" placeholder="Coupon Code"
-									aria-label="Coupon Code" aria-describedby="button-addon2">
-								<div class="input-group-append">
-									<button class="btn btn-black btn-sm" type="button" id="button-addon2">Apply</button>
-								</div>
-							</div>
-
+<div class="untree_co-section">
+	<div class="container">
+		@* <div class="row mb-5"> *@
+		@* 	<div class="col-md-12"> *@
+		@* 		<div class="border p-4 rounded" role="alert"> *@
+		@* 			Returning customer? <a href="#">Click here</a> to login *@
+		@* 		</div> *@
+		@* 	</div> *@
+		@* </div> *@
+		<div class="row">
+			<div class="col-md-6 mb-5 mb-md-0">
+				<form id="checkoutForm" asp-controller="Order" asp-action="Checkout" method="post" class="needs-validation" novalidate>
+					<h2 class="h3 mb-3 text-black">Billing Details</h2>
+					<div class="p-3 p-lg-5 border bg-white">
+						<!-- Province -->
+						<div class="form-group">
+							<label for="provinceDropdown" class="text-black">
+								Province <span class="text-danger">*</span>
+							</label>
+							<select id="provinceDropdown" class="form-control" required>
+								<option value="">Select a province...</option>
+							</select>
+							<input asp-for="CreateOrder.City" type="hidden" id="provinceName" />
+							<div class="invalid-feedback">Please select a province.</div>
 						</div>
-					</div>
-				</div>
-			
-				<div class="row mb-5">
-					<div class="col-md-12">
-						<h2 class="h3 mb-3 text-black">Your Order</h2>
-						<div class="p-3 p-lg-5 border bg-white">
-							<table class="table site-block-order-table mb-5">
-								<thead>
-									<th>Product</th>
-									<th>Total</th>
-								</thead>
-								<tbody>
-									@foreach (var item in Model.Orders)
-									{
-										<tr>
-											<td>@item.ProductName <strong class="mx-2">x</strong> @item.Quantity</td>
-											<td>@item.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN")) </td>
-										</tr>
-									}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
 
+						<!-- District -->
+						<div class="form-group">
+							<label for="districtDropdown" class="text-black">
+								District <span class="text-danger">*</span>
+							</label>
+							<select id="districtDropdown" class="form-control" required>
+								<option value="">Select a district...</option>
+							</select>
+							<input asp-for="CreateOrder.District" type="hidden" id="districtName" />
+							<div class="invalid-feedback">Please select a district.</div>
+						</div>
+
+						<!-- Ward -->
+						<div class="form-group">
+							<label for="wardDropdown" class="text-black">
+								Ward <span class="text-danger">*</span>
+							</label>
+							<select id="wardDropdown" class="form-control" required>
+								<option value="">Select a ward...</option>
+							</select>
+							<input asp-for="CreateOrder.Town" type="hidden" id="wardName" />
+							<div class="invalid-feedback">Please select a ward.</div>
+						</div>
+
+						<!-- Address -->
+						<div class="form-group">
+							<label for="c_address" class="text-black">
+								Address <span class="text-danger">*</span>
+							</label>
+							<input asp-for="CreateOrder.Detail" type="text" class="form-control" id="c_address"
+								   placeholder="Detail address" required>
+							<div class="invalid-feedback">Please enter your address.</div>
+						</div>
+
+						<!-- Name -->
+						<div class="form-group">
+							<label for="c_fname" class="text-black">Name <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="c_fname" value="@accountInfo!.Name" disabled required>
+							<div class="invalid-feedback">Name is required.</div>
+						</div>
+
+
+
+						<!-- Email -->
+						<div class="form-group">
+							<label for="c_email_address" class="text-black">
+								Email Address <span class="text-danger">*</span>
+							</label>
+							<input type="email" class="form-control" id="c_email_address" value="@accountInfo!.Email" disabled required>
+							<div class="invalid-feedback">Please enter a valid email address.</div>
+						</div>
+
+						<!-- Phone -->
+						<div class="form-group">
+							<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
+							<input asp-for="CreateOrder.Phone" type="text" class="form-control" id="c_phone" value="@accountInfo!.Phone"
+								   placeholder="Phone Number" pattern="[0-9]{10,11}" required>
+							<div class="invalid-feedback">Please enter a valid phone number (10-11 digits).</div>
+						</div>
+
+						<!-- Order Notes -->
+						<div class="form-group">
+							<label for="c_order_notes" class="text-black">Order Notes</label>
+							<textarea asp-for="CreateOrder.Note" id="c_order_notes" cols="30" rows="5"
+									  class="form-control" placeholder="Write your notes here..."></textarea>
+						</div>
+
+						<div class="form-group">
+							<label class="text-black">Payment Method</label>
+
+							<div class="form-check">
+								<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
+									   value="CashOnDelivery" id="cashOnDelivery" required>
+								<label class="form-check-label" for="cashOnDelivery">Cash on Delivery</label>
+							</div>
+
+							<div class="form-check">
+								<input class="form-check-input" asp-for="CreateOrder.PaymentMethod" type="radio"
+									   value="VNPAY" id="vnpay">
+								<label class="form-check-label" for="vnpay">VNPay</label>
+							</div>
+
+							<div class="invalid-feedback">Please select a payment method.</div>
+						</div>
+
+						<div class="form-group" style="margin-top:20px">
+							<button class="btn btn-black btn-lg py-3 btn-block" type="submit">Place Order</button>
+						</div>
+				</form>
 			</div>
 		</div>
-		<!-- </form> -->
+		<div class="col-md-6">
+
+			<div class="row mb-5">
+				<div class="col-md-12">
+					<h2 class="h3 mb-3 text-black">Coupon Code</h2>
+					<div class="p-3 p-lg-5 border bg-white">
+
+						<label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
+						<div class="input-group w-75 couponcode-wrap">
+							<input type="text" class="form-control me-2" id="c_code" placeholder="Coupon Code"
+								   aria-label="Coupon Code" aria-describedby="button-addon2">
+							<div class="input-group-append">
+								<button class="btn btn-black btn-sm" type="button" id="button-addon2">Apply</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="row mb-5">
+				<div class="col-md-12">
+					<h2 class="h3 mb-3 text-black">Your Order</h2>
+					<div class="p-3 p-lg-5 border bg-white">
+						<table class="table site-block-order-table mb-5">
+							<thead>
+							<th>Product</th>
+							<th>Total</th>
+							</thead>
+							<tbody>
+								@foreach (var item in Model.Orders)
+								{
+									<tr>
+										<td>@item.ProductName <strong class="mx-2">x</strong> @item.Quantity</td>
+										<td>@item.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN")) </td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+		</div>
 	</div>
-	<script src="~/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/tiny-slider.js"></script>
+	<!-- </form> -->
+</div>
+
+@section Scripts {
 	<script src="~/js/custom.js"></script>
 	<script src="~/js/address.js"></script>
 	<script>
@@ -229,7 +198,7 @@
 			paymentMethods.forEach(method => {
 				method.addEventListener("change", function () {
 					if (this.value === "VNPAY") {
-						form.action = "/Order/VnPayCheckout"; 
+						form.action = "/Order/VnPayCheckout";
 					} else {
 						form.action = "/Order/Checkout";
 					}
@@ -237,6 +206,4 @@
 			});
 		});
 	</script>
-</body>
-
-</html>
+}
