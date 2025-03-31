@@ -50,7 +50,7 @@
 											<td class="product-name">
 												<h2 class="h5 text-black">@items.ProductName</h2>
 											</td>
-											<td class="price" data-price="@items.Price">@items.Price $</td>
+											<td class="price" data-price="@items.Price">@items.Price.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</td>
 											<td>
 												<input type="number"
 													   name="Quantities"
@@ -66,7 +66,7 @@
 
 											</td>
 
-											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney $</span></td>
+											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney.ToString("C", CultureInfo.GetCultureInfo("vi-VN"))</span></td>
 
 
 

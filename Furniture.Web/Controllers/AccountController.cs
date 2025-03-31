@@ -96,6 +96,7 @@ public class Account(IAccountApi _accountApi,ICartApi _cartApi) : Controller
 				Name = checkAccountExist.Content.Name,
 				Email = checkAccountExist.Content.Email,
 				HashPassword = string.Empty,
+                Phone = checkAccountExist.Content.Phone,
 				RoleName = checkAccountExist.Content.RoleName
 			};
             var token = await _accountApi.LoginGoogleAsync(accountModel);

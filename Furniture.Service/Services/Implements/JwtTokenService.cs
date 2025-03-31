@@ -115,6 +115,7 @@ public class JwtTokenService : ITokenService
 			new Claim(ClaimTypes.Name, customerDto.Name!),
 			new Claim(ClaimTypes.Email, customerDto.Email!),
 			new Claim(ClaimTypes.Role, customerDto.RoleName!),
+			new Claim(ClaimTypes.MobilePhone, customerDto.Phone!)
 		};
 
 		var token = new JwtSecurityToken(

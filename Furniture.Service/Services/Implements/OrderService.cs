@@ -6,42 +6,80 @@ public class OrderService(
 	IOrderRepository _repository,
 	IOrderItemRepository _orderItemRepository,
 	IStatusRepository _statusRepository,
+	ICartItemRepository _cartItemRepository,
+	ICartRepository _cartRepository,
+	IProductRepository _productRepository,
 	IMapper _mapper) : IOrderService
 {
 
 	public async Task<bool> CreateOrderAsync(CreateOrderDto model)
 	{
+		using var transaction = await _repository.BeginTransactionAsync(); 
+
 		try
 		{
+			var status = await _statusRepository.GetStatusByNameAsync(OrderStatus.Pending.ToString());
+			if (status == null) return false; 
+
 			var order = _mapper.Map<Order>(model);
 			order.Country = "Viet Nam";
 			order.AccountId = model.AccountId;
-			order.StatusId = (await _statusRepository.GetStatusByNameAsync(OrderStatus.Pending.ToString()))!.Id;
+			order.StatusId = status.Id;
 			order.TotalMoney = model.OrderItems.Sum(item => item.Quantity * item.Price);
 
 			_repository.Create(order);
+			//await _repository.SaveChangesAsync();
 
-			foreach (var item in model.OrderItems)
+			//var orderItems = model.OrderItems.Select(item => new OrderItem
+			//{
+			//	OrderId = order.Id,
+			//	ProductId = item.ProductId,
+			//	Quantity = item.Quantity
+			//}).ToList();
+
+			//await _orderItemRepository.AddRangeAsync(orderItems); 
+			await _repository.SaveChangesAsync();
+
+			//foreach (var items in orderItems)
+			//{
+			//	_orderItemRepository.Delete(items);
+			//}
+
+			// Delete cart items was bought
+			var cartOfAccount = await _cartRepository.GetCartByAccountIdAsync(model.AccountId);
+
+			var cartItemsToDelete = new List<CartItem>();
+
+			foreach (var product in model.OrderItems)
 			{
-				var orderItem = new OrderItem
+				var cartItem = await _cartItemRepository.GetCartsItemByCartIdAndProductIdAsync(cartOfAccount!.Id, product.ProductId);
+				foreach (var item in cartItem!)
 				{
-					OrderId = order.Id, 
-					ProductId = item.ProductId,
-					Quantity = item.Quantity,
-				};
+					// update quantityOfStock product
+					var productCartItem = await _productRepository.GetByIdAsync(item.ProductId);
+					productCartItem!.QuantityInStock -= item.Quantity;
+					_productRepository.Update(productCartItem);
 
-				_orderItemRepository.Create(orderItem);
+					 _cartItemRepository.Delete(item);
+				}
 			}
 
-			await _repository.SaveChangesAsync(); 
-
+			//if (cartItemsToDelete.Any())
+			//{
+			//	_cartItemRepository.DeleteRangeAsync(cartItemsToDelete);
+			//	await _repository.SaveChangesAsync();
+			//}
+			await _repository.SaveChangesAsync();
+			await transaction.CommitAsync(); 
 			return true;
 		}
-		catch 
+		catch
 		{
+			await transaction.RollbackAsync();
 			return false;
 		}
 	}
+
 
 	public async Task<bool> ChangeStatusAsync(Guid orderId, string roleName)
 	{
