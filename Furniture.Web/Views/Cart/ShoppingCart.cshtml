@@ -7,348 +7,354 @@
 
 
 <body>
-	<div class="untree_co-section before-footer-section">
-		<div class="container">
-			<div class="row mb-5">
-				<form class="col-md-12" method="post">
-					<div class="site-blocks-table">
-						<table class="table">
-							<thead>
-								<tr>
-									<th></th>
-									<th class="product-thumbnail">Image</th>
-									<th class="product-name">Product</th>
-									<th class="product-price">Price</th>
-									<th class="product-quantity">Quantity</th>
-									<th class="product-total">Total</th>
-									<th class="product-remove">Remove</th>
-								</tr>
-							</thead>
-							<tbody>
-								@if (Model == null || !Model.Any())
-								{
-									<tr>
-										<td colspan="7">
-											<p>Không có sản phẩm trong giỏ hàng</p>
-										</td>
-									</tr>
-								}
-								else
-								{
-									@foreach (var items in @Model)
-									{
-										<tr id="cart-item-@items.Id">
-											<td>
-												<input type="checkbox" class="cart-item-checkbox" data-cartitem-id="@items.Id"
-													@(items.Status ? "checked" : "") />
-											</td>
+    <div class="untree_co-section before-footer-section">
+        <div class="container">
+            <div class="row mb-5">
+                <form class="col-md-12" method="post">
+                    <div class="site-blocks-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="product-thumbnail">Image</th>
+                                    <th class="product-name">Product</th>
+                                    <th class="product-price">Price</th>
+                                    <th class="product-quantity">Quantity</th>
+                                    <th class="product-total">Total</th>
+                                    <th class="product-remove">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model == null || !Model.Any())
+                                {
+                                    <tr>
+                                        <td colspan="7">
+                                            <p>Không có sản phẩm trong giỏ hàng</p>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var items in @Model)
+                                    {
+                                        <tr id="cart-item-@items.Id">
+                                            <td>
+                                                <input type="checkbox" class="cart-item-checkbox" data-cartitem-id="@items.Id"
+                                                @(items.Status ? "checked" : "") />
+                                            </td>
 
 
-											<td class="product-thumbnail">
-												<img src="@items.UrlImage" alt="Image" class="img-fluid">
-											</td>
-											<td class="product-name">
-												<h2 class="h5 text-black">@items.ProductName</h2>
-											</td>
-											<td class="price" data-price="@items.Price">@items.Price.ToString("C",
-																						CultureInfo.GetCultureInfo("vi-VN"))</td>
-											<td>
-												<input type="number" name="Quantities" value="@items.Quantity" min="1"
-													   max="@items.QuantityInStock" class="form-control quantity"
-													   data-cartItem-id="@items.Id" data-current-quantity="@items.Quantity"
-													   data-stock="@items.QuantityInStock"
-													   style="width: 80px; display: inline-block;"
-													   onchange="updateCartItemQuantity('@items.Id')"
-													   oninput="validateQuantity(this)" />
-											</td>
+                                            <td class="product-thumbnail">
+                                                <img src="@items.UrlImage.Split(',')[0]" alt="Image" class="img-fluid">
+                                            </td>
+                                            <td class="product-name">
+                                                <h2 class="h5 text-black">@items.ProductName</h2>
+                                            </td>
+                                            <td class="price" data-price="@items.Price">
+                                                @items.Price.ToString("C",
+                                                         CultureInfo.GetCultureInfo("vi-VN"))
+                                            </td>
+                                            <td>
+                                                <input type="number" name="Quantities" value="@items.Quantity" min="1"
+                                                       max="@items.QuantityInStock" class="form-control quantity"
+                                                       data-cartItem-id="@items.Id" data-current-quantity="@items.Quantity"
+                                                       data-stock="@items.QuantityInStock"
+                                                       style="width: 80px; display: inline-block;"
+                                                       onchange="updateCartItemQuantity('@items.Id')"
+                                                       oninput="validateQuantity(this)" />
+                                            </td>
 
 
-											<td><span id="productTotalPrice-@items.Id">@items.TotalMoney.ToString("C",
-																						CultureInfo.GetCultureInfo("vi-VN"))</span></td>
+                                            <td>
+                                                <span id="productTotalPrice-@items.Id">
+                                                    @items.TotalMoney.ToString("C",
+                                                             CultureInfo.GetCultureInfo("vi-VN"))
+                                                </span>
+                                            </td>
 
 
 
 
-									<td>
-										<a href="#" data-cartItem-id="@items.Id"
-											onclick="deleteCartItem('@items.Id', event)"
-											class="btn btn-black btn-sm">X</a>
-									</td>
-								</tr>
-																}
-								}
-							</tbody>
-						</table>
-					</div>
-				</form>
-			</div>
+                                            <td>
+                                                <a href="#" data-cartItem-id="@items.Id"
+                                                   onclick="deleteCartItem('@items.Id', event)"
+                                                   class="btn btn-black btn-sm">X</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
 
-			<div class="row">
-				<div class="col-md-6">
-					<div class="row mb-5">
-						<div class="col-md-6 mb-3 mb-md-0">
-							<button class="btn btn-black btn-sm btn-block">Update Cart</button>
-						</div>
-						<div class="col-md-6">
-							<button class="btn btn-outline-black btn-sm btn-block" asp-controller="Product"
-								asp-action="ProductIndex">
-								Continue Shopping
-							</button>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<label class="text-black h4" for="coupon">Coupon</label>
-							<p>Enter your coupon code if you have one.</p>
-						</div>
-						<div class="col-md-8 mb-3 mb-md-0">
-							<input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-						</div>
-						<div class="col-md-4">
-							<button class="btn btn-black">Apply Coupon</button>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6 pl-5">
-					<div class="row justify-content-end">
-						<div class="col-md-7">
-							<div class="row">
-								<div class="col-md-12 text-right border-bottom mb-5">
-									<h3 class="text-black h4 text-uppercase">Cart Totals</h3>
-								</div>
-							</div>
-<div class="row mb-5">
-    <div class="col-md-6">
-        <span class="text-black">Total</span>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row mb-5">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <button class="btn btn-black btn-sm btn-block">Update Cart</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-black btn-sm btn-block" asp-controller="Product"
+                                    asp-action="ProductIndex">
+                                Continue Shopping
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="text-black h4" for="coupon">Coupon</label>
+                            <p>Enter your coupon code if you have one.</p>
+                        </div>
+                        <div class="col-md-8 mb-3 mb-md-0">
+                            <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-black">Apply Coupon</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 pl-5">
+                    <div class="row justify-content-end">
+                        <div class="col-md-7">
+                            <div class="row">
+                                <div class="col-md-12 text-right border-bottom mb-5">
+                                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <span class="text-black">Total</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <strong class="text-black cart-total">0 đ</strong>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <form action="/order/checkout" method="get">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-black btn-lg py-3 btn-block">
+                                            Proceed To
+                                            Checkout
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-6 text-right">
-        <strong class="text-black cart-total">0 đ</strong>
-    </div>
-</div>
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/tiny-slider.js"></script>
+    <script src="~/js/custom.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function validateQuantity(input) {
+            let maxStock = parseInt(input.getAttribute("max")) || 1; // Lấy giá trị tối đa từ thuộc tính max
+            let value = parseInt(input.value) || 1; // Lấy giá trị nhập vào
+
+            if (value > maxStock) {
+                alert(`⚠️ Only ${maxStock} items available in stock!`);
+                input.value = maxStock; // Giới hạn số lượng tối đa
+            } else if (value < 1) {
+                input.value = 1; // Đảm bảo giá trị nhỏ nhất là 1
+            }
+        }
+
+        function updateCartItemQuantity(cartItemId, quantity) {
+            $.ajax({
+                url: "/Cart/UpdateCartItemByQuantity",
+                type: "PATCH",
+                contentType: "application/json",
+                data: JSON.stringify({ cartItemId: cartItemId, quantity: quantity }),
+                success: function (response) {
+                    console.log("Cập nhật thành công!");
+                    updateProductTotalPrice();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi cập nhật:", xhr.responseText);
+                }
+            });
+        }
+
+        // Bắt sự kiện khi thay đổi số lượng
+        $(document).on("change", ".quantity", function () {
+            let cartItemId = $(this).data("cartitem-id");
+            let quantity = $(this).val();
+            updateCartItemQuantity(cartItemId, quantity);
+        });
+
+        function updateProductTotalPrice(cartItemId) {
+            let input = document.querySelector(`[data-cartItem-id="${cartItemId}"]`);
+            let quantity = parseInt(input.value) || 0;
+            let price = parseFloat(input.closest("tr").querySelector(".price").dataset.price);
+
+            // Tính tổng tiền của sản phẩm đó
+            let totalPrice = quantity * price;
+
+            // Cập nhật tổng tiền cho đúng sản phẩm
+            document.getElementById(`productTotalPrice-${cartItemId}`).innerText = totalPrice.toLocaleString("vi-VN");
+        }
+        $(document).on("change", ".quantity", function () {
+            let cartItemId = $(this).data("cartitem-id");
+            let quantity = parseInt($(this).val()) || 0;
+            let price = parseFloat($(this).closest("tr").find(".price").data("price")) || 0;
+
+            // Đảm bảo số lượng hợp lệ (ít nhất là 1)
+            if (quantity < 1) {
+                quantity = 1;
+                $(this).val(1);
+            }
+
+            // Tính tổng tiền
+            let totalPrice = quantity * price;
+
+            // Định dạng số tiền theo VND
+            let formattedPrice = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
+            // Cập nhật UI
+            $(`#productTotalPrice-${cartItemId}`).text(formattedPrice);
+        });
 
 
-							<div class="row">
-								<form action="/order/checkout" method="get">
-									<div class="col-md-12">
-										<button type="submit" class="btn btn-black btn-lg py-3 btn-block">
-											Proceed To
-											Checkout
-										</button>
-									</div>
-								</form>
-							</div>
+        $(document).on("change", ".cart-item-checkbox", function () {
+            event.preventDefault();
 
+            let cartItemId = $(this).data("cartitem-id");
+            let isChecked = $(this).prop("checked"); // Lấy trạng thái checked
 
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script src="~/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/tiny-slider.js"></script>
-	<script src="~/js/custom.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script>
-			function validateQuantity(input) {
-			let maxStock = parseInt(input.getAttribute("max")) || 1; // Lấy giá trị tối đa từ thuộc tính max
-			let value = parseInt(input.value) || 1; // Lấy giá trị nhập vào
+            console.log("CartItemId:", cartItemId, "Checked:", isChecked);
 
-			if (value > maxStock) {
-				alert(`⚠️ Only ${maxStock} items available in stock!`);
-				input.value = maxStock; // Giới hạn số lượng tối đa
-			} else if (value < 1) {
-				input.value = 1; // Đảm bảo giá trị nhỏ nhất là 1
-			}
-		}
+            updateCartItemStatus(cartItemId, isChecked);
+        });
 
-		function updateCartItemQuantity(cartItemId, quantity) {
-			$.ajax({
-				url: "/Cart/UpdateCartItemByQuantity",
-				type: "PATCH",
-				contentType: "application/json",
-				data: JSON.stringify({ cartItemId: cartItemId, quantity: quantity }),
-				success: function (response) {
-					console.log("Cập nhật thành công!");
-					updateProductTotalPrice();
-				},
-				error: function (xhr, status, error) {
-					console.error("Lỗi cập nhật:", xhr.responseText);
-				}
-			});
-		}
+        function updateCartItemStatus(cartItemId, isChecked) {
+            $.ajax({
+                url: `/Cart/UpdateCartItemByStatus/${cartItemId}`,
+                type: "PATCH",
+                contentType: "application/json",
+                data: JSON.stringify({ status: isChecked }), // Gửi trạng thái checked
+                success: function (response) {
+                    console.log("Response:", response);
 
-		// Bắt sự kiện khi thay đổi số lượng
-		$(document).on("change", ".quantity", function () {
-			let cartItemId = $(this).data("cartitem-id");
-			let quantity = $(this).val();
-			updateCartItemQuantity(cartItemId, quantity);
-		});
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi:", xhr.responseText);
+                    alert("Đã xảy ra lỗi, vui lòng thử lại!");
+                }
+            });
+        }
 
-		function updateProductTotalPrice(cartItemId) {
-			let input = document.querySelector(`[data-cartItem-id="${cartItemId}"]`);
-			let quantity = parseInt(input.value) || 0;
-			let price = parseFloat(input.closest("tr").querySelector(".price").dataset.price);
+        function deleteCartItem(cartItemId) {
+            $.ajax({
+                url: `/Cart/DeleteCartItem/${cartItemId}`, // Sử dụng template string
+                type: "DELETE",
+                success: function (response) {
+                    console.log("Xóa thành công!");
 
-			// Tính tổng tiền của sản phẩm đó
-			let totalPrice = quantity * price;
+                    // Ẩn và xóa mục đã chọn
+                    $("#cart-item-" + cartItemId).fadeOut(500, function () {
+                        $(this).remove();
 
-			// Cập nhật tổng tiền cho đúng sản phẩm
-			document.getElementById(`productTotalPrice-${cartItemId}`).innerText = totalPrice.toLocaleString("vi-VN");
-		}
-				$(document).on("change", ".quantity", function () {
-			let cartItemId = $(this).data("cartitem-id");
-			let quantity = parseInt($(this).val()) || 0;
-			let price = parseFloat($(this).closest("tr").find(".price").data("price")) || 0;
+                        // Sau khi xóa xong, cập nhật số lượng trên giỏ hàng
+                        let badge = $(".badge.bg-danger");
+                        let currentItems = parseInt(badge.text()) || 0;
+                        let newItemsNumber = Math.max(0, currentItems - 1); // Đảm bảo không bị âm
 
-			// Đảm bảo số lượng hợp lệ (ít nhất là 1)
-			if (quantity < 1) {
-				quantity = 1;
-				$(this).val(1);
-			}
+                        badge.text(newItemsNumber);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi xóa sản phẩm:", xhr.responseText);
+                }
+            });
+        }
 
-			// Tính tổng tiền
-			let totalPrice = quantity * price;
-
-			// Định dạng số tiền theo VND
-			let formattedPrice = totalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
-
-			// Cập nhật UI
-			$(`#productTotalPrice-${cartItemId}`).text(formattedPrice);
-		});
-
-
-		$(document).on("change", ".cart-item-checkbox", function () {
-			event.preventDefault();
-
-			let cartItemId = $(this).data("cartitem-id");
-			let isChecked = $(this).prop("checked"); // Lấy trạng thái checked
-
-			console.log("CartItemId:", cartItemId, "Checked:", isChecked);
-
-			updateCartItemStatus(cartItemId, isChecked);
-		});
-
-		function updateCartItemStatus(cartItemId, isChecked) {
-			$.ajax({
-				url: `/Cart/UpdateCartItemByStatus/${cartItemId}`,
-				type: "PATCH",
-				contentType: "application/json",
-				data: JSON.stringify({ status: isChecked }), // Gửi trạng thái checked
-				success: function (response) {
-					console.log("Response:", response);
-
-				},
-				error: function (xhr, status, error) {
-					console.error("Lỗi:", xhr.responseText);
-					alert("Đã xảy ra lỗi, vui lòng thử lại!");
-				}
-			});
-		}
-
-		function deleteCartItem(cartItemId) {
-			$.ajax({
-				url: `/Cart/DeleteCartItem/${cartItemId}`, // Sử dụng template string
-				type: "DELETE",
-				success: function (response) {
-					console.log("Xóa thành công!");
-
-					// Ẩn và xóa mục đã chọn
-					$("#cart-item-" + cartItemId).fadeOut(500, function () {
-						$(this).remove();
-
-						// Sau khi xóa xong, cập nhật số lượng trên giỏ hàng
-						let badge = $(".badge.bg-danger");
-						let currentItems = parseInt(badge.text()) || 0;
-						let newItemsNumber = Math.max(0, currentItems - 1); // Đảm bảo không bị âm
-
-						badge.text(newItemsNumber);
-					});
-				},
-				error: function (xhr, status, error) {
-					console.error("Lỗi xóa sản phẩm:", xhr.responseText);
-				}
-			});
-		}
-
-		// Bắt sự kiện khi bấm nút xóa
-		$(document).on("click", ".btn-delete-cart-item", function (event) {
-			event.preventDefault();
-			let cartItemId = $(this).data("cartitem-id");
-			deleteCartItem(cartItemId);
-		});
+        // Bắt sự kiện khi bấm nút xóa
+        $(document).on("click", ".btn-delete-cart-item", function (event) {
+            event.preventDefault();
+            let cartItemId = $(this).data("cartitem-id");
+            deleteCartItem(cartItemId);
+        });
 
 
 
-		// document.addEventListener("DOMContentLoaded", function () {
-		// let inputs = document.querySelectorAll("input[type='number'].quantity");
+        // document.addEventListener("DOMContentLoaded", function () {
+        // let inputs = document.querySelectorAll("input[type='number'].quantity");
 
-		// inputs.forEach(input => {
-		// 		input.addEventListener("input", function () {
-		// 			let currentQuantity = parseInt(input.getAttribute("data-current-quantity")) || 0;
-		// 			let stock = parseInt(input.getAttribute("data-stock")) || 0;
-		// 			let min = parseInt(input.min) || 1;
-		// 			let max = currentQuantity + stock;
+        // inputs.forEach(input => {
+        // 		input.addEventListener("input", function () {
+        // 			let currentQuantity = parseInt(input.getAttribute("data-current-quantity")) || 0;
+        // 			let stock = parseInt(input.getAttribute("data-stock")) || 0;
+        // 			let min = parseInt(input.min) || 1;
+        // 			let max = currentQuantity + stock;
 
-		// 			console.log("Max calculated:", max); Debugging line
+        // 			console.log("Max calculated:", max); Debugging line
 
-		// 			Set correct max value
-		// 			input.max = max;
+        // 			Set correct max value
+        // 			input.max = max;
 
-		// 			let value = parseInt(input.value) || min;
+        // 			let value = parseInt(input.value) || min;
 
-		// 			if (value > max) {
-		// 				input.value = max;
-		// 				alert(`Stock quantity limit is ${max}`);
-		// 			} else if (value < min) {
-		// 				input.value = min;
-		// 			}
-		// 		});
-		// 	});
-		// });
-		function updateCartTotal() {
-			let total = 0;
+        // 			if (value > max) {
+        // 				input.value = max;
+        // 				alert(`Stock quantity limit is ${max}`);
+        // 			} else if (value < min) {
+        // 				input.value = min;
+        // 			}
+        // 		});
+        // 	});
+        // });
+        function updateCartTotal() {
+            let total = 0;
 
-			$(".cart-item-checkbox:checked").each(function () {
-				let cartItemId = $(this).data("cartitem-id");
-				let productTotal = parseFloat($(`#productTotalPrice-${cartItemId}`).text().replace(/[^\d]/g, '')) || 0;
-				total += productTotal;
-			});
+            $(".cart-item-checkbox:checked").each(function () {
+                let cartItemId = $(this).data("cartitem-id");
+                let productTotal = parseFloat($(`#productTotalPrice-${cartItemId}`).text().replace(/[^\d]/g, '')) || 0;
+                total += productTotal;
+            });
 
-			// Định dạng tổng tiền theo VND
-			let formattedTotal = total.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+            // Định dạng tổng tiền theo VND
+            let formattedTotal = total.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
-			// Cập nhật tổng tiền trong UI
-			$(".cart-total").text(formattedTotal);
-		}
+            // Cập nhật tổng tiền trong UI
+            $(".cart-total").text(formattedTotal);
+        }
 
-		// Bắt sự kiện khi thay đổi checkbox hoặc số lượng
-		$(document).on("change", ".cart-item-checkbox, .quantity", function () {
-			updateCartTotal();
-		});
+        // Bắt sự kiện khi thay đổi checkbox hoặc số lượng
+        $(document).on("change", ".cart-item-checkbox, .quantity", function () {
+            updateCartTotal();
+        });
 
-		// Cập nhật lại tổng tiền khi trang được tải
-		$(document).ready(function () {
-			updateCartTotal();
-		});
-		// check gia tri nhap vao
-		document.addEventListener("DOMContentLoaded", function () {
-			document.querySelectorAll(".quantity").forEach(function (input) {
-				input.addEventListener("blur", function () {
-					let max = parseInt(this.getAttribute("max"));
-					let min = parseInt(this.getAttribute("min"));
-					let value = parseInt(this.value);
+        // Cập nhật lại tổng tiền khi trang được tải
+        $(document).ready(function () {
+            updateCartTotal();
+        });
+        // check gia tri nhap vao
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".quantity").forEach(function (input) {
+                input.addEventListener("blur", function () {
+                    let max = parseInt(this.getAttribute("max"));
+                    let min = parseInt(this.getAttribute("min"));
+                    let value = parseInt(this.value);
 
-					if (value > max) {
-						this.value = max;
-					} else if (value < min) {
-						this.value = min;
-					}
-				});
-			});
-		});
+                    if (value > max) {
+                        this.value = max;
+                    } else if (value < min) {
+                        this.value = min;
+                    }
+                });
+            });
+        });
 
-	</script>
+    </script>
 </body>
 
 </html>

@@ -1,4 +1,9 @@
-﻿<!-- Start Header/Navigation -->
+﻿@{
+	var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+	var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!-- Start Header/Navigation -->
 <nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark" arial-label="Furni navigation bar">
 
 	<div class="container">
@@ -10,14 +15,24 @@
 
 		<div class="collapse navbar-collapse" id="navbarsFurni">
 			<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-				<li class="nav-item active">
+				<li class="nav-item @(currentController == "Home" && currentAction == "Index" ? "active" : "")">
 					<a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
 				</li>
-				<li><a class="nav-link" asp-controller="Product" asp-action="ProductHome">Shop</a></li>
-				<li><a class="nav-link" href="about.html">About us</a></li>
-				<li><a class="nav-link" href="services.html">Services</a></li>
-				<li><a class="nav-link" asp-controller="Order" asp-action="Checkout">Checkout</a></li>
-				<li><a class="nav-link" href="contact.html">Contact us</a></li>
+				<li class="nav-item @(currentController == "Product" && currentAction == "ProductHome" ? "active" : "")">
+					<a class="nav-link" asp-controller="Product" asp-action="ProductHome">Shop</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="about.html">About us</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="services.html">Services</a>
+				</li>
+				<li class="nav-item @(currentController == "Order" && currentAction == "Checkout" ? "active" : "")">
+					<a class="nav-link" asp-controller="Order" asp-action="Checkout">Checkout</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="contact.html">Contact us</a>
+				</li>
 			</ul>
 
 			<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
@@ -61,5 +76,3 @@
 		</div>
 	</div>
 </nav>
-<!-- End Header/Navigation -->
-<script src="~/js/bootstrap.bundle.min.js"></script>
