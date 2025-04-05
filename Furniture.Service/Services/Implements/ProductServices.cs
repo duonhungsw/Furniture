@@ -40,7 +40,8 @@ public class ProductServices(
                 }
             }
         }
-        _repository.Delete(product);
+        product.QuantityInStock = 0;
+        _repository.Update(product);
         return await _repository.SaveChangesAsync();
     }
     public async Task<ProductDto?> GetProductByIdAsync(Guid id)
